@@ -1,7 +1,14 @@
 const studentService = require("../services/student_service");
 
 async function CreateStudentRequest(req, res) {
+  const io = req.app.get("io");
   const student = await studentService.RequestDocuments(req.body);
+
+  io.emit("refreshStudentsRequests");
+  if (student.request && student.request.status) {
+    io.emit(`refreshStudentsByStatus:${student.request.status}`);
+  }
+
   res.status(201).json(student);
 }
 

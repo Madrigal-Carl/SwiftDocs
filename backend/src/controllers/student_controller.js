@@ -21,8 +21,18 @@ async function GetAllStudentsRequests(req, res) {
   res.json(students);
 }
 
+async function GetStudentsByRequestStatus(req, res) {
+  const { status } = req.query;
+
+  if (!status) return res.status(400).json({ message: "Status is required" });
+
+  const students = await studentService.GetStudentsByRequestStatus(status);
+  res.json(students);
+}
+
 module.exports = {
   CreateStudentRequest,
   GetStudentRequest,
   GetAllStudentsRequests,
+  GetStudentsByRequestStatus,
 };

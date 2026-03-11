@@ -14,6 +14,12 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
+      Student.hasOne(models.Request, {
+        foreignKey: "student_id",
+        as: "request",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
     }
 
     getFullName() {

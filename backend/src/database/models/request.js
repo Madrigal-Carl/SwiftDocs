@@ -9,7 +9,24 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Request.belongsTo(models.Student, {
+        foreignKey: "student_id",
+        as: "student",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
+      Request.hasMany(models.Receipt, {
+        foreignKey: "request_id",
+        as: "receipts",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
+      Request.hasMany(models.Document, {
+        foreignKey: "request_id",
+        as: "documents",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
     }
 
     static generateReference() {

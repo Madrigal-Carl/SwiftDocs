@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static generateReference() {
-      return `REQ-${nanoid(6).toUpperCase()}`;
+      return `req-${nanoid(8).toLowerCase()}`;
     }
   }
   Request.init(
@@ -77,26 +77,24 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Request",
+      tableName: "requests",
       underscored: true,
       timestamps: true,
       hooks: {
-        beforeCreate: async (request) => {
-          if (!request.reference_number) {
-            let unique = false;
+        beforeValidate: async (request) => {
+          if (request.reference_number) return;
 
-            while (!unique) {
-              const ref = Request.generateReference();
+          let ref;
+          let exists;
 
-              const exists = await Request.findOne({
-                where: { reference_number: ref },
-              });
+          do {
+            ref = Request.generateReference();
+            exists = await Request.findOne({
+              where: { reference_number: ref },
+            });
+          } while (exists);
 
-              if (!exists) {
-                request.reference_number = ref;
-                unique = true;
-              }
-            }
-          }
+          request.reference_number = ref;
         },
       },
     },

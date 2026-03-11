@@ -14,36 +14,6 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
-      Education.hasOne(models.CollegeRecord, {
-        foreignKey: "education_id",
-        as: "collegeRecord",
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-      });
-      Education.hasOne(models.SeniorHighRecord, {
-        foreignKey: "education_id",
-        as: "seniorHighRecord",
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-      });
-    }
-
-    async getRecord(options = {}) {
-      // Reload associations if not loaded
-      if (!this.collegeRecord && !this.seniorHighRecord) {
-        await this.reload({
-          include: [
-            { association: "collegeRecord" },
-            { association: "seniorHighRecord" },
-          ],
-          ...options,
-        });
-      }
-
-      if (this.collegeRecord) return this.collegeRecord.course || null;
-      if (this.seniorHighRecord) return this.seniorHighRecord.track || null;
-
-      return null;
     }
   }
   Education.init(
@@ -62,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       education_level: {
         type: DataTypes.ENUM("college", "senior_high"),
+        allowNull: false,
+      },
+      program: {
+        type: DataTypes.STRING,
         allowNull: false,
       },
       school_last_attended: {

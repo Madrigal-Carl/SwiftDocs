@@ -46,6 +46,10 @@ function validateCreateStudent(req, res, next) {
         "any.only": "Education level must be either college or senior_high",
         "any.required": "Education level is required",
       }),
+    program: Joi.string().required().messages({
+      "string.empty": "Program is required",
+      "any.required": "Program is required",
+    }),
     school_last_attended: Joi.number().required().messages({
       "number.base": "School last attended must be a valid ID",
       "any.required": "School last attended is required",
@@ -64,22 +68,6 @@ function validateCreateStudent(req, res, next) {
       }),
     graduation_date: Joi.string().allow(null, ""),
     attendance_period: Joi.string().allow(null, ""),
-    track: Joi.string().when("education_level", {
-      is: "senior_high",
-      then: Joi.required().messages({
-        "string.empty": "Track is required for senior high students",
-        "any.required": "Track is required for senior high students",
-      }),
-      otherwise: Joi.forbidden(),
-    }),
-    course: Joi.string().when("education_level", {
-      is: "college",
-      then: Joi.required().messages({
-        "string.empty": "Course is required for college students",
-        "any.required": "Course is required for college students",
-      }),
-      otherwise: Joi.forbidden(),
-    }),
     notes: Joi.string().allow(null, ""),
     documents: Joi.array()
       .items(

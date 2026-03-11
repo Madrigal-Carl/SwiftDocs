@@ -27,6 +27,10 @@ module.exports = {
         type: Sequelize.ENUM("college", "senior_high"),
         allowNull: false,
       },
+      program: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       school_last_attended: {
         type: Sequelize.INTEGER,
         allowNull: false,

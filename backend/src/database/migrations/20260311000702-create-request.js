@@ -30,7 +30,14 @@ module.exports = {
         defaultValue: Sequelize.NOW,
       },
       status: {
-        type: Sequelize.ENUM("reject", "released", "pending"),
+        type: Sequelize.ENUM(
+          "reject",
+          "released",
+          "pending",
+          "paid",
+          "overdue",
+          "invoiced",
+        ),
         allowNull: false,
         defaultValue: "pending",
       },

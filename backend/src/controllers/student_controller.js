@@ -15,7 +15,14 @@ async function GetStudentRequest(req, res) {
   res.json(student);
 }
 
+async function GetAllStudentsRequests(req, res) {
+  const students = await studentService.GetAllStudentsWithRequests();
+
+  res.json(students);
+}
+
 module.exports = {
   CreateStudentRequest,
   GetStudentRequest,
+  GetAllStudentsRequests,
 };

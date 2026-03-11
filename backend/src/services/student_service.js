@@ -100,7 +100,16 @@ async function GetStudentWithRequest(studentId) {
   return studentJSON;
 }
 
+async function GetAllStudentsWithRequests() {
+  const students = await studentRepository.FindAllStudents(null, {
+    include: [{ association: "request", include: ["documents"] }],
+  });
+
+  return students.map((s) => s.toJSON());
+}
+
 module.exports = {
   RequestDocuments,
   GetStudentWithRequest,
+  GetAllStudentsWithRequests,
 };

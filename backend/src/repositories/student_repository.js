@@ -8,8 +8,12 @@ function FindStudentById(id, transaction, options = {}) {
   return Student.findByPk(id, { transaction, ...options });
 }
 
+function FindAllStudents(transaction, options = {}) {
+  return Student.findAll({ transaction, ...options });
+}
+
 module.exports = {
   CreateStudent,
   FindStudentById,
-  sequelize: Student.sequelize,
+  FindAllStudents,
 };

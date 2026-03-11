@@ -9,4 +9,7 @@ router.post("/", validateCreateStudent, studentController.CreateStudentRequest);
 // Fetch a student's requested documents
 router.get("/:id", studentController.GetStudentRequest);
 
+// Fetch all students requested documents
+router.get("/", studentController.GetAllStudentsRequests);
+
 module.exports = router;

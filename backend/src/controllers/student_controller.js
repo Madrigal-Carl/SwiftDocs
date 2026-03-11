@@ -4,10 +4,7 @@ async function CreateStudentRequest(req, res) {
   const io = req.app.get("io");
   const student = await studentService.RequestDocuments(req.body);
 
-  io.emit("refreshStudentsRequests");
-  if (student.request && student.request.status) {
-    io.emit(`refreshStudentsByStatus:${student.request.status}`);
-  }
+  io.emit("studentsUpdated", { status: student.request?.status || null });
 
   res.status(201).json(student);
 }

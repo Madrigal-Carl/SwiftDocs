@@ -6,7 +6,7 @@ const shRecordRepository = require("../repositories/senior_high_record_repositor
 const requestRepository = require("../repositories/request_repository");
 const documentRepository = require("../repositories/document_repository");
 
-async function CreateStudent(data) {
+async function RequestDocuments(data) {
   return sequelize.transaction(async (t) => {
     // 1️⃣ Create Student
     const student = await studentRepository.CreateStudent(data, t);
@@ -74,4 +74,33 @@ async function CreateStudent(data) {
   });
 }
 
-module.exports = { CreateStudent };
+async function GetStudentWithRequest(studentId) {
+  const student = await studentRepository.FindStudentById(studentId, null, {
+    include: [
+      {
+        association: "education",
+        include: ["collegeRecord", "seniorHighRecord"],
+      },
+      { association: "request", include: ["documents"] },
+    ],
+  });
+
+  if (!student) return null;
+  const studentJSON = student.toJSON();
+  if (student.education) {
+    const record = await student.education.getRecord();
+    const { collegeRecord, seniorHighRecord, ...eduFields } =
+      studentJSON.education;
+    studentJSON.education = {
+      ...eduFields,
+      record: record || null,
+    };
+  }
+
+  return studentJSON;
+}
+
+module.exports = {
+  RequestDocuments,
+  GetStudentWithRequest,
+};

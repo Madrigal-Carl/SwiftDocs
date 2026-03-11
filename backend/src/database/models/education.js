@@ -29,7 +29,8 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     async getRecord(options = {}) {
-      if (!this.collegeRecord || !this.seniorHighRecord) {
+      // Reload associations if not loaded
+      if (!this.collegeRecord && !this.seniorHighRecord) {
         await this.reload({
           include: [
             { association: "collegeRecord" },
@@ -39,7 +40,10 @@ module.exports = (sequelize, DataTypes) => {
         });
       }
 
-      return this.collegeRecord || this.seniorHighRecord || null;
+      if (this.collegeRecord) return this.collegeRecord.course || null;
+      if (this.seniorHighRecord) return this.seniorHighRecord.track || null;
+
+      return null;
     }
   }
   Education.init(

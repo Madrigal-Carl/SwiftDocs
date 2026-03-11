@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "SeniorHighRecord",
+      tableName: "senior_high_records",
       underscored: true,
       timestamps: true,
     },

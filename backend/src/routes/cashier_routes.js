@@ -1,8 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const cashierController = require("../controllers/cashier_controller");
-import requireRole from "../middlewares/role";
+const requireRole = require("../middlewares/role");
 
-router.get("/students", requireRole("cashier"), cashierController.GetStudentsForCashier);
+router.get(
+  "/students",
+  requireRole("cashier"),
+  cashierController.GetStudentsForCashier,
+);
 
 module.exports = router;

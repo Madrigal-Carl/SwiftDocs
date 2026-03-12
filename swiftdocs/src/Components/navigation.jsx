@@ -2,7 +2,7 @@ import Logo from "../assets/swiftlogo.svg";
 
 function Navigation() {
   return (
-    <nav className="fixed left-1/2 -translate-x-1/2 z-50 order border border-white-200 flex items-center justify-between px-4 py-2 bg-[var(--primary-purple)] rounded-[var(--radius-4xl)] text-white w-[80%] mx-auto mt-6">
+    <nav className="fixed left-1/2 -translate-x-1/2 z-50 order border border-white-200 flex items-center justify-between px-4 py-2 bg-[var(--primary-purple)] rounded-[var(--radius-4xl)] text-white w-[77%] mx-auto mt-8">
       
       {/* Logo */}
       <div className="flex items-center gap-2">

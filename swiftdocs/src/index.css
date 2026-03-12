@@ -25,3 +25,18 @@ body {
   font-family: 'Poppins', sans-serif;
   background-color: var(--primary-purple);
 }
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: none;
+}
+
+/* IE / older Edge */
+body {
+  -ms-overflow-style: none;
+}

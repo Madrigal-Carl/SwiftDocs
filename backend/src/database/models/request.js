@@ -27,6 +27,12 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
+      Request.hasMany(models.Log, {
+        foreignKey: "request_id",
+        as: "logs",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
     }
 
     static generateReference() {
@@ -39,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: "Students",
+          model: "students",
           key: "id",
         },
       },

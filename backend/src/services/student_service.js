@@ -72,24 +72,8 @@ async function GetAllStudentsWithRequests() {
   return students.map((s) => s.toJSON());
 }
 
-async function GetStudentsByRequestStatus(status) {
-  const students = await studentRepository.FindAllStudents(null, {
-    include: [
-      {
-        association: "request",
-        where: { status },
-        required: true,
-        include: ["documents"],
-      },
-    ],
-  });
-
-  return students.map((s) => s.toJSON());
-}
-
 module.exports = {
   RequestDocuments,
   GetStudentWithRequest,
   GetAllStudentsWithRequests,
-  GetStudentsByRequestStatus,
 };

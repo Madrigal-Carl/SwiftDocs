@@ -72,9 +72,10 @@ app.use("/uploads", express.static("uploads"));
 */
 
 const studentRoutes = require("./routes/student_routes");
+const cashierRoutes = require("./routes/cashier_routes");
 
 app.use("/api/students", studentRoutes);
-
+app.use("/api/cashier", cashierRoutes);
 /*
 |--------------------------------------------------------------------------
 | GLOBAL ERROR HANDLER

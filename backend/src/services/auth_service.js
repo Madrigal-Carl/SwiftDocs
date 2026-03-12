@@ -67,14 +67,6 @@ async function register(data, res) {
     remember_me,
   });
 
-  const payload = {
-    id: account.id,
-    email: account.email,
-    role: account.role,
-  };
-
-  setAuthCookies(res, payload, remember_me);
-
   const safeAccount = account.toJSON();
   delete safeAccount.password;
 

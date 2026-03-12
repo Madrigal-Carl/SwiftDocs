@@ -11,7 +11,7 @@ router.get("/filter-by-status", requireRole("rmo", "cashier"), studentController
 router.post("/", validateCreateStudent, studentController.CreateStudentRequest);
 
 // Fetch all students requested documents
-router.get("/", requireRole("rmo", "cashier", "admin"), studentController.GetAllStudentsRequests);
+router.get("/", requireRole("admin"), studentController.GetAllStudentsRequests);
 
 // Fetch a student's requested documents
 router.get("/:id", requireRole("rmo", "cashier", "admin"), studentController.GetStudentRequest);

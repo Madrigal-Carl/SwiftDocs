@@ -4,7 +4,7 @@ async function CreateStudentRequest(req, res) {
   const io = req.app.get("io");
   const student = await studentService.RequestDocuments(req.body);
 
-  io.emit("studentsUpdated", { status: student.request?.status || null });
+  io.emit("studentsUpdated");
 
   res.status(201).json(student);
 }

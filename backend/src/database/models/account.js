@@ -17,8 +17,21 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     getFullName() {
-      const middle = this.middle_name ? ` ${this.middle_name}` : "";
-      return `${this.last_name}, ${this.first_name} ${middle}.`;
+      const capitalize = (str) =>
+        str
+          .split(" ")
+          .map(
+            (word) =>
+              word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+          )
+          .join(" ");
+
+      const last = capitalize(this.last_name);
+      const middleInitial = this.middle_name
+        ? ` ${this.middle_name.charAt(0).toUpperCase()}.`
+        : "";
+
+      return `${last}, ${this.first_name}${middleInitial}`;
     }
   }
   Account.init(
@@ -56,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "Account",
-      modelName: "accounts",
+      tableName: "accounts",
       underscored: true,
       timestamps: true,
     },

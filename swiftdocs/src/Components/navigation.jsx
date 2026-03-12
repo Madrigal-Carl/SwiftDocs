@@ -2,7 +2,7 @@ import Logo from "../assets/swiftlogo.svg";
 
 function Navigation() {
   return (
-    <nav className="border border-gray-200 flex items-center justify-between px-6 py-2 bg-[var(--gradiant-purple)] rounded-[var(--radius-2xl)] text-white w-[80%] mx-auto mt-6">
+    <nav className="fixed left-1/2 -translate-x-1/2 z-50 order border border-white-200 flex items-center justify-between px-4 py-2 bg-[var(--primary-purple)] rounded-[var(--radius-4xl)] text-white w-[80%] mx-auto mt-6">
       
       {/* Logo */}
       <div className="flex items-center gap-2">
@@ -22,7 +22,7 @@ function Navigation() {
         </ul>
 
         {/* Button */}
-        <button className="border border-white-300 bg-[var(--primary-teal)] px-5 py-2 rounded-lg font-medium hover:bg-[var(--primary-light-purple)] transition">
+        <button className="border border-white-300 bg-[var(--primary-purple)] px-5 py-3 rounded-[var(--radius-4xl)] font-medium hover:bg-[var(--primary-light-purple)] transition">
           Get Started
         </button>
       </div>

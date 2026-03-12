@@ -10,5 +10,10 @@ router.get(
   requireRole("cashier"),
   cashierController.GetStudentsForCashier,
 );
-
+router.patch(
+  "/requests/:id/status",
+  requireAuth,
+  requireRole("cashier"),
+  cashierController.UpdateRequestStatus
+);
 module.exports = router;

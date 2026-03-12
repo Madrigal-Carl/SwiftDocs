@@ -15,9 +15,26 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
       });
     }
+
+    getFullName() {
+      const middle = this.middle_name ? ` ${this.middle_name}` : "";
+      return `${this.last_name}, ${this.first_name} ${middle}.`;
+    }
   }
   Account.init(
     {
+      first_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      middle_name: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      last_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       email: {
         type: DataTypes.STRING,
         unique: true,

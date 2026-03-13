@@ -22,7 +22,7 @@ async function GetStudentsForCashier() {
 }
 
 async function UpdateRequestStatus(requestId, status, account) {
-  const allowedStatuses = ["paid", "overdue", "invoiced"];
+  const allowedStatuses = ["paid", "invoiced"];
 
   if (!allowedStatuses.includes(status)) {
     throw new Error("Invalid status for cashier");

@@ -16,7 +16,6 @@ async function UpdateRequestStatus(requestId, status, account) {
 
   const previousStatus = request.status;
 
-  // Workflow validation
   if (status === "invoiced" && previousStatus !== "pending") {
     throw new Error("Only pending requests can be invoiced");
   }
@@ -31,7 +30,6 @@ async function UpdateRequestStatus(requestId, status, account) {
 
   await requestRepository.UpdateRequestStatus(requestId, status);
 
-  // 🔹 LOG ENTRY
   await logRepository.CreateLog({
     account_id: account.id,
     request_id: requestId,

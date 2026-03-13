@@ -9,6 +9,17 @@ async function CreateRequest(req, res) {
   res.status(201).json(request);
 }
 
+async function SendRequestEmail(req, res) {
+  const result = await requestService.SendRequestEmail(
+    req.params.referenceNumber,
+  );
+
+  res.json({
+    message: "Email sent successfully",
+    data: result,
+  });
+}
+
 async function GetRequest(req, res) {
   const request = await requestService.GetRequestWithStudent(req.params.id);
 
@@ -27,6 +38,7 @@ async function GetAllRequestsWithStudent(req, res) {
 
 module.exports = {
   CreateRequest,
+  SendRequestEmail,
   GetRequest,
   GetAllRequestsWithStudent,
 };

@@ -3,31 +3,31 @@ const requireAuth = require("../middlewares/auth");
 const requireGuest = require("../middlewares/guest");
 const express = require("express");
 const router = express.Router();
-const studentController = require("../controllers/student_controller");
-const { validateCreateStudent } = require("../validators/student_validator");
+const requestController = require("../controllers/request_controller");
+const { validateCreateRequest } = require("../validators/request_validator");
 
 // Request documents
 router.post(
   "/",
   requireGuest,
-  validateCreateStudent,
-  studentController.CreateStudentRequest,
+  validateCreateRequest,
+  requestController.CreateRequest,
 );
 
-// Fetch all students requested documents
+// Fetch all requests requested documents
 router.get(
   "/",
   requireAuth,
   requireRole("admin", "rmo"),
-  studentController.GetAllStudentsRequests,
+  requestController.GetAllRequestsWithStudent,
 );
 
-// Fetch a student's requested documents
+// Fetch a request's requested documents
 router.get(
   "/:id",
   requireAuth,
   requireRole("rmo", "cashier", "admin"),
-  studentController.GetStudentRequest,
+  requestController.GetRequest,
 );
 
 module.exports = router;

@@ -4,8 +4,8 @@ import "./index.css";
 
 import { BrowserRouter } from "react-router-dom";
 
-import { AuthProvider, useAuth } from "./stores/auth_store";
-import { StudentProvider } from "./stores/student_store";
+import { AuthProvider, useAuth } from "./stores/auth/auth_store";
+import { StudentProvider } from "./stores/student/student_provider";
 
 import PublicRoutes from "./routes/public_routes";
 import AdminRoutes from "./routes/admin_routes";
@@ -14,7 +14,6 @@ import RmoRoutes from "./routes/rmo_routes";
 import { Suspense } from "react";
 import AuthLoader from "./components/loaders/AuthLoader";
 import PageLoader from "./components/loaders/PageLoader";
-import DataLoader from "./components/loaders/DataLoader";
 
 function RoleRouter() {
   const { user, loading } = useAuth();

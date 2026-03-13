@@ -1,19 +1,18 @@
-import Nav from "../Components/navigation";
+import Nav from "../components/navigation";
 
 function Landingpage() {
   return (
     <div className="bg-gradient-to-br from-[#150578] to-[#220E9D] min-h-[100dvh]">
-
       <Nav />
 
       {/* Hero Section */}
       <section className="min-h-[100dvh] flex items-center justify-center px-6">
-
-        <div className="relative w-full max-w-[1600px] h-[70dvh] rounded-[40px] 
+        <div
+          className="relative w-full max-w-[1600px] h-[70dvh] rounded-[40px] 
         bg-gradient-to-b from-[#150578] to-[#2B1DB4] 
         shadow-2xl flex flex-col items-center text-center 
-        text-white px-10 p-24 mt-10">
-
+        text-white px-10 p-24 mt-10"
+        >
           {/* Small Label */}
           <p className="text-xl text-white/70 mb-4 mt-5">
             Credential Request Sytem
@@ -45,39 +44,32 @@ function Landingpage() {
           <button className="absolute bottom-8 right-8 px-8 py-3 rounded-[var(--radius-xl)] bg-white text-[#1E07AC] font-medium shadow hover:bg-[#1E07AC] hover:text-white transition">
             Instructions
           </button>
-
         </div>
-
       </section>
 
       {/* White Content Section */}
       <section className="flex justify-center items-center min-h-[100dvh] px-6 py-10">
         <div className="bg-white w-full max-w-[1680px] min-h-[95dvh] rounded-[60px] p-16 shadow-xl">
-
           {/* Gradient Container */}
           <div className="bg-[#1E07AC]/20 border-4 border-[#6E6BC4] rounded-[50px] h-[72dvh] flex overflow-hidden mt-20">
-
             {/* LEFT SIDE */}
             <div className="w-[55%] bg-[#1E07AC]/40 p-16 flex flex-col justify-center border-r-[5px] border-[#6E6BC4] rounded-r-[50px]">
-
               <h1 className="text-6xl font-bold text-[#160B7A]">
                 Track Request Status
               </h1>
 
               <p className="mt-6 text-sm text-[#160B7A]/80 max-w-[500px]">
-                Submit your document requests online and track their progress
-                in one simple platform.
+                Submit your document requests online and track their progress in
+                one simple platform.
               </p>
 
               <button className="mt-8 bg-[#2C1AA6] text-white px-8 py-3 rounded-full w-fit font-medium">
                 Instructions
               </button>
-
             </div>
 
             {/* RIGHT SIDE */}
             <div className="w-[45%] flex flex-col justify-center items-center text-center p-16">
-
               <h2 className="text-3xl font-semibold text-[#160B7A]">
                 Input Code
               </h2>
@@ -99,14 +91,10 @@ function Landingpage() {
               <button className="mt-6 bg-[#2C1AA6] text-white px-8 py-3 rounded-full font-medium">
                 Track Request
               </button>
-
             </div>
-
           </div>
-
         </div>
       </section>
-
     </div>
   );
 }

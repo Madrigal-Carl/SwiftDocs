@@ -9,11 +9,26 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      request_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "requests",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       type: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      price: {
+      quantity: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        allowNull: false,
+        defaultValue: 1,
+      },
+      unit_price: {
         type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
         defaultValue: 0,

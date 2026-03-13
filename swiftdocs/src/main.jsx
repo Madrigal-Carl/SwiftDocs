@@ -4,8 +4,8 @@ import "./index.css";
 
 import { BrowserRouter } from "react-router-dom";
 
-import { AuthProvider, useAuth } from "./stores/auth_store";
-import { StudentProvider } from "./stores/student_provider";
+import { AuthProvider, useAuth } from "./stores/auth/auth_store";
+import { StudentProvider } from "./stores/student/student_provider";
 
 import PublicRoutes from "./routes/public_routes";
 import AdminRoutes from "./routes/admin_routes";

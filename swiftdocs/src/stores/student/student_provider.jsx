@@ -1,9 +1,9 @@
-import { createContext, useState, useEffect } from "react";
-import socket from "../sockets/socket";
-import { fetchAllStudentsRequests } from "../services/student_service";
-import { fetchCashierStudents } from "../services/cashier_service";
+import { useState, useEffect } from "react";
+import socket from "../../sockets/socket";
+import { StudentContext } from "./student_context";
 
-export const StudentContext = createContext();
+import { fetchAllStudentsRequests } from "../../services/student_service";
+import { fetchCashierStudents } from "../../services/cashier_service";
 
 export function StudentProvider({ children, role }) {
   const [students, setStudents] = useState({ all: [], cashier: [] });
@@ -14,6 +14,7 @@ export function StudentProvider({ children, role }) {
         const data = await fetchAllStudentsRequests();
         setStudents((prev) => ({ ...prev, all: data }));
       }
+
       if (role === "cashier") {
         const data = await fetchCashierStudents();
         setStudents((prev) => ({ ...prev, cashier: data }));
@@ -33,6 +34,7 @@ export function StudentProvider({ children, role }) {
     };
 
     socket.on("studentsUpdated", handleUpdate);
+
     return () => socket.off("studentsUpdated", handleUpdate);
   }, [role]);
 

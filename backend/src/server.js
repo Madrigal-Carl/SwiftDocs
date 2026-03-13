@@ -72,12 +72,12 @@ app.use("/uploads", express.static("uploads"));
 */
 
 const authRoutes = require("./routes/auth_routes");
-const studentRoutes = require("./routes/student_routes");
+const requestRoutes = require("./routes/request_routes");
 const cashierRoutes = require("./routes/cashier_routes");
 const rmoRoutes = require("./routes/rmo_routes");
 
 app.use("/api/auth", authRoutes);
-app.use("/api/students", studentRoutes);
+app.use("/api/request", requestRoutes);
 app.use("/api/cashier", cashierRoutes);
 app.use("/api/rmo", rmoRoutes);
 /*

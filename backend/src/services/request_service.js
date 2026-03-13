@@ -39,19 +39,18 @@ async function RequestDocuments(data) {
       }
     }
 
-    // 5️⃣ Reload student with education and requests
-    const fullStudent = await studentRepository.FindStudentById(student.id, t, {
+    const requests = await studentRepository.FindStudentById(student.id, t, {
       include: [
         { association: "education" },
         { association: "request", include: ["documents"] },
       ],
     });
 
-    return fullStudent;
+    return requests;
   });
 }
 
-async function GetStudentWithRequest(studentId) {
+async function GetRequestWithStudent(studentId) {
   const student = await studentRepository.FindStudentById(studentId, null, {
     include: [
       {
@@ -64,7 +63,7 @@ async function GetStudentWithRequest(studentId) {
   return student;
 }
 
-async function GetAllStudentsWithRequests() {
+async function GetAllRequestsWithStudent() {
   const students = await studentRepository.FindAllStudents(null, {
     include: [{ association: "request", include: ["documents"] }],
   });
@@ -74,6 +73,6 @@ async function GetAllStudentsWithRequests() {
 
 module.exports = {
   RequestDocuments,
-  GetStudentWithRequest,
-  GetAllStudentsWithRequests,
+  GetRequestWithStudent,
+  GetAllRequestsWithStudent,
 };

@@ -1,8 +1,8 @@
 const cashierService = require("../services/cashier_service");
 
-async function GetStudentsForCashier(req, res) {
-  const students = await cashierService.GetStudentsForCashier();
-  res.json(students);
+async function GetRequestsForCashier(req, res) {
+  const requests = await cashierService.GetRequestsForCashier();
+  res.json(requests);
 }
 
 async function UpdateRequestStatus(req, res) {
@@ -20,6 +20,6 @@ async function UpdateRequestStatus(req, res) {
 }
 
 module.exports = {
-  GetStudentsForCashier,
+  GetRequestsForCashier,
   UpdateRequestStatus,
 };

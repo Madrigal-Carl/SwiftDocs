@@ -34,15 +34,19 @@ export function StudentProvider({ children, role }) {
   };
 
   useEffect(() => {
+    if (!role) return;
+
     loadStudents();
 
-    socket.on("studentsUpdated", async () => {
+    const handleUpdate = async () => {
       console.log("Students updated via socket. Refetching...");
       await loadStudents();
-    });
+    };
+
+    socket.on("studentsUpdated", handleUpdate);
 
     return () => {
-      socket.off("studentsUpdated");
+      socket.off("studentsUpdated", handleUpdate);
     };
   }, [role]);
 

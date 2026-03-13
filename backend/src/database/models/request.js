@@ -21,9 +21,15 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
-      Request.hasMany(models.Document, {
+      Request.hasMany(models.Requested_Document, {
         foreignKey: "request_id",
-        as: "documents",
+        as: "requested_documents",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
+      Request.hasMany(models.Requested_Additional, {
+        foreignKey: "request_id",
+        as: "requested_additionals",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });

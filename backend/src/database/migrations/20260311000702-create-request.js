@@ -31,7 +31,7 @@ module.exports = {
       },
       status: {
         type: Sequelize.ENUM(
-          "reject",
+          "rejected",
           "released",
           "pending",
           "paid",

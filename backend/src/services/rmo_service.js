@@ -20,7 +20,7 @@ async function UpdateRequestStatus(requestId, status, account) {
     throw new Error("Only pending requests can be invoiced");
   }
 
-  if (status === "reject" && previousStatus !== "pending") {
+  if (status === "rejected" && previousStatus !== "pending") {
     throw new Error("Only pending requests can be rejected");
   }
 

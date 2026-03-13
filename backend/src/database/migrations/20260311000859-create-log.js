@@ -34,7 +34,7 @@ module.exports = {
         allowNull: false,
       },
       action: {
-        type: Sequelize.ENUM("reject", "released", "paid", "invoiced"),
+        type: Sequelize.ENUM("rejected", "released", "paid", "invoiced"),
         allowNull: false,
       },
       from_status: {
@@ -42,7 +42,7 @@ module.exports = {
         allowNull: false,
       },
       to_status: {
-        type: Sequelize.ENUM("reject", "released", "paid", "invoiced"),
+        type: Sequelize.ENUM("rejected", "released", "paid", "invoiced"),
         allowNull: false,
       },
       created_at: {

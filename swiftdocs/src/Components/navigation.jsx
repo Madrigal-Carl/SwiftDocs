@@ -22,8 +22,8 @@ function Navigation() {
         </ul>
 
         {/* Button */}
-        <button className="border border-white-300 bg-(--primary-purple) px-5 py-3 rounded-4xl font-medium hover:bg-(--primary-light-purple) transition">
-          Get Started
+        <button className="border border-white-300 bg-(--primary-purple-dark) px-5 py-3 rounded-4xl font-medium hover:bg-(--primary-light-purple) transition">
+          Staff Login
         </button>
       </div>
 

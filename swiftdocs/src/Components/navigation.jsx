@@ -2,7 +2,7 @@ import Logo from "../assets/swiftlogo.svg";
 
 function Navigation() {
   return (
-    <nav className="fixed left-1/2 -translate-x-1/2 z-50 order border border-white-200 flex items-center justify-between px-4 py-2 bg-[var(--primary-purple)] rounded-[var(--radius-4xl)] text-white w-[77%] mx-auto mt-8">
+    <nav className="fixed left-1/2 -translate-x-1/2 z-50 order border border-white-200 flex items-center justify-between px-4 py-2 bg-[var(--primary-purple)] rounded-[80px] text-white w-[84%] mx-auto mt-8">
       
       {/* Logo */}
       <div className="flex items-center gap-2">
@@ -14,7 +14,7 @@ function Navigation() {
 
       {/* Menu */}
       <div className="flex items-center gap-10">
-        <ul className="flex gap-8 text-md font-medium">
+        <ul className="flex gap-8 text-lg font-medium">
           <li className="cursor-pointer hover:text-gray-400 transition">Request</li>
           <li className="cursor-pointer hover:text-gray-400 transition">Monitor</li>
           <li className="cursor-pointer hover:text-gray-400 transition">Services</li>

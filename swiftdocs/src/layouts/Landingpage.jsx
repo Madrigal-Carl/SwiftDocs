@@ -7,15 +7,52 @@ function Landingpage() {
       <Nav />
 
       {/* Hero Section */}
-      <section className="min-h-[100dvh] flex items-center justify-center text-white px-6 text-center">
-        <h1 className="text-5xl font-bold max-w-[900px]">
-          A Smarter Way to Request School Documents
-        </h1>
+      <section className="min-h-[100dvh] flex items-center justify-center px-6">
+
+        <div className="relative w-full max-w-[1600px] h-[70dvh] rounded-[40px] 
+        bg-gradient-to-b from-[#150578] to-[#2B1DB4] 
+        shadow-2xl flex flex-col items-center text-center 
+        text-white px-10 p-24 mt-10">
+
+          {/* Small Label */}
+          <p className="text-xl text-white/70 mb-4 mt-5">
+            Credential Request Sytem
+          </p>
+
+          {/* Main Heading */}
+          <h1 className="text-7xl font-semibold max-w-[1000px] leading-tight">
+            A Smarter Way to Request School Documents
+          </h1>
+
+          {/* Description */}
+          <p className="mt-6 text-white/70 max-w-[600px]">
+            Submit your document requests online and track their progress in one
+            simple platform.
+          </p>
+
+          {/* Buttons */}
+          <div className="flex gap-6 mt-10">
+            <button className="px-8 py-3 rounded-[var(--radius-xl)] bg-white text-[#1E07AC] font-medium shadow hover:bg-[#1E07AC] hover:text-white transition">
+              Request
+            </button>
+
+            <button className="px-8 py-3 rounded-[var(--radius-xl)] border border-white text-white font-medium hover:bg-[var(--primary-light-purple)] transition">
+              Track Request
+            </button>
+          </div>
+
+          {/* Bottom Right Button */}
+          <button className="absolute bottom-8 right-8 px-8 py-3 rounded-[var(--radius-xl)] bg-white text-[#1E07AC] font-medium shadow hover:bg-[#1E07AC] hover:text-white transition">
+            Instructions
+          </button>
+
+        </div>
+
       </section>
 
       {/* White Content Section */}
       <section className="flex justify-center items-center min-h-[100dvh] px-6 py-10">
-        <div className="bg-white w-full max-w-[1600px] min-h-[95dvh] rounded-[60px] p-16 shadow-xl">
+        <div className="bg-white w-full max-w-[1680px] min-h-[95dvh] rounded-[60px] p-16 shadow-xl">
 
           {/* Gradient Container */}
           <div className="bg-[#1E07AC]/20 border-4 border-[#6E6BC4] rounded-[50px] h-[72dvh] flex overflow-hidden mt-20">

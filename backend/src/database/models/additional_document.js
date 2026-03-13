@@ -1,22 +1,22 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Document extends Model {
+  class Additional_Document extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Document.hasMany(models.Requested_Document, {
-        foreignKey: "document_id",
-        as: "requested_documents",
+      Additional_Document.hasMany(models.Requested_Additional, {
+        foreignKey: "additional_document_id",
+        as: "requested_additionals",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
     }
   }
-  Document.init(
+  Additional_Document.init(
     {
       type: {
         type: DataTypes.STRING,
@@ -30,11 +30,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Document",
-      tableName: "documents",
+      modelName: "Additional_Document",
+      tableName: "additional_documents",
       underscored: true,
       timestamps: true,
     },
   );
-  return Document;
+  return Additional_Document;
 };

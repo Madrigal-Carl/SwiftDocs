@@ -5,7 +5,7 @@
     "db:migrate": "sequelize db:migrate",
     "db:create": "sequelize db:create",
     "db:seed": "sequelize db:seed:all",
-    "generate:jwt": "node generate-jwt.js"
+    "key:generate": "node generate-jwt.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

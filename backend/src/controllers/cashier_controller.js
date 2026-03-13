@@ -11,14 +11,10 @@ async function UpdateRequestStatus(req, res) {
   const request = await cashierService.UpdateRequestStatus(
     Number(req.params.id),
     req.body.status,
-    req.user
+    req.user,
   );
 
-  // 🔹 Emit realtime update
-  io.emit("requestStatusUpdated", {
-    requestId: Number(req.params.id),
-    status: req.body.status,
-  });
+  io.emit("studentsUpdated");
 
   res.json(request);
 }

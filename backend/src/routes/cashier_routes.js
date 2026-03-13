@@ -4,7 +4,7 @@ const cashierController = require("../controllers/cashier_controller");
 const requireRole = require("../middlewares/role");
 const requireAuth = require("../middlewares/auth");
 
-//get students with invoiced, overdue and paid requests status for cashier
+//get students with invoiced and paid requests status for cashier
 router.get(
   "/students",
   requireAuth,

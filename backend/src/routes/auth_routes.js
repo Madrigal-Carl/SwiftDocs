@@ -11,6 +11,7 @@ const {
   validateLogin,
 } = require("../validators/auth_validator");
 
+// Register
 router.post(
   "/register",
   // requireGuest,
@@ -20,13 +21,18 @@ router.post(
   authController.register,
 );
 
+// Login
 router.post("/login", requireGuest, validateLogin, authController.login);
 
+// Logout
 router.post(
   "/logout",
   requireAuth,
   requireRole("admin", "rmo", "cashier"),
   authController.logout,
 );
+
+// Get current authenticated user
+router.get("/me", requireAuth, authController.me);
 
 module.exports = router;

@@ -4,11 +4,12 @@ const rmoController = require("../controllers/rmo_controller");
 const requireAuth = require("../middlewares/auth");
 const requireRole = require("../middlewares/role");
 
+//update request status
 router.patch(
   "/requests/:id/status",
   requireAuth,
   requireRole("rmo"),
-  rmoController.UpdateRequestStatus
+  rmoController.UpdateRequestStatus,
 );
 
 module.exports = router;

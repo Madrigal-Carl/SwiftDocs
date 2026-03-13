@@ -1,31 +1,11 @@
-const studentRepository = require("../repositories/student_repository");
 const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
 
-async function GetStudentsForCashier() {
-  const allowedStatuses = ["paid", "overdue", "invoiced"];
-
-  const students = await studentRepository.FindAllStudents(null, {
-    include: [
-      {
-        association: "request",
-        where: {
-          status: allowedStatuses,
-        },
-        required: true,
-        include: ["documents"],
-      },
-    ],
-  });
-
-  return students.map((s) => s.toJSON());
-}
-
 async function UpdateRequestStatus(requestId, status, account) {
-  const allowedStatuses = ["paid", "overdue", "invoiced"];
+  const allowedStatuses = ["invoiced", "reject", "released"];
 
   if (!allowedStatuses.includes(status)) {
-    throw new Error("Invalid status for cashier");
+    throw new Error("Invalid status for RMO");
   }
 
   const request = await requestRepository.FindRequestById(requestId);
@@ -36,8 +16,22 @@ async function UpdateRequestStatus(requestId, status, account) {
 
   const previousStatus = request.status;
 
+  // Workflow validation
+  if (status === "invoiced" && previousStatus !== "pending") {
+    throw new Error("Only pending requests can be invoiced");
+  }
+
+  if (status === "reject" && previousStatus !== "pending") {
+    throw new Error("Only pending requests can be rejected");
+  }
+
+  if (status === "released" && previousStatus !== "paid") {
+    throw new Error("Request must be paid before releasing");
+  }
+
   await requestRepository.UpdateRequestStatus(requestId, status);
 
+  // 🔹 LOG ENTRY
   await logRepository.CreateLog({
     account_id: account.id,
     request_id: requestId,
@@ -51,6 +45,5 @@ async function UpdateRequestStatus(requestId, status, account) {
 }
 
 module.exports = {
-  GetStudentsForCashier,
   UpdateRequestStatus,
 };

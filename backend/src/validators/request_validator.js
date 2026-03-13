@@ -94,7 +94,7 @@ const schema = Joi.object({
     .default([]),
 });
 
-function validateCreateStudent(req, res, next) {
+function validateCreateRequest(req, res, next) {
   const { error, value } = schema.validate(req.body, {
     abortEarly: true,
     stripUnknown: true,
@@ -110,4 +110,4 @@ function validateCreateStudent(req, res, next) {
   next();
 }
 
-module.exports = { validateCreateStudent };
+module.exports = { validateCreateRequest };

@@ -2,7 +2,7 @@ const studentRepository = require("../repositories/student_repository");
 const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
 
-async function GetStudentsForCashier() {
+async function GetRequestsForCashier() {
   const allowedStatuses = ["paid", "invoiced"];
 
   const students = await studentRepository.FindAllStudents(null, {
@@ -51,6 +51,6 @@ async function UpdateRequestStatus(requestId, status, account) {
 }
 
 module.exports = {
-  GetStudentsForCashier,
+  GetRequestsForCashier,
   UpdateRequestStatus,
 };

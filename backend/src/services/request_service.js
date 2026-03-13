@@ -3,6 +3,7 @@ const studentRepository = require("../repositories/student_repository");
 const educationRepository = require("../repositories/education_repository");
 const requestRepository = require("../repositories/request_repository");
 const documentRepository = require("../repositories/document_repository");
+const mailService = require("./mail_service");
 
 async function RequestDocuments(data) {
   return sequelize.transaction(async (t) => {
@@ -39,19 +40,39 @@ async function RequestDocuments(data) {
       }
     }
 
-    // 5️⃣ Reload student with education and requests
-    const fullStudent = await studentRepository.FindStudentById(student.id, t, {
+    const requests = await studentRepository.FindStudentById(student.id, t, {
       include: [
         { association: "education" },
         { association: "request", include: ["documents"] },
       ],
     });
 
-    return fullStudent;
+    return requests;
   });
 }
 
-async function GetStudentWithRequest(studentId) {
+async function SendRequestEmail(referenceNumber) {
+  const request = await requestRepository.FindByReferenceNumber(
+    referenceNumber,
+    {
+      include: ["student", "documents"],
+    },
+  );
+
+  if (!request) {
+    throw new Error("Request not found");
+  }
+
+  await mailService.SendMail({
+    to: request.student.email,
+    status: request.status,
+    data: request,
+  });
+
+  return request;
+}
+
+async function GetRequestWithStudent(studentId) {
   const student = await studentRepository.FindStudentById(studentId, null, {
     include: [
       {
@@ -64,7 +85,7 @@ async function GetStudentWithRequest(studentId) {
   return student;
 }
 
-async function GetAllStudentsWithRequests() {
+async function GetAllRequestsWithStudent() {
   const students = await studentRepository.FindAllStudents(null, {
     include: [{ association: "request", include: ["documents"] }],
   });
@@ -74,6 +95,7 @@ async function GetAllStudentsWithRequests() {
 
 module.exports = {
   RequestDocuments,
-  GetStudentWithRequest,
-  GetAllStudentsWithRequests,
+  SendRequestEmail,
+  GetRequestWithStudent,
+  GetAllRequestsWithStudent,
 };

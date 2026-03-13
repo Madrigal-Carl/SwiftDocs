@@ -35,7 +35,6 @@ module.exports = {
           "released",
           "pending",
           "paid",
-          "overdue",
           "invoiced",
         ),
         allowNull: false,

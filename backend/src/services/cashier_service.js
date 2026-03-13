@@ -3,7 +3,7 @@ const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
 
 async function GetStudentsForCashier() {
-  const allowedStatuses = ["paid", "overdue", "invoiced"];
+  const allowedStatuses = ["paid", "invoiced"];
 
   const students = await studentRepository.FindAllStudents(null, {
     include: [
@@ -22,7 +22,7 @@ async function GetStudentsForCashier() {
 }
 
 async function UpdateRequestStatus(requestId, status, account) {
-  const allowedStatuses = ["paid", "overdue", "invoiced"];
+  const allowedStatuses = ["paid", "invoiced"];
 
   if (!allowedStatuses.includes(status)) {
     throw new Error("Invalid status for cashier");

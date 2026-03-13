@@ -65,7 +65,6 @@ module.exports = (sequelize, DataTypes) => {
           "released",
           "pending",
           "paid",
-          "overdue",
           "invoiced",
         ),
         allowNull: false,

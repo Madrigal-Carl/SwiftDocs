@@ -3,6 +3,7 @@ const studentRepository = require("../repositories/student_repository");
 const educationRepository = require("../repositories/education_repository");
 const requestRepository = require("../repositories/request_repository");
 const documentRepository = require("../repositories/document_repository");
+const mailService = require("./mail_service");
 
 async function RequestDocuments(data) {
   return sequelize.transaction(async (t) => {
@@ -50,6 +51,27 @@ async function RequestDocuments(data) {
   });
 }
 
+async function SendRequestEmail(referenceNumber) {
+  const request = await requestRepository.FindByReferenceNumber(
+    referenceNumber,
+    {
+      include: ["student", "documents"],
+    },
+  );
+
+  if (!request) {
+    throw new Error("Request not found");
+  }
+
+  await mailService.SendMail({
+    to: request.student.email,
+    status: request.status,
+    data: request,
+  });
+
+  return request;
+}
+
 async function GetRequestWithStudent(studentId) {
   const student = await studentRepository.FindStudentById(studentId, null, {
     include: [
@@ -73,6 +95,7 @@ async function GetAllRequestsWithStudent() {
 
 module.exports = {
   RequestDocuments,
+  SendRequestEmail,
   GetRequestWithStudent,
   GetAllRequestsWithStudent,
 };

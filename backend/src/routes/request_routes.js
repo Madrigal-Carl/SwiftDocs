@@ -14,6 +14,13 @@ router.post(
   requestController.CreateRequest,
 );
 
+// Request status update for requested documents
+router.post(
+  "/status/:referenceNumber/send-email",
+  requireGuest,
+  requestController.SendRequestEmail,
+);
+
 // Fetch all requests requested documents
 router.get(
   "/",

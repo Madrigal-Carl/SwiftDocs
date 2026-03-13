@@ -36,61 +36,62 @@ function Landingpage() {
             </button>
 
             <button className="px-8 py-3 rounded-xl border border-white text-white font-medium hover:bg-(--primary-light-purple) transition">
-              Track Request
+              Instruction
             </button>
           </div>
-
-          {/* Bottom Right Button */}
-          <button className="absolute bottom-8 right-8 px-8 py-3 rounded-xl bg-white text-[#1E07AC] font-medium shadow hover:bg-[#1E07AC] hover:text-white transition">
-            Instructions
-          </button>
         </div>
       </section>
 
       {/* White Content Section */}
-      <section className="flex justify-center items-center min-h-dvh px-6 py-10">
-        <div className="bg-white w-full max-w-420 min-h-[95dvh] rounded-[60px] p-16 shadow-xl">
+      <section className="flex justify-center items-center min-h-dvh">
+        <div className="bg-white w-full flex justify-center items-center min-h-dvh rounded-t-xl p-16 shadow-xl">
           {/* Gradient Container */}
-          <div className="bg-[#1E07AC]/20 border-4 border-[#6E6BC4] rounded-[50px] h-[72dvh] flex overflow-hidden mt-20">
+          <div className="max-w-400 w-full bg-linear-to-b from-[#281891] to-[#150578] rounded-[50px] h-[75dvh]  flex overflow-hidden mt-20 shadow-2xl">
             {/* LEFT SIDE */}
-            <div className="w-[55%] bg-[#1E07AC]/40 p-16 flex flex-col justify-center border-r-[5px] border-[#6E6BC4] rounded-r-[50px]">
-              <h1 className="text-6xl font-bold text-[#160B7A]">
+            <div className="w-[55%] p-16 flex flex-col justify-center rounded-r-[50px]">
+              <h1 className="text-6xl font-bold text-white">
                 Track Request Status
               </h1>
 
-              <p className="mt-6 text-sm text-[#160B7A]/80 max-w-125">
+              <p className="mt-6 text-lg text-white max-w-125">
                 Submit your document requests online and track their progress in
                 one simple platform.
               </p>
 
-              <button className="mt-8 bg-[#2C1AA6] text-white px-8 py-3 rounded-full w-fit font-medium">
-                Instructions
+              <button className="mt-8 bg-[#2C1AA6] text-white px-8 py-3 rounded-full w-fit font-medium hover:bg-white hover:text-[#1E07AC] transition">
+                Instruction
               </button>
             </div>
 
             {/* RIGHT SIDE */}
-            <div className="w-[45%] flex flex-col justify-center items-center text-center p-16">
-              <h2 className="text-3xl font-semibold text-[#160B7A]">
-                Input Code
-              </h2>
+            <div className="w-[45%] flex justify-center items-center">
 
-              <p className="text-xs text-[#160B7A]/60 mt-4 max-w-100">
-                Enter the reference code.
-              </p>
+              <div className="bg-white w-120 h-[50dvh]  rounded-[30px] shadow-xl flex flex-col items-center justify-center text-center p-10">
 
-              <input
-                type="text"
-                placeholder="Enter reference code"
-                className="mt-3 w-[320px] h-12.5 rounded-full px-6 bg-white shadow-inner outline-none"
-              />
+                <h2 className="text-2xl font-semibold text-[#160B7A]">
+                  Input Code
+                </h2>
 
-              <p className="text-xs text-[#160B7A]/60 mt-3">
-                The reference code can be found on your request receipt.
-              </p>
+                <p className="text-xs text-[#160B7A]/60 mt-3 max-w-65">
+                  Enter the reference code you received after submitting your request to check its status.
+                </p>
 
-              <button className="mt-6 bg-[#2C1AA6] text-white px-8 py-3 rounded-full font-medium">
-                Track Request
-              </button>
+                <input
+                  type="text"
+                  placeholder="Enter reference code"
+                  className="mt-6 w-full h-12 rounded-full px-6 bg-gray-100 border border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-800"
+                />
+
+                <p className="text-xs text-[#160B7A]/60 mt-3 max-w-65">
+                  The reference code can be found on your request receipt.
+                </p>
+
+                <button className="mt-6 bg-[#2C1AA6] text-white px-8 py-3 rounded-full font-medium shadow-md hover:bg-(--primary-light-purple)">
+                  Track Request
+                </button>
+
+              </div>
+
             </div>
           </div>
         </div>

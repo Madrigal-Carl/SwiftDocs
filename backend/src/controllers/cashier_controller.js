@@ -6,11 +6,15 @@ async function GetStudentsForCashier(req, res) {
 }
 
 async function UpdateRequestStatus(req, res) {
+  const io = req.app.get("io");
+
   const request = await cashierService.UpdateRequestStatus(
     Number(req.params.id),
     req.body.status,
-    req.user
+    req.user,
   );
+
+  io.emit("studentsUpdated");
 
   res.json(request);
 }

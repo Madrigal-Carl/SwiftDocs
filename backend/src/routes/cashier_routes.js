@@ -7,20 +7,12 @@ const {
   validateUpdateRequestStatus,
 } = require("../validators/cashier_validator");
 
-<<<<<<< HEAD
 //get requests with invoiced and paid requests status for cashier
-=======
-// get students with invoiced and paid requests status for cashier
->>>>>>> main
 router.get(
   "/requests",
   requireAuth,
   requireRole("cashier"),
-<<<<<<< HEAD
   cashierController.GetRequestsForCashier,
-=======
-  cashierController.GetStudentsForCashier
->>>>>>> main
 );
 
 // update request status
@@ -29,11 +21,7 @@ router.patch(
   requireAuth,
   requireRole("cashier"),
   validateUpdateRequestStatus,
-<<<<<<< HEAD
   cashierController.UpdateRequestStatus,
-=======
-  cashierController.UpdateRequestStatus
->>>>>>> main
 );
 
 module.exports = router;

@@ -8,7 +8,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Requested_Additional.belongsTo(models.Request, {
+        foreignKey: "request_id",
+        as: "request",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
+      Requested_Additional.belongsTo(models.Additional_Document, {
+        foreignKey: "additional_document_id",
+        as: "document",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
     }
   }
   Requested_Additional.init(

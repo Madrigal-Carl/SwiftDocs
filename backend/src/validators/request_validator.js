@@ -90,7 +90,13 @@ const schema = Joi.object({
         }),
       }),
     )
-    .default([]),
+    .min(1)
+    .required()
+    .messages({
+      "array.base": "Documents must be an array",
+      "array.min": "At least one document is required",
+      "any.required": "Documents are required",
+    }),
   additionals: Joi.array()
     .items(
       Joi.object({

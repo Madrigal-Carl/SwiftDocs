@@ -3,21 +3,25 @@ const router = express.Router();
 const cashierController = require("../controllers/cashier_controller");
 const requireRole = require("../middlewares/role");
 const requireAuth = require("../middlewares/auth");
+const {
+  validateUpdateRequestStatus,
+} = require("../validators/cashier_validator");
 
-//get students with invoiced and paid requests status for cashier
+// get students with invoiced and paid requests status for cashier
 router.get(
   "/students",
   requireAuth,
   requireRole("cashier"),
-  cashierController.GetStudentsForCashier,
+  cashierController.GetStudentsForCashier
 );
 
-//update request status
+// update request status
 router.patch(
   "/requests/:id/status",
   requireAuth,
   requireRole("cashier"),
-  cashierController.UpdateRequestStatus,
+  validateUpdateRequestStatus,
+  cashierController.UpdateRequestStatus
 );
 
 module.exports = router;

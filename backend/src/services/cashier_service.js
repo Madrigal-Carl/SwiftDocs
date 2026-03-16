@@ -44,11 +44,13 @@ async function UpdateRequestStatus(requestId, status, account) {
 
   const previousStatus = request.status;
 
-  if (status === "paid" && !request.isInvoiced()) {
-    throw new Error("Only invoiced requests can be paid");
-  }
+  const actions = {
+    paid: () => request.markPaid(),
+  };
 
-  await requestRepository.UpdateRequestStatus(requestId, status);
+  actions[status]();
+
+  await request.save();
 
   await logRepository.CreateLog({
     account_id: account.id,
@@ -56,7 +58,7 @@ async function UpdateRequestStatus(requestId, status, account) {
     role: account.role,
     action: status,
     from_status: previousStatus,
-    to_status: status,
+    to_status: request.status,
   });
 
   return request;

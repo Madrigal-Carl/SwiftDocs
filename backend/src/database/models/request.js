@@ -95,11 +95,6 @@ module.exports = (sequelize, DataTypes) => {
       return requestedTotal + additionalTotal;
     }
 
-    markCompleted() {
-      this.status = "released";
-      this.request_completed = new Date();
-    }
-
     getDocumentSummary() {
       const requested = (this.requested_documents || []).map((rd) => ({
         category: "requested",
@@ -118,6 +113,35 @@ module.exports = (sequelize, DataTypes) => {
       }));
 
       return [...requested, ...additional];
+    }
+
+    markInvoiced() {
+      if (!this.isPending()) {
+        throw new Error("Only pending requests can be invoiced");
+      }
+      this.status = "invoiced";
+    }
+
+    markRejected() {
+      if (!this.isPending()) {
+        throw new Error("Only pending requests can be rejected");
+      }
+      this.status = "rejected";
+    }
+
+    markPaid() {
+      if (!this.isInvoiced()) {
+        throw new Error("Only invoiced requests can be paid");
+      }
+      this.status = "paid";
+    }
+
+    markReleased() {
+      if (!this.isPaid()) {
+        throw new Error("Only paid requests can be released");
+      }
+      this.status = "released";
+      this.request_completed = new Date();
     }
   }
   Request.init(

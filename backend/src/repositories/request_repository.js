@@ -11,17 +11,6 @@ function FindRequestById(id, transaction = null, options = {}) {
   });
 }
 
-async function UpdateRequestStatus(id, status, transaction) {
-  const request = await Request.findByPk(id, { transaction });
-
-  if (!request) return null;
-
-  request.status = status;
-  await request.save({ transaction });
-
-  return request;
-}
-
 async function FindByReferenceNumber(referenceNumber, options = {}) {
   return Request.findOne({
     where: { reference_number: referenceNumber },
@@ -32,6 +21,5 @@ async function FindByReferenceNumber(referenceNumber, options = {}) {
 module.exports = {
   CreateRequest,
   FindRequestById,
-  UpdateRequestStatus,
   FindByReferenceNumber,
 };

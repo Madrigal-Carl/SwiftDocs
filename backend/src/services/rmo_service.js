@@ -24,27 +24,21 @@ async function UpdateRequestStatus(requestId, status, account) {
     throw new Error("Request not found");
   }
 
-  switch (status) {
-    case "invoiced":
-      if (!request.isPending()) {
-        throw new Error("Only pending requests can be invoiced");
-      }
-      break;
+  const previousStatus = request.status;
 
-    case "rejected":
-      if (!request.isPending()) {
-        throw new Error("Only pending requests can be rejected");
-      }
-      break;
+  const actions = {
+    invoiced: () => request.markInvoiced(),
+    rejected: () => request.markRejected(),
+    released: () => request.markReleased(),
+  };
 
-    case "released":
-      if (!request.isPaid()) {
-        throw new Error("Request must be paid before releasing");
-      }
-      break;
+  if (!actions[status]) {
+    throw new Error("Invalid status");
   }
 
-  await requestRepository.UpdateRequestStatus(requestId, status);
+  actions[status]();
+
+  await request.save();
 
   await logRepository.CreateLog({
     account_id: account.id,
@@ -52,7 +46,7 @@ async function UpdateRequestStatus(requestId, status, account) {
     role: account.role,
     action: status,
     from_status: previousStatus,
-    to_status: status,
+    to_status: request.status,
   });
 
   return {

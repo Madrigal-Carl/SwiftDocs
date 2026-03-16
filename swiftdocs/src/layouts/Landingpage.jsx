@@ -3,7 +3,6 @@ import Nav from "../components/navigation";
 import {
   GraduationCap,
   Activity,
-  Menu,
   ArrowRight,
   PlayCircle,
   CheckCircle,
@@ -41,103 +40,7 @@ function Landingpage() {
 
   return (
     <div className="font-sans text-slate-800 antialiased overflow-x-hidden">
-      <nav
-        className="fixed w-full z-50 glass-nav transition-all duration-300"
-        id="navbar"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
-                <GraduationCap className="w-6 h-6" />
-              </div>
-              <span className="font-bold text-xl tracking-tight text-slate-900">
-                Edu<span className="text-indigo-600">Credentials</span>
-              </span>
-            </div>
-
-            <div className="hidden md:flex items-center space-x-8">
-              <a
-                href="#features"
-                className="text-slate-600 hover:text-indigo-600 font-medium transition-colors"
-              >
-                Features
-              </a>
-              <a
-                href="#how-it-works"
-                className="text-slate-600 hover:text-indigo-600 font-medium transition-colors"
-              >
-                How it Works
-              </a>
-              <a
-                href="#documents"
-                className="text-slate-600 hover:text-indigo-600 font-medium transition-colors"
-              >
-                Documents
-              </a>
-              <a
-                href="#faq"
-                className="text-slate-600 hover:text-indigo-600 font-medium transition-colors"
-              >
-                FAQ
-              </a>
-            </div>
-
-            <div className="hidden md:flex items-center space-x-4">
-              <button className="text-slate-600 hover:text-indigo-600 font-medium px-4 py-2 transition-colors">
-                Log in
-              </button>
-              <button className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-lg shadow-slate-900/20 hover:shadow-slate-900/30 transform hover:-translate-y-0.5">
-                Get Started
-              </button>
-            </div>
-
-            <div className="md:hidden flex items-center">
-              <button
-                id="mobile-menu-btn"
-                className="text-slate-600 hover:text-slate-900 p-2"
-              >
-                <Menu className="w-6 h-6" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div
-          id="mobile-menu"
-          className="hidden md:hidden bg-white border-t border-slate-100 absolute w-full"
-        >
-          <div className="px-4 pt-2 pb-6 space-y-1 shadow-xl">
-            <a
-              href="#features"
-              className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50"
-            >
-              Features
-            </a>
-            <a
-              href="#how-it-works"
-              className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50"
-            >
-              How it Works
-            </a>
-            <a
-              href="#documents"
-              className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50"
-            >
-              Documents
-            </a>
-            <div className="pt-4 flex flex-col gap-3">
-              <button className="w-full text-center py-3 border border-slate-200 rounded-xl font-medium text-slate-700">
-                Log in
-              </button>
-              <button className="w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-medium shadow-lg shadow-indigo-500/30">
-                Get Started
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+      <Nav />
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden hero-gradient">
         <div className="blob bg-indigo-300 w-96 h-96 rounded-full top-0 left-0 mix-blend-multiply"></div>
         <div className="blob bg-purple-300 w-96 h-96 rounded-full top-0 right-0 mix-blend-multiply animation-delay-2000"></div>
@@ -190,7 +93,7 @@ function Landingpage() {
             </div>
 
             <div
-              className="relative lg:h-[600px] flex items-center justify-center opacity-0 animate-fade-in-up"
+              className="relative lg:h-150 flex items-center justify-center opacity-0 animate-fade-in-up"
               style={{ animationDelay: "0.3s" }}
             >
               <div className="relative w-full max-w-lg aspect-square">
@@ -303,7 +206,7 @@ function Landingpage() {
             <div className="flex items-center gap-2 text-xl font-bold text-slate-800">
               <Square className="w-8 h-8 text-emerald-600" /> Global Metro Univ.
             </div>
-            <div className="flex items-center gap-2 text-xl font-bold text-slate-800 hidden md:flex">
+            <div className="flex items-center gap-2 text-xl font-bold text-slate-800 md:flex">
               <Octagon className="w-8 h-8 text-blue-600" /> Global Academy
             </div>
           </div>
@@ -393,7 +296,7 @@ function Landingpage() {
 
               <div className="space-y-8">
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-lg">
+                  <div className="shrink-0 w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-lg">
                     1
                   </div>
                   <div>
@@ -405,7 +308,7 @@ function Landingpage() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-lg">
+                  <div className="shrink-0 w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-lg">
                     2
                   </div>
                   <div>
@@ -417,7 +320,7 @@ function Landingpage() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-lg">
+                  <div className="shrink-0 w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-lg">
                     3
                   </div>
                   <div>
@@ -429,7 +332,7 @@ function Landingpage() {
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-lg">
+                  <div className="shrink-0 w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-lg">
                     <Check className="w-5 h-5" />
                   </div>
                   <div>
@@ -444,11 +347,11 @@ function Landingpage() {
             </div>
 
             <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl opacity-30 blur-2xl"></div>
+              <div className="absolute -inset-4 bg-linear-to-r from-indigo-600 to-violet-600 rounded-2xl opacity-30 blur-2xl"></div>
               <img
                 src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
                 alt="Student using laptop"
-                className="relative rounded-2xl shadow-2xl border border-slate-700 w-full object-cover h-[500px]"
+                className="relative rounded-2xl shadow-2xl border border-slate-700 w-full object-cover h-125"
               />
             </div>
           </div>
@@ -700,7 +603,7 @@ function Landingpage() {
       </footer>
 
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100]">
+        <div className="fixed inset-0 z-100">
           <div
             className="fixed inset-0 bg-slate-900/75 backdrop-blur-sm transition-opacity opacity-0"
             id="modal-backdrop"
@@ -713,7 +616,7 @@ function Landingpage() {
               >
                 <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
-                    <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
                       <Rocket className="h-6 w-6 text-indigo-600" />
                     </div>
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">

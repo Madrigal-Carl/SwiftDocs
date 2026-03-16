@@ -89,11 +89,17 @@ body {
 ::-webkit-scrollbar {
   display: none;
 }
+
 * {
   scrollbar-width: none;
 }
+
 body {
   -ms-overflow-style: none;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 @keyframes fade-in-up {

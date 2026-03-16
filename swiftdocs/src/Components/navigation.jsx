@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { GraduationCap, Menu } from "lucide-react";
 
-function Navigation({ variant = "default", menu = "main" }) {
+function Navigation() {
+  const [mobileOpen, setMobileOpen] = useState(false);
   return (
     <nav
       className="fixed w-full z-50 glass-nav transition-all duration-300"
@@ -13,7 +15,7 @@ function Navigation({ variant = "default", menu = "main" }) {
               <GraduationCap className="w-6 h-6" />
             </div>
             <span className="font-bold text-xl tracking-tight text-slate-900">
-              Edu<span className="text-indigo-600">Credentials</span>
+              Swift<span className="text-indigo-600">Docs</span>
             </span>
           </div>
 
@@ -55,7 +57,7 @@ function Navigation({ variant = "default", menu = "main" }) {
 
           <div className="md:hidden flex items-center">
             <button
-              id="mobile-menu-btn"
+              onClick={() => setMobileOpen(!mobileOpen)}
               className="text-slate-600 hover:text-slate-900 p-2"
             >
               <Menu className="w-6 h-6" />
@@ -64,39 +66,41 @@ function Navigation({ variant = "default", menu = "main" }) {
         </div>
       </div>
 
-      <div
-        id="mobile-menu"
-        className="hidden md:hidden bg-white border-t border-slate-100 absolute w-full"
-      >
-        <div className="px-4 pt-2 pb-6 space-y-1 shadow-xl">
-          <a
-            href="#features"
-            className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50"
-          >
-            Features
-          </a>
-          <a
-            href="#how-it-works"
-            className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50"
-          >
-            How it Works
-          </a>
-          <a
-            href="#documents"
-            className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50"
-          >
-            Documents
-          </a>
-          <div className="pt-4 flex flex-col gap-3">
-            <button className="w-full text-center py-3 border border-slate-200 rounded-xl font-medium text-slate-700">
-              Log in
-            </button>
-            <button className="w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-medium shadow-lg shadow-indigo-500/30">
-              Get Started
-            </button>
+      {mobileOpen && (
+        <div className="md:hidden fixed top-20 left-0 right-0 bg-white border-t border-slate-100 z-50 shadow-lg">
+          <div className="px-4 pt-2 pb-6 space-y-1 shadow-xl">
+            <a
+              href="#features"
+              onClick={() => setMobileOpen(false)}
+              className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50"
+            >
+              Features
+            </a>
+            <a
+              href="#how-it-works"
+              onClick={() => setMobileOpen(false)}
+              className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50"
+            >
+              How it Works
+            </a>
+            <a
+              href="#documents"
+              onClick={() => setMobileOpen(false)}
+              className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-indigo-600 hover:bg-indigo-50"
+            >
+              Documents
+            </a>
+            <div className="pt-4 flex flex-col gap-3">
+              <button className="w-full text-center py-3 border border-slate-200 rounded-xl font-medium text-slate-700">
+                Log in
+              </button>
+              <button className="w-full text-center py-3 bg-indigo-600 text-white rounded-xl font-medium shadow-lg shadow-indigo-500/30">
+                Get Started
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 }

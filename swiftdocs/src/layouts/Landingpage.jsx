@@ -442,7 +442,7 @@ function Landingpage() {
         className="py-28 bg-slate-50 relative overflow-hidden"
       >
         {/* Background glow */}
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-(--primary-200) rounded-full blur-3xl opacity-30"></div>
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-175 h-h-175 bg-(--primary-200) rounded-full blur-3xl opacity-30"></div>
 
         <div className="max-w-7xl mx-auto px-6 lg:px-8 relative">
           <div className="grid lg:grid-cols-2 gap-16 items-center">

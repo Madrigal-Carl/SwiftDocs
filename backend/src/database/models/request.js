@@ -44,6 +44,81 @@ module.exports = (sequelize, DataTypes) => {
     static generateReference() {
       return `req-${nanoid(8).toLowerCase()}`;
     }
+
+    isPending() {
+      return this.status === "pending";
+    }
+
+    isPaid() {
+      return this.status === "paid";
+    }
+
+    isInvoiced() {
+      return this.status === "invoiced";
+    }
+
+    isReleased() {
+      return this.status === "released";
+    }
+
+    isRejected() {
+      return this.status === "rejected";
+    }
+
+    getTotalDocumentQuantity() {
+      return (this.requested_documents || []).reduce((total, rd) => {
+        return total + (rd.quantity || 0);
+      }, 0);
+    }
+
+    getTotalAdditionalQuantity() {
+      return (this.additional_documents || []).reduce((total, ad) => {
+        return total + (ad.quantity || 0);
+      }, 0);
+    }
+
+    getGrandTotal() {
+      const requestedTotal = (this.requested_documents || []).reduce(
+        (sum, rd) => {
+          return sum + (rd.quantity || 0) * (rd.document?.price || 0);
+        },
+        0,
+      );
+
+      const additionalTotal = (this.additional_documents || []).reduce(
+        (sum, ad) => {
+          return sum + (ad.quantity || 0) * (ad.unit_price || 0);
+        },
+        0,
+      );
+
+      return requestedTotal + additionalTotal;
+    }
+
+    markCompleted() {
+      this.status = "released";
+      this.request_completed = new Date();
+    }
+
+    getDocumentSummary() {
+      const requested = (this.requested_documents || []).map((rd) => ({
+        category: "requested",
+        type: rd.document?.type,
+        quantity: rd.quantity || 0,
+        unit_price: rd.document?.price || 0,
+        total: (rd.quantity || 0) * (rd.document?.price || 0),
+      }));
+
+      const additional = (this.additional_documents || []).map((ad) => ({
+        category: "additional",
+        type: ad.type,
+        quantity: ad.quantity || 0,
+        unit_price: ad.unit_price || 0,
+        total: (ad.quantity || 0) * (ad.unit_price || 0),
+      }));
+
+      return [...requested, ...additional];
+    }
   }
   Request.init(
     {

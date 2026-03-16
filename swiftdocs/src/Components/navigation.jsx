@@ -39,6 +39,12 @@ function Navigation() {
               Documents
             </a>
             <a
+              href="#track-request"
+              className="text-slate-600 hover:text-(--primary-600) font-medium transition-colors"
+            >
+              Track Request
+            </a>
+            <a
               href="#faq"
               className="text-slate-600 hover:text-(--primary-600) font-medium transition-colors"
             >
@@ -89,6 +95,13 @@ function Navigation() {
               className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-(--primary-600) hover:bg-(--primary-50)"
             >
               Documents
+            </a>
+            <a
+              href="#track-request"
+              onClick={() => setMobileOpen(false)}
+              className="block px-3 py-3 rounded-md text-base font-medium text-slate-700 hover:text-(--primary-600) hover:bg-(--primary-50)"
+            >
+              Track Request
             </a>
             <div className="pt-4 flex flex-col gap-3">
               <button className="w-full text-center py-3 border border-slate-200 rounded-xl font-medium text-slate-700 hover:text-(--primary-600) transition-colors">

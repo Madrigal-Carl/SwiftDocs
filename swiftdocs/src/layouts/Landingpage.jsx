@@ -437,6 +437,108 @@ function Landingpage() {
         </div>
       </section>
 
+      <section
+        id="track-request"
+        className="py-24 bg-slate-50 relative overflow-hidden"
+      >
+        {/* Decorative blobs */}
+        <div className="absolute -top-20 -left-20 w-72 h-72 bg-(--primary-200) rounded-full blur-3xl opacity-40"></div>
+        <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-purple-200 rounded-full blur-3xl opacity-40"></div>
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          {/* Header */}
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-(--primary-50) text-(--primary-700) border border-(--primary-100) text-sm font-semibold mb-6">
+              <Activity className="w-4 h-4" />
+              Real-time Request Tracking
+            </div>
+
+            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Track Your Document Request
+            </h3>
+
+            <p className="text-lg text-slate-600">
+              Enter your reference number to instantly view the progress of your
+              request.
+            </p>
+          </div>
+
+          {/* Tracking Card */}
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-10 max-w-3xl mx-auto relative overflow-hidden">
+            {/* floating icon */}
+            <div className="absolute top-6 right-6 w-12 h-12 bg-(--primary-50) text-(--primary-600) rounded-xl flex items-center justify-center">
+              <FileText className="w-6 h-6" />
+            </div>
+
+            {/* Input Group */}
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-semibold text-slate-600 mb-2">
+                  Reference Number
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="REQ-2026-000123"
+                  className="w-full px-6 py-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-(--primary-500) focus:border-transparent text-slate-800 transition-all"
+                />
+              </div>
+
+              <div className="flex items-end">
+                <button className="px-8 py-4 bg-(--primary-600) hover:bg-(--primary-700) text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-[0_15px_25px_-5px_rgba(59,130,246,0.4)] flex items-center gap-2">
+                  <Activity className="w-5 h-5" />
+                  Track Request
+                </button>
+              </div>
+            </div>
+
+            {/* Example references */}
+            <div className="mt-6">
+              <p className="text-sm text-slate-500 mb-3">
+                Example reference numbers:
+              </p>
+
+              <div className="flex flex-wrap gap-2">
+                <span className="px-3 py-1 text-sm bg-slate-100 rounded-full text-slate-600 font-medium">
+                  REQ-2026-000123
+                </span>
+                <span className="px-3 py-1 text-sm bg-slate-100 rounded-full text-slate-600 font-medium">
+                  REQ-2026-000124
+                </span>
+                <span className="px-3 py-1 text-sm bg-slate-100 rounded-full text-slate-600 font-medium">
+                  REQ-2026-000125
+                </span>
+              </div>
+            </div>
+
+            {/* Help text */}
+            <div className="mt-6 flex items-center gap-2 text-sm text-slate-500">
+              <CheckCircle className="w-4 h-4 text-emerald-500" />
+              Your reference number was emailed to you after submitting your
+              request.
+            </div>
+          </div>
+
+          {/* extra trust indicators */}
+          <div className="mt-12 flex flex-wrap justify-center gap-8 text-slate-500 text-sm font-medium">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-emerald-500" />
+              Instant Status Updates
+            </div>
+
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-emerald-500" />
+              Secure Tracking
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Clock className="w-5 h-5 text-emerald-500" />
+              24/7 Access
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-(--primary-700)"></div>
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuMSIvPjwvc3ZnPg==')] opacity-30"></div>

@@ -1,4 +1,5 @@
 const requestRepository = require("../repositories/request_repository");
+const { Request, Additional_Document } = require("../database/models");
 const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
 
@@ -66,6 +67,29 @@ async function UpdateRequestStatus(requestId, status, account, note = null) {
   };
 }
 
+async function SetAdditionalDocumentPrice(requestId, additionalDocumentId, unitPrice, account) {
+  if (!additionalDocumentId) {
+    throw new Error("Missing additionalDocumentId in request body");
+  }
+
+  const additionalDoc = await Additional_Document.findByPk(additionalDocumentId, {
+  include: [{ model: Request, as: "request" }],
+  });
+
+  if (!additionalDoc) {
+    throw new Error(`Additional document with id ${additionalDocumentId} not found`);
+  }
+
+  if (additionalDoc.request_id !== Number(requestId)) {
+    throw new Error("Document does not belong to this request");
+  }
+
+  additionalDoc.unit_price = unitPrice;
+  await additionalDoc.save();
+
+  return additionalDoc;
+}
 module.exports = {
   UpdateRequestStatus,
+  SetAdditionalDocumentPrice,
 };

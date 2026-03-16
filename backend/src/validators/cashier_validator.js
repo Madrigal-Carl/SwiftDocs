@@ -1,9 +1,9 @@
 const Joi = require("joi");
 
 const updateRequestStatusSchema = Joi.object({
-  status: Joi.string().valid("paid", "invoiced").required().messages({
+  status: Joi.string().valid("paid").required().messages({
     "string.empty": "Status is required",
-    "any.only": "Status must be either paid or invoiced",
+    "any.only": "Status must be paid",
     "any.required": "Status is required",
   }),
 });

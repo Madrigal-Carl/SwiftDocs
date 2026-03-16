@@ -10,8 +10,8 @@ router.patch(
   "/requests/:id/status",
   requireAuth,
   requireRole("rmo"),
-  validateUpdateRequestStatus, // ✅ added validator
-  rmoController.UpdateRequestStatus
+  validateUpdateRequestStatus,
+  rmoController.UpdateRequestStatus,
 );
 
 module.exports = router;

@@ -45,6 +45,10 @@ module.exports = {
         type: Sequelize.ENUM("rejected", "released", "paid", "invoiced"),
         allowNull: false,
       },
+      notes: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

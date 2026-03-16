@@ -44,7 +44,7 @@ function Landingpage() {
     <div className="font-sans text-slate-800 antialiased overflow-x-hidden">
       <Nav />
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden hero-gradient">
-        <div className="blob bg-indigo-300 w-96 h-96 rounded-full top-0 left-0 mix-blend-multiply"></div>
+        <div className="blob bg-[var(--primary-300)] w-96 h-96 rounded-full top-0 left-0 mix-blend-multiply"></div>
         <div className="blob bg-purple-300 w-96 h-96 rounded-full top-0 right-0 mix-blend-multiply animation-delay-2000"></div>
         <div className="blob bg-pink-200 w-80 h-80 rounded-full -bottom-20 left-20 mix-blend-multiply animation-delay-4000"></div>
 
@@ -54,8 +54,8 @@ function Landingpage() {
               className="text-center lg:text-left z-10 opacity-0 animate-fade-in-up"
               style={{ animationDelay: "0.1s" }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-sm font-semibold mb-6">
-                <span className="flex h-2 w-2 rounded-full bg-indigo-600 animate-pulse"></span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--primary-50)] border border-[var(--primary-100)] text-[var(--primary-700)] text-sm font-semibold mb-6">
+                <span className="flex h-2 w-2 rounded-full bg-[var(--primary-600)] animate-pulse"></span>
                 Now serving 50+ institutions
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-6 leading-tight">
@@ -71,13 +71,13 @@ function Landingpage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <button
                   onClick={openModal}
-                  className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full font-semibold text-lg transition-all shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                  className="px-8 py-4 bg-[var(--primary-600)] hover:bg-[var(--primary-700)] text-white rounded-full font-semibold text-lg transition-all shadow-lg shadow-[0_20px_25px_-5px_rgba(139,92,246,30)] hover:shadow-[0_20px_25px_-5px_rgba(59,130,246,0.35)] transform hover:-translate-y-1 flex items-center justify-center gap-2"
                 >
                   Request Now
                   <ArrowRight className="w-5 h-5" />
                 </button>
                 <button className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-full font-semibold text-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2">
-                  <PlayCircle className="w-5 h-5 text-indigo-600" />
+                  <PlayCircle className="w-5 h-5 text-[var(--primary-600)]" />
                   See How It Works
                 </button>
               </div>
@@ -99,7 +99,7 @@ function Landingpage() {
               style={{ animationDelay: "0.3s" }}
             >
               <div className="relative w-full max-w-lg aspect-square">
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full bg-white rounded-2xl shadow-2xl shadow-indigo-500/20 p-2 border border-slate-100 z-20 animate-float">
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full bg-white rounded-2xl shadow-2xl shadow-[0_20px_25px_-5px_rgba(59,130,246,0.2)] p-2 border border-slate-100 z-20 animate-float">
                   <div className="bg-slate-50 rounded-xl overflow-hidden">
                     <div className="bg-white border-b border-slate-100 px-4 py-3 flex items-center gap-2">
                       <div className="flex gap-1.5">
@@ -117,7 +117,7 @@ function Landingpage() {
                           <div className="h-4 w-32 bg-slate-200 rounded mb-2"></div>
                           <div className="h-8 w-48 bg-slate-800 rounded"></div>
                         </div>
-                        <div className="h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600">
+                        <div className="h-10 w-10 bg-[var(--primary-100)] rounded-full flex items-center justify-center text-[var(--primary-600)]">
                           <User className="w-5 h-5" />
                         </div>
                       </div>
@@ -171,13 +171,13 @@ function Landingpage() {
                 </div>
 
                 <div
-                  className="absolute -bottom-5 -left-5 bg-indigo-600 p-4 rounded-2xl shadow-xl z-30 text-white animate-float"
+                  className="absolute -bottom-5 -left-5 bg-[var(--primary-600)] p-4 rounded-2xl shadow-xl z-30 text-white animate-float"
                   style={{ animationDelay: "0.2s" }}
                 >
                   <div className="flex items-center gap-3">
                     <Clock className="w-5 h-5" />
                     <div>
-                      <p className="text-xs text-indigo-200 font-semibold uppercase">
+                      <p className="text-xs text-[var(--primary-200)] font-semibold uppercase">
                         Processing Time
                       </p>
                       <p className="text-lg font-bold">~2 Days</p>
@@ -197,7 +197,7 @@ function Landingpage() {
           </p>
           <div className="flex justify-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 flex-wrap">
             <div className="flex items-center gap-2 text-xl font-bold text-slate-800">
-              <Hexagon className="w-8 h-8 text-indigo-600" /> UniTech
+              <Hexagon className="w-8 h-8 text-[var(--primary-600)]" /> UniTech
             </div>
             <div className="flex items-center gap-2 text-xl font-bold text-slate-800">
               <Triangle className="w-8 h-8 text-rose-600" /> State College
@@ -218,7 +218,7 @@ function Landingpage() {
       <section id="features" className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-indigo-600 font-semibold tracking-wide uppercase text-sm mb-3">
+            <h2 className="text-[var(--primary-600)] font-semibold tracking-wide uppercase text-sm mb-3">
               Why Choose Us
             </h2>
             <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
@@ -232,8 +232,8 @@ function Landingpage() {
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-slate-50 rounded-2xl p-8 card-hover border border-slate-100 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-indigo-100 rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
-              <div className="w-14 h-14 bg-white rounded-xl shadow-md flex items-center justify-center text-indigo-600 mb-6 relative z-10">
+              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-[var(--primary-100)] rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="w-14 h-14 bg-white rounded-xl shadow-md flex items-center justify-center text-[var(--primary-600)] mb-6 relative z-10">
                 <MousePointerClick className="w-7 h-7" />
               </div>
               <h4 className="text-xl font-bold text-slate-900 mb-3">
@@ -285,7 +285,7 @@ function Landingpage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-indigo-400 font-semibold tracking-wide uppercase text-sm mb-3">
+              <h2 className="text-[var(--primary-400)] font-semibold tracking-wide uppercase text-sm mb-3">
                 The Process
               </h2>
               <h3 className="text-3xl md:text-4xl font-bold mb-6">
@@ -298,7 +298,7 @@ function Landingpage() {
 
               <div className="space-y-8">
                 <div className="flex gap-4">
-                  <div className="shrink-0 w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-lg">
+                  <div className="shrink-0 w-10 h-10 rounded-full bg-[var(--primary-600)] flex items-center justify-center font-bold text-lg">
                     1
                   </div>
                   <div>
@@ -349,7 +349,7 @@ function Landingpage() {
             </div>
 
             <div className="relative">
-              <div className="absolute -inset-4 bg-linear-to-r from-indigo-600 to-violet-600 rounded-2xl opacity-30 blur-2xl"></div>
+              <div className="absolute -inset-4 bg-linear-to-r from-[var(--primary-600)] to-violet-600 rounded-2xl opacity-30 blur-2xl"></div>
               <img
                 src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
                 alt="Student using laptop"
@@ -382,7 +382,7 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Complete academic record with official seal.
               </p>
-              <span className="text-indigo-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span className="text-[var(--primary-600)] text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -396,7 +396,7 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Certified true copy of your diploma.
               </p>
-              <span className="text-indigo-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span className="text-[var(--primary-600)] text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -412,7 +412,7 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Proof of current or past enrollment.
               </p>
-              <span className="text-indigo-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span className="text-[var(--primary-600)] text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -428,7 +428,7 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Certification of conduct and standing.
               </p>
-              <span className="text-indigo-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span className="text-[var(--primary-600)] text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -438,24 +438,24 @@ function Landingpage() {
       </section>
 
       <section className="py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-indigo-700"></div>
+        <div className="absolute inset-0 bg-[var(--primary-700)]"></div>
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuMSIvPjwvc3ZnPg==')] opacity-30"></div>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
             Ready to skip the registrar's line?
           </h2>
-          <p className="text-indigo-100 text-lg md:text-xl mb-10 max-w-2xl mx-auto">
+          <p className="text-[var(--primary-100)] text-lg md:text-xl mb-10 max-w-2xl mx-auto">
             Join thousands of students who are getting their documents faster
             and easier than ever before.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button
               onClick={openModal}
-              className="px-8 py-4 bg-white text-indigo-700 rounded-full font-bold text-lg hover:bg-indigo-50 transition-colors shadow-xl"
+              className="px-8 py-4 bg-white text-[var(--primary-700)] rounded-full font-bold text-lg hover:bg-[var(--primary-50)] transition-colors shadow-xl"
             >
               Create Free Account
             </button>
-            <button className="px-8 py-4 bg-indigo-600 border border-indigo-400 text-white rounded-full font-bold text-lg hover:bg-indigo-500 transition-colors">
+            <button className="px-8 py-4 bg-[var(--primary-600)] border border-[var(--primary-400)] text-white rounded-full font-bold text-lg hover:bg-[var(--primary-500)] transition-colors">
               Contact Support
             </button>
           </div>
@@ -468,7 +468,7 @@ function Landingpage() {
             Frequently Asked Questions
           </h2>
           <div className="space-y-4">
-            <details className="group bg-slate-50 rounded-xl p-6 cursor-pointer open:bg-indigo-50 open:ring-1 open:ring-indigo-500 transition-all">
+            <details className="group bg-slate-50 rounded-xl p-6 cursor-pointer open:bg-[var(--primary-50)] open:ring-1 open:ring-[var(--primary-500)] transition-all">
               <summary className="flex justify-between items-center font-medium text-slate-900 list-none">
                 <span>How long does processing take?</span>
                 <span className="transition group-open:rotate-180">
@@ -481,7 +481,7 @@ function Landingpage() {
               </p>
             </details>
 
-            <details className="group bg-slate-50 rounded-xl p-6 cursor-pointer open:bg-indigo-50 open:ring-1 open:ring-indigo-500 transition-all">
+            <details className="group bg-slate-50 rounded-xl p-6 cursor-pointer open:bg-[var(--primary-50)] open:ring-1 open:ring-[var(--primary-500)] transition-all">
               <summary className="flex justify-between items-center font-medium text-slate-900 list-none">
                 <span>Can I request documents for third parties?</span>
                 <span className="transition group-open:rotate-180">
@@ -494,7 +494,7 @@ function Landingpage() {
               </p>
             </details>
 
-            <details className="group bg-slate-50 rounded-xl p-6 cursor-pointer open:bg-indigo-50 open:ring-1 open:ring-indigo-500 transition-all">
+            <details className="group bg-slate-50 rounded-xl p-6 cursor-pointer open:bg-[var(--primary-50)] open:ring-1 open:ring-[var(--primary-500)] transition-all">
               <summary className="flex justify-between items-center font-medium text-slate-900 list-none">
                 <span>What payment methods are accepted?</span>
                 <span className="transition group-open:rotate-180">
@@ -515,7 +515,7 @@ function Landingpage() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-2 mb-4 text-white">
-                <GraduationCap className="w-6 h-6 text-indigo-500" />
+                <GraduationCap className="w-6 h-6 text-[var(--primary-500)]" />
                 <span className="font-bold text-xl">SwiftDocs</span>
               </div>
               <p className="text-slate-400 max-w-xs">
@@ -529,7 +529,7 @@ function Landingpage() {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-indigo-400 transition-colors"
+                    className="hover:text-[var(--primary-400)] transition-colors"
                   >
                     How it works
                   </a>
@@ -537,7 +537,7 @@ function Landingpage() {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-indigo-400 transition-colors"
+                    className="hover:text-[var(--primary-400)] transition-colors"
                   >
                     Pricing
                   </a>
@@ -545,7 +545,7 @@ function Landingpage() {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-indigo-400 transition-colors"
+                    className="hover:text-[var(--primary-400)] transition-colors"
                   >
                     Security
                   </a>
@@ -558,7 +558,7 @@ function Landingpage() {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-indigo-400 transition-colors"
+                    className="hover:text-[var(--primary-400)] transition-colors"
                   >
                     Help Center
                   </a>
@@ -566,7 +566,7 @@ function Landingpage() {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-indigo-400 transition-colors"
+                    className="hover:text-[var(--primary-400)] transition-colors"
                   >
                     Contact Us
                   </a>
@@ -574,7 +574,7 @@ function Landingpage() {
                 <li>
                   <a
                     href="#"
-                    className="hover:text-indigo-400 transition-colors"
+                    className="hover:text-[var(--primary-400)] transition-colors"
                   >
                     Status
                   </a>
@@ -584,7 +584,7 @@ function Landingpage() {
           </div>
           <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-slate-500">
-              &copy; 2023 SwiftDocs. All rights reserved.
+              &copy; 2026 SwiftDocs. All rights reserved.
             </p>
             <div className="flex gap-6">
               <a href="#" className="hover:text-white transition-colors">

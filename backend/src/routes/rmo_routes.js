@@ -10,8 +10,16 @@ router.patch(
   "/requests/:id/status",
   requireAuth,
   requireRole("rmo"),
-  validateUpdateRequestStatus, // ✅ added validator
-  rmoController.UpdateRequestStatus
+  validateUpdateRequestStatus,
+  rmoController.UpdateRequestStatus,
+);
+
+// PATCH to set additional document price
+router.patch(
+  "/additional-documents/:id/price",
+  requireAuth,
+  requireRole("rmo"),
+  rmoController.SetAdditionalDocumentPrice
 );
 
 module.exports = router;

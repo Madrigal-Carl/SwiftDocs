@@ -1,6 +1,7 @@
 const studentRepository = require("../repositories/student_repository");
 const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
+const mailService = require("./mail_service");
 
 async function GetRequestsForCashier() {
   const allowedStatuses = ["paid", "invoiced"];
@@ -36,7 +37,18 @@ async function UpdateRequestStatus(requestId, status, account) {
     throw new Error("Invalid status for cashier");
   }
 
-  const request = await requestRepository.FindRequestById(requestId);
+  const request = await requestRepository.FindRequestById(requestId, null, {
+    include: [
+      { association: "student" },
+      {
+        association: "requested_documents",
+        include: ["document"],
+      },
+      {
+        association: "additional_documents",
+      },
+    ],
+  });
 
   if (!request) {
     throw new Error("Request not found");
@@ -59,6 +71,11 @@ async function UpdateRequestStatus(requestId, status, account) {
     action: status,
     from_status: previousStatus,
     to_status: request.status,
+  });
+
+  await mailService.SendCashierUpdateMail({
+    request,
+    status,
   });
 
   return request;

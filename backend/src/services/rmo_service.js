@@ -1,7 +1,9 @@
 const requestRepository = require("../repositories/request_repository");
+const { Request, Additional_Document } = require("../database/models");
 const logRepository = require("../repositories/log_repository");
+const mailService = require("./mail_service");
 
-async function UpdateRequestStatus(requestId, status, account) {
+async function UpdateRequestStatus(requestId, status, account, note = null) {
   const allowedStatuses = ["invoiced", "rejected", "released"];
 
   if (!allowedStatuses.includes(status)) {
@@ -10,6 +12,9 @@ async function UpdateRequestStatus(requestId, status, account) {
 
   const request = await requestRepository.FindRequestById(requestId, null, {
     include: [
+      {
+        association: "student",
+      },
       {
         association: "requested_documents",
         include: ["document"],
@@ -49,6 +54,12 @@ async function UpdateRequestStatus(requestId, status, account) {
     to_status: request.status,
   });
 
+  await mailService.SendRMOUpdateMail({
+    request,
+    status,
+    reason: status === "rejected" ? note : null,
+  });
+
   return {
     ...request.toJSON(),
     total_price: request.getGrandTotal(),
@@ -56,6 +67,29 @@ async function UpdateRequestStatus(requestId, status, account) {
   };
 }
 
+async function SetAdditionalDocumentPrice(requestId, additionalDocumentId, unitPrice, account) {
+  if (!additionalDocumentId) {
+    throw new Error("Missing additionalDocumentId in request body");
+  }
+
+  const additionalDoc = await Additional_Document.findByPk(additionalDocumentId, {
+  include: [{ model: Request, as: "request" }],
+  });
+
+  if (!additionalDoc) {
+    throw new Error(`Additional document with id ${additionalDocumentId} not found`);
+  }
+
+  if (additionalDoc.request_id !== Number(requestId)) {
+    throw new Error("Document does not belong to this request");
+  }
+
+  additionalDoc.unit_price = unitPrice;
+  await additionalDoc.save();
+
+  return additionalDoc;
+}
 module.exports = {
   UpdateRequestStatus,
+  SetAdditionalDocumentPrice,
 };

@@ -1,12 +1,8 @@
 "use strict";
 const { Model } = require("sequelize");
+
 module.exports = (sequelize, DataTypes) => {
   class Additional_Document extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       Additional_Document.belongsTo(models.Request, {
         foreignKey: "request_id",
@@ -16,8 +12,15 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
+
   Additional_Document.init(
     {
+      id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true, // ✅ this is required
+      },
       request_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -47,7 +50,8 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "additional_documents",
       underscored: true,
       timestamps: true,
-    },
+    }
   );
+
   return Additional_Document;
 };

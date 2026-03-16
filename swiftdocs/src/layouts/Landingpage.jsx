@@ -439,101 +439,138 @@ function Landingpage() {
 
       <section
         id="track-request"
-        className="py-24 bg-slate-50 relative overflow-hidden"
+        className="py-28 bg-slate-50 relative overflow-hidden"
       >
-        {/* Decorative blobs */}
-        <div className="absolute -top-20 -left-20 w-72 h-72 bg-(--primary-200) rounded-full blur-3xl opacity-40"></div>
-        <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-purple-200 rounded-full blur-3xl opacity-40"></div>
+        {/* Background glow */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-(--primary-200) rounded-full blur-3xl opacity-30"></div>
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          {/* Header */}
-          <div className="text-center max-w-2xl mx-auto mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-(--primary-50) text-(--primary-700) border border-(--primary-100) text-sm font-semibold mb-6">
-              <Activity className="w-4 h-4" />
-              Real-time Request Tracking
-            </div>
-
-            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-              Track Your Document Request
-            </h3>
-
-            <p className="text-lg text-slate-600">
-              Enter your reference number to instantly view the progress of your
-              request.
-            </p>
-          </div>
-
-          {/* Tracking Card */}
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-10 max-w-3xl mx-auto relative overflow-hidden">
-            {/* floating icon */}
-            <div className="absolute top-6 right-6 w-12 h-12 bg-(--primary-50) text-(--primary-600) rounded-xl flex items-center justify-center">
-              <FileText className="w-6 h-6" />
-            </div>
-
-            {/* Input Group */}
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <label className="block text-sm font-semibold text-slate-600 mb-2">
-                  Reference Number
-                </label>
-
-                <input
-                  type="text"
-                  placeholder="REQ-2026-000123"
-                  className="w-full px-6 py-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-(--primary-500) focus:border-transparent text-slate-800 transition-all"
-                />
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 relative">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* LEFT SIDE */}
+            <div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-(--primary-50) border border-(--primary-100) text-(--primary-700) text-sm font-semibold mb-6">
+                <Activity className="w-4 h-4" />
+                Real-time Tracking
               </div>
 
-              <div className="flex items-end">
-                <button className="px-8 py-4 bg-(--primary-600) hover:bg-(--primary-700) text-white rounded-xl font-semibold transition-all shadow-lg hover:shadow-[0_15px_25px_-5px_rgba(59,130,246,0.4)] flex items-center gap-2">
-                  <Activity className="w-5 h-5" />
-                  Track Request
-                </button>
-              </div>
-            </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight">
+                Instantly check the
+                <span className="text-gradient"> status of your request</span>
+              </h2>
 
-            {/* Example references */}
-            <div className="mt-6">
-              <p className="text-sm text-slate-500 mb-3">
-                Example reference numbers:
+              <p className="text-lg text-slate-600 mb-10 max-w-lg">
+                Stay informed at every step. Enter your reference number and see
+                exactly where your document is in the processing pipeline.
               </p>
 
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 text-sm bg-slate-100 rounded-full text-slate-600 font-medium">
-                  REQ-2026-000123
-                </span>
-                <span className="px-3 py-1 text-sm bg-slate-100 rounded-full text-slate-600 font-medium">
-                  REQ-2026-000124
-                </span>
-                <span className="px-3 py-1 text-sm bg-slate-100 rounded-full text-slate-600 font-medium">
-                  REQ-2026-000125
-                </span>
+              {/* benefits */}
+              <div className="space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center">
+                    <CheckCircle className="w-5 h-5" />
+                  </div>
+                  <p className="text-slate-700 font-medium">
+                    Instant status updates
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <p className="text-slate-700 font-medium">
+                    Secure and verified tracking
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <p className="text-slate-700 font-medium">
+                    Available 24/7 from any device
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Help text */}
-            <div className="mt-6 flex items-center gap-2 text-sm text-slate-500">
-              <CheckCircle className="w-4 h-4 text-emerald-500" />
-              Your reference number was emailed to you after submitting your
-              request.
-            </div>
-          </div>
+            {/* RIGHT SIDE TRACKING UI */}
+            <div className="relative">
+              {/* glow */}
+              <div className="absolute -inset-6 bg-linear-to-r from-(--primary-500) to-violet-500 rounded-3xl opacity-20 blur-2xl"></div>
 
-          {/* extra trust indicators */}
-          <div className="mt-12 flex flex-wrap justify-center gap-8 text-slate-500 text-sm font-medium">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-emerald-500" />
-              Instant Status Updates
-            </div>
+              <div className="relative bg-white rounded-3xl shadow-2xl border border-slate-100 p-8">
+                {/* top bar */}
+                <div className="flex items-center gap-2 mb-6">
+                  <div className="w-3 h-3 bg-red-400 rounded-full"></div>
+                  <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                  <div className="w-3 h-3 bg-green-400 rounded-full"></div>
 
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-emerald-500" />
-              Secure Tracking
-            </div>
+                  <div className="ml-auto text-xs text-slate-400 font-mono">
+                    request-tracker
+                  </div>
+                </div>
 
-            <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-emerald-500" />
-              24/7 Access
+                {/* title */}
+                <h4 className="text-xl font-bold text-slate-900 mb-4">
+                  Enter Reference Number
+                </h4>
+
+                {/* input */}
+                <div className="flex gap-3">
+                  <input
+                    type="text"
+                    placeholder="REQ-2026-000123"
+                    className="flex-1 px-5 py-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-(--primary-500)"
+                  />
+
+                  <button className="px-6 py-4 bg-(--primary-600) hover:bg-(--primary-700) text-white rounded-xl font-semibold flex items-center gap-2 shadow-lg">
+                    <Activity className="w-5 h-5" />
+                    Track
+                  </button>
+                </div>
+
+                {/* example references */}
+                <div className="mt-6">
+                  <p className="text-sm text-slate-500 mb-2">
+                    Example references
+                  </p>
+
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-sm">
+                      REQ-2026-000123
+                    </span>
+                    <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-sm">
+                      REQ-2026-000124
+                    </span>
+                    <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-sm">
+                      REQ-2026-000125
+                    </span>
+                  </div>
+                </div>
+
+                {/* helper */}
+                <div className="mt-6 text-sm text-slate-500 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-emerald-500" />
+                  Reference number is sent to your email after submitting a
+                  request.
+                </div>
+              </div>
+
+              {/* floating status preview */}
+              <div className="absolute -bottom-6 -right-6 bg-white rounded-xl shadow-xl border border-slate-100 p-4 w-52">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
+                    <Check className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-slate-500">Latest Update</p>
+                    <p className="text-sm font-bold text-slate-800">
+                      Processing
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

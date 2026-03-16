@@ -1,7 +1,8 @@
 const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
+const mailService = require("./mail_service");
 
-async function UpdateRequestStatus(requestId, status, account) {
+async function UpdateRequestStatus(requestId, status, account, note = null) {
   const allowedStatuses = ["invoiced", "rejected", "released"];
 
   if (!allowedStatuses.includes(status)) {
@@ -10,6 +11,9 @@ async function UpdateRequestStatus(requestId, status, account) {
 
   const request = await requestRepository.FindRequestById(requestId, null, {
     include: [
+      {
+        association: "student",
+      },
       {
         association: "requested_documents",
         include: ["document"],
@@ -47,6 +51,12 @@ async function UpdateRequestStatus(requestId, status, account) {
     action: status,
     from_status: previousStatus,
     to_status: request.status,
+  });
+
+  await mailService.SendRMOUpdateMail({
+    request,
+    status,
+    reason: status === "rejected" ? note : null,
   });
 
   return {

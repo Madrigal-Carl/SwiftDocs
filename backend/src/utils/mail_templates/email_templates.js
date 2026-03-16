@@ -77,8 +77,40 @@ function releasedTemplate(data) {
   };
 }
 
+function paidTemplate(data) {
+  const fullName = data.student.getFullName();
+  const documents = data.getDocumentSummary();
+  const total = data.getGrandTotal();
+
+  const docList = documents
+    .map((d) => `<li>${d.type} (x${d.quantity})</li>`)
+    .join("");
+
+  return {
+    subject: "Payment Verified for Your Document Request",
+    html: `
+      <p>Dear ${fullName},</p>
+
+      <p>We are pleased to inform you that your payment for the document request with reference number 
+      <strong>${data.reference_number}</strong> has been successfully <strong>verified</strong>.</p>
+
+      <p><strong>Requested Documents:</strong></p>
+      <ul>
+        ${docList}
+      </ul>
+
+      <p><strong>Total Paid: ₱${total}</strong></p>
+
+      <p>Your request will now proceed to the processing stage. You will be notified once your documents are ready for release.</p>
+
+      <p>Sincerely,<br>Registrar Office</p>
+    `,
+  };
+}
+
 module.exports = {
   invoiced: invoicedTemplate,
   rejected: rejectedTemplate,
   released: releasedTemplate,
+  paid: paidTemplate,
 };

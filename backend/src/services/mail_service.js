@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 const requestedTemplate = require("../utils/mail_templates/request_mail_templates");
-const rmoTemplates = require("../utils/mail_templates/email_templates");
+const templates = require("../utils/mail_templates/email_templates");
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -30,7 +30,7 @@ async function SendMail({ to, status, data }) {
 }
 
 async function SendRMOUpdateMail({ request, status, reason }) {
-  const template = rmoTemplates[status];
+  const template = templates[status];
 
   if (!template) {
     return;
@@ -47,7 +47,25 @@ async function SendRMOUpdateMail({ request, status, reason }) {
   });
 }
 
+async function SendCashierUpdateMail({ request, status }) {
+  const template = templates[status];
+
+  if (!template) {
+    return;
+  }
+
+  const { subject, html } = template(request);
+
+  await transporter.sendMail({
+    from: `"Registrar Office" <${process.env.SMTP_USER}>`,
+    to: request.student.email,
+    subject,
+    html,
+  });
+}
+
 module.exports = {
   SendMail,
   SendRMOUpdateMail,
+  SendCashierUpdateMail,
 };

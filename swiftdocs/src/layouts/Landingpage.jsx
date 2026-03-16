@@ -439,7 +439,7 @@ function Landingpage() {
 
       <section
         id="track-request"
-        className="py-28 bg-slate-50 relative overflow-hidden"
+        className="py-28 bg-white relative overflow-hidden border-t border-slate-200"
       >
         {/* Background glow */}
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-175 h-h-175 bg-(--primary-200) rounded-full blur-3xl opacity-30"></div>

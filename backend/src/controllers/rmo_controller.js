@@ -1,3 +1,4 @@
+const rmoService = require("../services/rmo_service");
 async function UpdateRequestStatus(req, res) {
   const io = req.app.get("io");
 

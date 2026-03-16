@@ -13,7 +13,12 @@ async function GetRequestsForCashier() {
           status: allowedStatuses,
         },
         required: true,
-        include: ["documents"],
+        include: [
+          {
+            association: "requested_documents",
+            include: ["document"],
+          },
+        ],
       },
     ],
   });

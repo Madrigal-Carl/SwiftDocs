@@ -1,11 +1,14 @@
 const Joi = require("joi");
 
 const updateRequestStatusSchema = Joi.object({
-  status: Joi.string().valid("invoiced", "reject", "released").required().messages({
-    "string.empty": "Status is required",
-    "any.only": "Status must be invoiced, reject, or released",
-    "any.required": "Status is required",
-  }),
+  status: Joi.string()
+    .valid("invoiced", "rejected", "released")
+    .required()
+    .messages({
+      "string.empty": "Status is required",
+      "any.only": "Status must be invoiced, rejected, or released",
+      "any.required": "Status is required",
+    }),
 });
 
 function validateUpdateRequestStatus(req, res, next) {

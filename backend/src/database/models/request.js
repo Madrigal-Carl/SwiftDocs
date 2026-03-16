@@ -27,9 +27,9 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
-      Request.hasMany(models.Requested_Additional, {
+      Request.hasMany(models.Additional_Document, {
         foreignKey: "request_id",
-        as: "requested_additionals",
+        as: "additional_documents",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
@@ -67,7 +67,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       status: {
         type: DataTypes.ENUM(
-          "reject",
+          "rejected",
           "released",
           "pending",
           "paid",

@@ -12,6 +12,7 @@ module.exports = {
       type: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
       },
       price: {
         type: Sequelize.INTEGER.UNSIGNED,

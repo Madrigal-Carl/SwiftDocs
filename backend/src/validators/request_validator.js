@@ -77,7 +77,6 @@ const schema = Joi.object({
   notes: Joi.string().allow(null, "").messages({
     "string.base": "Notes must be a string",
   }),
-
   documents: Joi.array()
     .items(
       Joi.object({
@@ -88,6 +87,26 @@ const schema = Joi.object({
         quantity: Joi.number().min(1).default(1).messages({
           "number.base": "Document quantity must be a number",
           "number.min": "Document quantity must be at least 1",
+        }),
+      }),
+    )
+    .min(1)
+    .required()
+    .messages({
+      "array.base": "Documents must be an array",
+      "array.min": "At least one document is required",
+      "any.required": "Documents are required",
+    }),
+  additionals: Joi.array()
+    .items(
+      Joi.object({
+        type: Joi.string().required().messages({
+          "string.empty": "Additional document type is required",
+          "any.required": "Additional document type is required",
+        }),
+        quantity: Joi.number().min(1).default(1).messages({
+          "number.base": "Additional document quantity must be a number",
+          "number.min": "Additional document quantity must be at least 1",
         }),
       }),
     )

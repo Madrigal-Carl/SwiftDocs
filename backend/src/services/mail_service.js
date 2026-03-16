@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const templates = require("../utils/mail_templates");
+const templates = require("../utils/mail_templates/request_mail_templates");
 
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,

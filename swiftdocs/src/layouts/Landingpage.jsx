@@ -3,7 +3,7 @@ import Nav from "../components/navigation";
 function Landingpage() {
   return (
     <div className="bg-linear-to-br from-[#150578] to-[#220E9D] min-h-dvh">
-      <Nav />
+      <Nav variant="home"/>
 
       {/* Hero Section */}
       <section className="min-h-dvh flex items-center justify-center px-6">

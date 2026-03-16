@@ -18,6 +18,9 @@ async function GetRequestsForCashier() {
             association: "requested_documents",
             include: ["document"],
           },
+          {
+            association: "additional_documents",
+          },
         ],
       },
     ],
@@ -27,7 +30,7 @@ async function GetRequestsForCashier() {
 }
 
 async function UpdateRequestStatus(requestId, status, account) {
-  const allowedStatuses = ["paid", "invoiced"];
+  const allowedStatuses = ["paid"];
 
   if (!allowedStatuses.includes(status)) {
     throw new Error("Invalid status for cashier");
@@ -40,6 +43,10 @@ async function UpdateRequestStatus(requestId, status, account) {
   }
 
   const previousStatus = request.status;
+
+  if (status === "paid" && !request.isInvoiced()) {
+    throw new Error("Only invoiced requests can be paid");
+  }
 
   await requestRepository.UpdateRequestStatus(requestId, status);
 

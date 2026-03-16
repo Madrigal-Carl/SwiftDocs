@@ -6,3 +6,11 @@ export async function updateRmoRequestStatus(id, status) {
   });
   return res.data;
 }
+
+export async function setAdditionalDocumentPrice(requestId, additionalDocumentId, unitPrice) {
+  const res = await api.patch(`/rmo/additional-documents/${requestId}/price`, {
+    additionalDocumentId,
+    unitPrice,
+  });
+  return res.data;
+}

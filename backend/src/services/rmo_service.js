@@ -2,30 +2,46 @@ const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
 
 async function UpdateRequestStatus(requestId, status, account) {
-  const allowedStatuses = ["invoiced", "reject", "released"];
+  const allowedStatuses = ["invoiced", "rejected", "released"];
 
   if (!allowedStatuses.includes(status)) {
     throw new Error("Invalid status for RMO");
   }
 
-  const request = await requestRepository.FindRequestById(requestId);
+  const request = await requestRepository.FindRequestById(requestId, null, {
+    include: [
+      {
+        association: "requested_documents",
+        include: ["document"],
+      },
+      {
+        association: "additional_documents",
+      },
+    ],
+  });
 
   if (!request) {
     throw new Error("Request not found");
   }
 
-  const previousStatus = request.status;
+  switch (status) {
+    case "invoiced":
+      if (!request.isPending()) {
+        throw new Error("Only pending requests can be invoiced");
+      }
+      break;
 
-  if (status === "invoiced" && previousStatus !== "pending") {
-    throw new Error("Only pending requests can be invoiced");
-  }
+    case "rejected":
+      if (!request.isPending()) {
+        throw new Error("Only pending requests can be rejected");
+      }
+      break;
 
-  if (status === "rejected" && previousStatus !== "pending") {
-    throw new Error("Only pending requests can be rejected");
-  }
-
-  if (status === "released" && previousStatus !== "paid") {
-    throw new Error("Request must be paid before releasing");
+    case "released":
+      if (!request.isPaid()) {
+        throw new Error("Request must be paid before releasing");
+      }
+      break;
   }
 
   await requestRepository.UpdateRequestStatus(requestId, status);
@@ -39,7 +55,11 @@ async function UpdateRequestStatus(requestId, status, account) {
     to_status: status,
   });
 
-  return request;
+  return {
+    ...request.toJSON(),
+    total_price: request.getGrandTotal(),
+    documents: request.getDocumentSummary(),
+  };
 }
 
 module.exports = {

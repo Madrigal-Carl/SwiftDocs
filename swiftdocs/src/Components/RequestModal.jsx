@@ -255,7 +255,7 @@ function RequestModal({ isOpen, onClose }) {
             <div className="flex justify-between relative">
               <div className="absolute top-4 left-0 right-0 h-0.5 bg-gray-200 -z-10"></div>
               <div
-                className="absolute top-4 left-0 h-0.5 bg-[var(--primary-500)] transition-all duration-300 -z-10"
+                className="absolute top-4 left-0 h-0.5 bg-(--primary-500) transition-all duration-300 -z-10"
                 style={{ width: progressWidth }}
               />
               <div className="flex flex-col items-center">
@@ -263,7 +263,7 @@ function RequestModal({ isOpen, onClose }) {
                   className={
                     "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold " +
                     (currentStep === 1
-                      ? "bg-[var(--primary-500)] text-white"
+                      ? "bg-(--primary-500) text-white"
                       : "bg-gray-200 text-gray-600")
                   }
                 >
@@ -278,7 +278,7 @@ function RequestModal({ isOpen, onClose }) {
                   className={
                     "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold " +
                     (currentStep === 2
-                      ? "bg-[var(--primary-500)] text-white"
+                      ? "bg-(--primary-500) text-white"
                       : "bg-gray-200 text-gray-600")
                   }
                 >
@@ -293,7 +293,7 @@ function RequestModal({ isOpen, onClose }) {
                   className={
                     "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold " +
                     (currentStep === 3
-                      ? "bg-[var(--primary-500)] text-white"
+                      ? "bg-(--primary-500) text-white"
                       : "bg-gray-200 text-gray-600")
                   }
                 >
@@ -308,7 +308,7 @@ function RequestModal({ isOpen, onClose }) {
                   className={
                     "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold " +
                     (currentStep === 4
-                      ? "bg-[var(--primary-500)] text-white"
+                      ? "bg-(--primary-500) text-white"
                       : "bg-gray-200 text-gray-600")
                   }
                 >
@@ -323,7 +323,7 @@ function RequestModal({ isOpen, onClose }) {
                   className={
                     "w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold " +
                     (currentStep === 5
-                      ? "bg-[var(--primary-500)] text-white"
+                      ? "bg-(--primary-500) text-white"
                       : "bg-gray-200 text-gray-600")
                   }
                 >
@@ -349,28 +349,28 @@ function RequestModal({ isOpen, onClose }) {
                 </p>
                 <div className="space-y-3 mb-6">
                   <div className="flex items-start">
-                    <ShieldCheck className="text-[var(--primary-500)] mr-3 mt-1 shrink-0" />
+                    <ShieldCheck className="text-(--primary-500) mr-3 mt-1 shrink-0" />
                     <p className="text-gray-700">
                       Personal data will only be used for document processing
                       and institutional requirements.
                     </p>
                   </div>
                   <div className="flex items-start">
-                    <Lock className="text-[var(--primary-500)] mr-3 mt-1 shrink-0" />
+                    <Lock className="text-(--primary-500) mr-3 mt-1 shrink-0" />
                     <p className="text-gray-700">
                       Information will not be shared with unauthorized third
                       parties.
                     </p>
                   </div>
                   <div className="flex items-start">
-                    <Database className="text-[var(--primary-500)] mr-3 mt-1 shrink-0" />
+                    <Database className="text-(--primary-500) mr-3 mt-1 shrink-0" />
                     <p className="text-gray-700">
                       Data is securely stored using encryption and protected
                       according to institutional policy.
                     </p>
                   </div>
                   <div className="flex items-start">
-                    <Trash2 className="text-[var(--primary-500)] mr-3 mt-1 shrink-0" />
+                    <Trash2 className="text-(--primary-500) mr-3 mt-1 shrink-0" />
                     <p className="text-gray-700">
                       Students may request deletion of their data after request
                       processing.
@@ -407,15 +407,15 @@ function RequestModal({ isOpen, onClose }) {
                     type="checkbox"
                     checked={agreed}
                     onChange={(e) => setAgreed(e.target.checked)}
-                    className="mt-1 mr-3 w-5 h-5 rounded border-gray-300 text-[var(--primary-600)] focus:ring-[var(--primary-500)]"
+                    className="mt-1 mr-3 w-5 h-5 rounded border-gray-300 text-(--primary-600) focus:ring-(--primary-500)"
                   />
                   <label className="text-gray-700">
                     I have read and agree to the{" "}
-                    <span className="text-[var(--primary-600)] font-medium">
+                    <span className="text-(--primary-600) font-medium">
                       Privacy Policy
                     </span>{" "}
                     and{" "}
-                    <span className="text-[var(--primary-600)] font-medium">
+                    <span className="text-(--primary-600) font-medium">
                       Data Processing Terms
                     </span>
                     .
@@ -454,7 +454,7 @@ function RequestModal({ isOpen, onClose }) {
                   selectedDocuments.map((doc) => (
                     <div
                       key={doc.id}
-                      className="bg-[var(--primary-100)] text-[var(--primary-700)] px-3 py-1 rounded-full text-sm flex items-center gap-2"
+                      className="bg-(--primary-100) text-(--primary-700) px-3 py-1 rounded-full text-sm flex items-center gap-2"
                     >
                       {doc.name} ({doc.quantity})
                     </div>
@@ -468,13 +468,13 @@ function RequestModal({ isOpen, onClose }) {
                     onChange={(e) => setSearchInput(e.target.value)}
                     type="text"
                     placeholder="Search for documents..."
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-[var(--primary-400)]"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
                   />
                   <Search className="absolute right-3 top-3.5 text-gray-400" />
                 </div>
                 <button
                   onClick={addCustomDocument}
-                  className="px-4 py-3 bg-[var(--primary-50)] text-[var(--primary-700)] font-medium rounded-lg hover:bg-[var(--primary-100)] transition-colors flex items-center"
+                  className="px-4 py-3 bg-(--primary-50) text-(--primary-700) font-medium rounded-lg hover:bg-(--primary-100) transition-colors flex items-center"
                 >
                   <PlusCircle className="mr-2" />
                   Add Document
@@ -497,7 +497,7 @@ function RequestModal({ isOpen, onClose }) {
                             onChange={(e) =>
                               selectAll(e.target.checked, filteredDocuments)
                             }
-                            className="rounded border-gray-300 text-[var(--primary-600)]"
+                            className="rounded border-gray-300 text-(--primary-600)"
                           />
                         </th>
                         <th className="py-3 px-4 text-left font-semibold text-gray-700">
@@ -534,7 +534,7 @@ function RequestModal({ isOpen, onClose }) {
                                   type="checkbox"
                                   checked={selected}
                                   onChange={() => toggleDocument(doc)}
-                                  className="document-checkbox rounded border-gray-300 text-[var(--primary-600)]"
+                                  className="document-checkbox rounded border-gray-300 text-(--primary-600)"
                                 />
                               </td>
                               <td className="px-4 py-3">{doc.name}</td>
@@ -553,7 +553,7 @@ function RequestModal({ isOpen, onClose }) {
                                         ),
                                       )
                                     }
-                                    className="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 bg-white hover:bg-[var(--primary-50)] disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 bg-white hover:bg-(--primary-50) disabled:opacity-40 disabled:cursor-not-allowed"
                                   >
                                     -
                                   </button>
@@ -583,7 +583,7 @@ function RequestModal({ isOpen, onClose }) {
                                           doc.defaultQuantity) + 1,
                                       )
                                     }
-                                    className="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 bg-white hover:bg-[var(--primary-50)] disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 bg-white hover:bg-(--primary-50) disabled:opacity-40 disabled:cursor-not-allowed"
                                   >
                                     +
                                   </button>
@@ -643,7 +643,7 @@ function RequestModal({ isOpen, onClose }) {
                       }
                       type={type}
                       placeholder={placeholder}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-[var(--primary-400)]"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
                     />
                   </div>
                 ))}
@@ -665,7 +665,7 @@ function RequestModal({ isOpen, onClose }) {
                               gender: e.target.value,
                             }))
                           }
-                          className="mr-2 text-[var(--primary-600)] focus:ring-[var(--primary-500)]"
+                          className="mr-2 text-(--primary-600) focus:ring-(--primary-500)"
                         />
                         {gender}
                       </label>
@@ -685,7 +685,7 @@ function RequestModal({ isOpen, onClose }) {
                         birthdate: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-[var(--primary-400)]"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
                   />
                 </div>
                 <div>
@@ -701,7 +701,7 @@ function RequestModal({ isOpen, onClose }) {
                         email: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-[var(--primary-400)]"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
                     placeholder="student@example.com"
                   />
                 </div>
@@ -718,7 +718,7 @@ function RequestModal({ isOpen, onClose }) {
                         mobile: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-[var(--primary-400)]"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
                     placeholder="+63 912 345 6789"
                   />
                 </div>
@@ -735,7 +735,7 @@ function RequestModal({ isOpen, onClose }) {
                       }))
                     }
                     rows="3"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-[var(--primary-400)]"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
                     placeholder="Enter complete address including street, city, province, zip code"
                   ></textarea>
                 </div>
@@ -826,7 +826,7 @@ function RequestModal({ isOpen, onClose }) {
                                     entryLevel: e.target.value,
                                   }))
                                 }
-                                className="mr-2 text-[var(--primary-600)] focus:ring-[var(--primary-500)]"
+                                className="mr-2 text-(--primary-600) focus:ring-(--primary-500)"
                               />
                               {value}
                             </label>
@@ -871,7 +871,7 @@ function RequestModal({ isOpen, onClose }) {
                         }
                         type={type}
                         placeholder={placeholder}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-[var(--primary-400)]"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
                       />
                     </div>
                   );
@@ -894,7 +894,7 @@ function RequestModal({ isOpen, onClose }) {
                               completion: e.target.value,
                             }))
                           }
-                          className="mr-2 text-[var(--primary-600)] focus:ring-[var(--primary-500)]"
+                          className="mr-2 text-(--primary-600) focus:ring-(--primary-500)"
                         />
                         {value}
                       </label>
@@ -915,7 +915,7 @@ function RequestModal({ isOpen, onClose }) {
                     }))
                   }
                   rows="3"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-[var(--primary-400)]"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
                   placeholder="Any additional information about academic history"
                 ></textarea>
               </div>
@@ -947,7 +947,7 @@ function RequestModal({ isOpen, onClose }) {
               <div className="space-y-6">
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                   <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
-                    <FileText className="mr-2 text-[var(--primary-500)]" />
+                    <FileText className="mr-2 text-(--primary-500)" />
                     Documents Requested
                   </h4>
                   <ul id="summaryDocuments" className="space-y-2 pl-5">
@@ -964,7 +964,7 @@ function RequestModal({ isOpen, onClose }) {
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                   <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
-                    <User className="mr-2 text-[var(--primary-500)]" />
+                    <User className="mr-2 text-(--primary-500)" />
                     Student Information
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -997,7 +997,7 @@ function RequestModal({ isOpen, onClose }) {
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                   <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
-                    <GraduationCap className="mr-2 text-[var(--primary-500)]" />
+                    <GraduationCap className="mr-2 text-(--primary-500)" />
                     Academic Information
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

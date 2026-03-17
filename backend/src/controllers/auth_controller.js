@@ -21,6 +21,7 @@ async function me(req, res) {
       id: req.user.id,
       email: req.user.email,
       role: req.user.role,
+      fullname: req.user.getFullName(),
     },
   });
 }

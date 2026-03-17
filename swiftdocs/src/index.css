@@ -51,7 +51,7 @@ body {
 /* Gradient Text */
 .text-gradient {
   background: var(--gradient-purple);
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

@@ -23,10 +23,20 @@ function DeleteDocument(document, transaction) {
   return document.destroy({ transaction });
 }
 
+function FindDeletedByType(type = null, transaction) {
+  const whereClause = type ? { type } : {}; // null means any
+  return Document.findOne({
+    where: whereClause,
+    paranoid: false, // include deleted rows
+    order: [["deleted_at", "DESC"]],
+    transaction,
+  });
+}
 module.exports = {
   CreateDocument,
   FindDocumentById,
   FindByType,
   UpdateDocument,
   DeleteDocument,
+  FindDeletedByType,
 };

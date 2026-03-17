@@ -6,27 +6,36 @@ async function CreateDocument(data) {
   return sequelize.transaction(async (t) => {
     const { type, price } = data;
 
-    if (!type) {
-      throw new Error("Document type is required");
-    }
+    if (!type) throw new Error("Document type is required");
 
-    const existing = await documentRepository.FindByType(type, t);
-
-    if (existing) {
+    // 1️⃣ Check for existing active document with the same type
+    const existingActive = await documentRepository.FindByType(type, t);
+    if (existingActive) {
       throw new Error("Document type already exists");
     }
 
-    const document = await documentRepository.CreateDocument(
-      {
-        type,
-        price: price || 0,
-      },
-      t
-    );
+    // 2️⃣ Look for any soft-deleted document (slot reuse)
+    const deletedDoc = await documentRepository.FindDeletedByType(null, t);
 
-    return document;
+    if (deletedDoc) {
+      // Restore the soft-deleted row (clears deleted_at automatically)
+      await deletedDoc.restore({ transaction: t });
+
+      // Update type and price after restoring
+      await documentRepository.UpdateDocument(
+        deletedDoc,
+        { type, price: price || 0 },
+        t
+      );
+
+      return deletedDoc;
+    }
+
+    // 3️⃣ Otherwise, create a new document
+    return documentRepository.CreateDocument({ type, price: price || 0 }, t);
   });
 }
+
 
 //update document
 async function UpdateDocument(id, data) {

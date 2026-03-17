@@ -33,7 +33,7 @@ export default function AdminDashboard() {
         onSelectTab={setSelectedTab}
       />
       <div className="flex-1 flex flex-col ml-64 overflow-hidden">
-        <Header />
+        <Header name="Dashboard" />
 
         <MainContent selectedTab={selectedTab} onChangeTab={setSelectedTab} />
       </div>

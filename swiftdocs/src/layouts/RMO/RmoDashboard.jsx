@@ -21,7 +21,7 @@ export default function RmoDashboard() {
         onSelectTab={setSelectedTab}
       />
       <div className="flex-1 flex flex-col ml-64 overflow-hidden">
-        <Header />
+        <Header name="Dashboard" />
         <div className="flex-1 p-6 overflow-auto">
           <MainContent selectedTab={selectedTab} />
         </div>

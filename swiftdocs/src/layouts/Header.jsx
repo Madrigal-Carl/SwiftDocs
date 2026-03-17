@@ -1,13 +1,13 @@
 import { useAuth } from "../stores/auth/auth_store";
 import { Bell, ChevronDown } from "lucide-react";
 
-export default function Header() {
+export default function Header({ name }) {
   const { user } = useAuth();
 
   return (
     <header className="sticky top-0 z-10 bg-white border-b border-(--border-light) h-16 flex items-center justify-between px-8 shadow-sm">
       <div>
-        <h2 className="text-xl font-semibold text-(--text-dark)">Dashboard</h2>
+        <h2 className="text-xl font-semibold text-(--text-dark)">{name}</h2>
       </div>
 
       <div className="flex items-center gap-4">

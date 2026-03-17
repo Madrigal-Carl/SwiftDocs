@@ -1,7 +1,7 @@
-import { useAuth } from "../../stores/auth/auth_store";
+import { useAuth } from "../stores/auth/auth_store";
 import { GraduationCap, ChevronDown } from "lucide-react";
 
-export default function Sidebar({ menuItems = [] }) {
+export default function Sidebar({ menuItems = [], selectedTab, onSelectTab }) {
   const { user } = useAuth();
 
   return (
@@ -24,21 +24,26 @@ export default function Sidebar({ menuItems = [] }) {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-6 px-4">
         <ul className="space-y-2">
-          {menuItems.map((item, index) => (
-            <li key={index}>
-              <a
-                href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
-                  item.active
-                    ? "bg-(--primary-800) text-white shadow-lg shadow-black/10"
-                    : "text-(--primary-200) hover:bg-(--primary-800)/40 hover:text-white"
-                }`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="font-medium text-sm">{item.label}</span>
-              </a>
-            </li>
-          ))}
+          {menuItems.map((item, index) => {
+            const Icon = item.icon;
+            const isActive = selectedTab === item.label;
+
+            return (
+              <li key={index}>
+                <button
+                  onClick={() => onSelectTab(item.label)}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                    isActive
+                      ? "bg-(--primary-800) text-white shadow-lg shadow-black/10"
+                      : "text-(--primary-200) hover:bg-(--primary-800)/40 hover:text-white"
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  <span className="font-medium text-sm">{item.label}</span>
+                </button>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 

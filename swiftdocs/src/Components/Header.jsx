@@ -1,4 +1,4 @@
-import { useAuth } from "../../stores/auth/auth_store";
+import { useAuth } from "../stores/auth/auth_store";
 import { Bell, ChevronDown } from "lucide-react";
 
 export default function Header() {

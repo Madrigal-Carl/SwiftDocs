@@ -1,30 +1,30 @@
-import Sidebar from "../../components/dashboard/Sidebar";
-import Header from "../../components/dashboard/Header";
+import { useState } from "react";
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
+import MainContent from "../../components/MainContent";
 import { LayoutDashboard, FileCheck, Settings } from "lucide-react";
 
 export default function RmoDashboard() {
+  const [selectedTab, setSelectedTab] = useState("Dashboard");
+
   const menuItems = [
-    {
-      icon: LayoutDashboard,
-      label: "Dashboard",
-      active: true,
-      href: "index.html",
-    },
-    {
-      icon: FileCheck,
-      label: "Document Processing",
-      active: false,
-      href: "document-processing.html",
-    },
-    { icon: Settings, label: "Settings", active: false, href: "#" },
+    { icon: LayoutDashboard, label: "Dashboard" },
+    { icon: FileCheck, label: "Document Processing" },
+    { icon: Settings, label: "Settings" },
   ];
 
   return (
     <div className="flex h-screen bg-[#f0f4ff] overflow-hidden">
-      <Sidebar menuItems={menuItems} />
+      <Sidebar
+        menuItems={menuItems}
+        selectedTab={selectedTab}
+        onSelectTab={setSelectedTab}
+      />
       <div className="flex-1 flex flex-col ml-64 overflow-hidden">
         <Header />
-        {/* Add your main dashboard content here */}
+        <div className="flex-1 p-6 overflow-auto">
+          <MainContent selectedTab={selectedTab} />
+        </div>
       </div>
     </div>
   );

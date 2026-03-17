@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { GraduationCap, Menu } from "lucide-react";
+import logo from "../assets/black_outline_logo.png";
 
 function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -11,9 +12,7 @@ function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="shrink-0 flex items-center gap-2 cursor-pointer">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg bg-[linear-gradient(135deg,var(--primary-600),var(--primary-500))]">
-              <GraduationCap className="w-6 h-6" />
-            </div>
+            <img src={logo} alt="SwiftDocs Logo" className="w-10" />
             <span className="font-bold text-xl tracking-tight text-slate-900">
               Swift<span className="text-(--primary-600)">Docs</span>
             </span>

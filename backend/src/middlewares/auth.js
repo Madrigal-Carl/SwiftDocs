@@ -1,17 +1,19 @@
 const jwt = require("jsonwebtoken");
 const { getCookieOptions } = require("../utils/auth_cookies");
+const { Account } = require("../database/models");
 
-function requireAuth(req, res, next) {
+async function requireAuth(req, res, next) {
   const accessToken = req.cookies.access_token;
 
   if (accessToken) {
     try {
       const decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
-      req.user = decoded;
+
+      const account = await Account.findByPk(decoded.id);
+      req.user = account;
+
       return next();
-    } catch (err) {
-      // expired token, continue to refresh
-    }
+    } catch (err) {}
   }
 
   const refreshToken = req.cookies.refresh_token;
@@ -21,7 +23,8 @@ function requireAuth(req, res, next) {
   try {
     const payload = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
 
-    // generate new access token
+    const account = await Account.findByPk(payload.id);
+
     const newAccessToken = jwt.sign(
       { id: payload.id, email: payload.email, role: payload.role },
       process.env.JWT_SECRET,
@@ -34,8 +37,7 @@ function requireAuth(req, res, next) {
       getCookieOptions(Number(process.env.JWT_COOKIE_MAX_AGE)),
     );
 
-    req.user = payload; // payload from refresh token
-    req.newAccessToken = newAccessToken; // optional if you want to send it back in response
+    req.user = account;
     next();
   } catch (err) {
     return res.status(401).json({ message: "Session expired" });

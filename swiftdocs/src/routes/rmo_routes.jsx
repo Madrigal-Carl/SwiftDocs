@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { lazy } from "react";
 
-const RmoDashboard = lazy(() => import("../pages/RMO/RmoDashboard"));
+const RmoDashboard = lazy(() => import("../layouts/RMO/RmoDashboard"));
 
 export default function RmoRoutes() {
   return (

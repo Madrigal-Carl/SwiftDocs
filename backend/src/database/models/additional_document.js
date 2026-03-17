@@ -15,12 +15,6 @@ module.exports = (sequelize, DataTypes) => {
 
   Additional_Document.init(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true, // ✅ this is required
-      },
       request_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -50,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
       tableName: "additional_documents",
       underscored: true,
       timestamps: true,
-    }
+    },
   );
 
   return Additional_Document;

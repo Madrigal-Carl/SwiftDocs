@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Nav from "../components/Navigation";
+import Nav from "../layouts/Navigation";
 import {
   GraduationCap,
   Activity,
@@ -24,10 +24,8 @@ import {
   Facebook,
   Instagram,
   Twitter,
-  Rocket,
 } from "lucide-react";
 import RequestModal from "../components/RequestModal";
-import SuccessModal from "../components/SuccessModal";
 
 function Landingpage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -316,12 +314,14 @@ function Landingpage() {
                   <div>
                     <h4 className="text-xl font-bold mb-2">Pay </h4>
                     <p className="text-slate-400">
-                      Proceed to the cashier and present your reference number to pay for the requested document. Once the payment is confirmed by the cashier, your request will continue to the processing stage.
+                      Proceed to the cashier and present your reference number
+                      to pay for the requested document. Once the payment is
+                      confirmed by the cashier, your request will continue to
+                      the processing stage.
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                </div>
+                <div className="flex gap-4"></div>
                 <div className="flex gap-4">
                   <div className="shrink-0 w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-lg">
                     <Check className="w-5 h-5" />

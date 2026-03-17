@@ -6,26 +6,39 @@ import { fetchAllRequests } from "../../services/request_service";
 import { fetchCashierRequests } from "../../services/cashier_service";
 
 export function RequestProvider({ children, role }) {
-  const [requests, setRequests] = useState({ all: [], cashier: [] });
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const requestFetchers = {
+    admin: fetchAllRequests,
+    rmo: fetchAllRequests,
+    cashier: fetchCashierRequests,
+  };
 
   const loadRequests = async () => {
     try {
-      if (role === "admin" || role === "rmo") {
-        const data = await fetchAllRequests();
-        setRequests((prev) => ({ ...prev, all: data }));
-      }
+      if (!role) return;
 
-      if (role === "cashier") {
-        const data = await fetchCashierRequests();
-        setRequests((prev) => ({ ...prev, cashier: data }));
-      }
+      setLoading(true);
+
+      const fetcher = requestFetchers[role];
+      if (!fetcher) return;
+
+      const data = await fetcher();
+      setRequests(data);
     } catch (err) {
       console.error("Failed to load requests:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     if (!role) return;
+
+    if (!socket.connected) {
+      socket.connect();
+    }
 
     loadRequests();
 
@@ -35,12 +48,19 @@ export function RequestProvider({ children, role }) {
 
     socket.on("requestsUpdated", handleUpdate);
 
-    return () => socket.off("requestsUpdated", handleUpdate);
+    return () => {
+      socket.off("requestsUpdated", handleUpdate);
+    };
   }, [role]);
 
   return (
     <RequestContext.Provider
-      value={{ requests, setRequests, reloadRequests: loadRequests }}
+      value={{
+        requests,
+        loading,
+        reloadRequests: loadRequests,
+        setRequests,
+      }}
     >
       {children}
     </RequestContext.Provider>

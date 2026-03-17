@@ -27,7 +27,33 @@ async function GetRequestsForCashier() {
     ],
   });
 
-  return students.map((s) => s.toJSON());
+  const result = students.map((s) => {
+    const reqInstance = s.request;
+
+    const totalDocuments =
+      reqInstance.getTotalDocumentQuantity() +
+      reqInstance.getTotalAdditionalQuantity();
+
+    const totalPrice = reqInstance.getGrandTotal();
+
+    return {
+      id: s.id,
+      full_name: s.getFullName(),
+      request: {
+        id: reqInstance.id,
+        reference_number: reqInstance.reference_number,
+        request_date: reqInstance.request_date,
+        status: reqInstance.status,
+        total_documents: totalDocuments,
+        total_price: totalPrice,
+      },
+    };
+  });
+
+  return result.sort(
+    (a, b) =>
+      new Date(b.request.request_date) - new Date(a.request.request_date),
+  );
 }
 
 async function UpdateRequestStatus(requestId, status, account) {

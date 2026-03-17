@@ -14,25 +14,21 @@ import {
 } from "lucide-react";
 
 const initialDocs = [
-  {
-    id: 1,
-    name: "Diploma (for 2nd Copy, provide affidavit of loss)",
-    defaultQuantity: 1,
-  },
-  { id: 2, name: "Transcript of Records", defaultQuantity: 1 },
-  { id: 3, name: "True Copy of Grades", defaultQuantity: 1 },
-  { id: 4, name: "Form 137", defaultQuantity: 1 },
-  { id: 5, name: "Form 138", defaultQuantity: 1 },
-  { id: 6, name: "Honorable Dismissal", defaultQuantity: 1 },
-  { id: 7, name: "Certificate of Good Moral", defaultQuantity: 1 },
-  { id: 8, name: "CTC", defaultQuantity: 1 },
-  { id: 9, name: "Certificate of Honor / Awards", defaultQuantity: 1 },
-  { id: 10, name: "Course Description", defaultQuantity: 1 },
-  { id: 11, name: "Certificate of Grades", defaultQuantity: 1 },
-  { id: 12, name: "WES Application", defaultQuantity: 1 },
-  { id: 13, name: "CAV Application", defaultQuantity: 1 },
-  { id: 14, name: "Other Certificates", defaultQuantity: 1 },
+  { id: 1, name: "Diploma (2nd Copy)", price: 300, defaultQuantity: 1 },
+  { id: 2, name: "Transcript of Records", price: 500, defaultQuantity: 1 },
+  { id: 3, name: "True Copy of Grades", price: 200, defaultQuantity: 1 },
+  { id: 4, name: "Form 137 (SHS Only)", price: 200, defaultQuantity: 1 },
+  { id: 5, name: "Form 138 (SHS Only)", price: 200, defaultQuantity: 1 },
+  { id: 6, name: "Honorable Dismissal", price: 1000, defaultQuantity: 1 },
+  { id: 7, name: "Certificate of Good Moral", price: 200, defaultQuantity: 1 },
+  { id: 8, name: "CTC (Certified True Copy)", price: 100, defaultQuantity: 1 },
+  { id: 9, name: "Certificate of Honor / Awards", price: 250, defaultQuantity: 1 },
+  { id: 10, name: "Course Description", price: 200, defaultQuantity: 1 },
+  { id: 11, name: "Certificate of Grades", price: 200, defaultQuantity: 1 },
+  { id: 12, name: "WES Application", price: 4000, defaultQuantity: 1 },
+  { id: 13, name: "CAV Application", price: 500, defaultQuantity: 1 },
 ];
+
 
 function RequestModal({ isOpen, onClose }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -232,6 +228,8 @@ function RequestModal({ isOpen, onClose }) {
     setFormSubmitted(false);
   };
 
+  
+
   if (!isOpen) return null;
 
   const summaryData = updateSummary();
@@ -382,25 +380,11 @@ function RequestModal({ isOpen, onClose }) {
                     Privacy Policy Agreement
                   </h4>
                   <p className="text-gray-600 text-sm mb-3">
-                    By using SwiftDocs Document Request System, you acknowledge
-                    and agree to the following terms:
+                    By using SwiftDocs Document Request System, you acknowledge:
                   </p>
-                  <ul className="text-gray-600 text-sm space-y-2 pl-5 list-disc">
-                    <li>
-                      SwiftDocs collects personal info for processing official
-                      requests.
-                    </li>
-                    <li>
-                      We implement security measures to protect against
-                      unauthorized access.
-                    </li>
-                    <li>Data may be shared with authorized personnel only.</li>
-                    <li>
-                      Students can request access, correction, or deletion after
-                      processing.
-                    </li>
-                    <li>We do not sell your data for marketing.</li>
-                  </ul>
+                  <p className="text-gray-600 text-sm ">
+                    Pursuant to RA 10173 or the Data Privacy Act of 2012, we recognize the importance of privacy and are committed to maintaining the accuracy, confidentiality, and security of your personal information. In filling out this form, you understand that the information provided will be collected, processed, protected, shared, retained and to be used by the Informatics Records for its pursuits of legitimate purposes. You, hereby allow Informatics Records - to collect, use and share personal data for its pursuits of legitimate interests as an educational institution. Informatics Records, agrees to abide by all its rules, policies and regulations pertaining to Data Privacy and confidentiality. This consent and authorization remains valid and subsisting for a limited period consistent with purposes or until otherwise revoked or canceled in writing.
+                  </p>
                 </div>
                 <div className="flex items-start">
                   <input
@@ -506,6 +490,9 @@ function RequestModal({ isOpen, onClose }) {
                         <th className="py-3 px-4 text-left font-semibold text-gray-700">
                           Quantity
                         </th>
+                        <th className="py-3 px-4 text-left font-semibold text-gray-700">
+                          Price
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -524,6 +511,7 @@ function RequestModal({ isOpen, onClose }) {
                           const selectedItem = selectedDocuments.find(
                             (item) => item.id === doc.id,
                           );
+                          const quantity = selected ? selectedItem?.quantity ?? 1 : 0;
                           return (
                             <tr
                               key={doc.id}
@@ -540,54 +528,40 @@ function RequestModal({ isOpen, onClose }) {
                               <td className="px-4 py-3">{doc.name}</td>
                               <td className="px-4 py-3">
                                 <div className="flex items-center gap-1">
+
                                   <button
                                     type="button"
-                                    disabled={!selected}
-                                    onClick={() =>
-                                      updateQuantity(
-                                        doc.id,
-                                        Math.max(
-                                          1,
-                                          (selectedItem?.quantity ??
-                                            doc.defaultQuantity) - 1,
-                                        ),
-                                      )
-                                    }
-                                    className="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 bg-white hover:bg-(--primary-50) disabled:opacity-40 disabled:cursor-not-allowed"
+                                    onClick={() => updateQuantity(doc.id, quantity - 1)}
+                                    className="w-8 h-8 rounded-lg border border-gray-300 bg-white hover:bg-(--primary-50)"
                                   >
                                     -
                                   </button>
+
                                   <input
                                     type="number"
                                     min={1}
-                                    value={
-                                      selectedItem?.quantity ??
-                                      doc.defaultQuantity
-                                    }
-                                    disabled={!selected}
+                                    value={quantity}
                                     onChange={(e) =>
-                                      updateQuantity(
-                                        doc.id,
-                                        Number(e.target.value) || 1,
-                                      )
+                                      updateQuantity(doc.id, Number(e.target.value) || 1)
                                     }
-                                    className="w-20 px-2 py-1 border border-gray-300 rounded-lg text-center"
+                                    className="w-15 px-2 py-1 border border-gray-300 rounded-lg text-center"
                                   />
+
                                   <button
                                     type="button"
-                                    disabled={!selected}
-                                    onClick={() =>
-                                      updateQuantity(
-                                        doc.id,
-                                        (selectedItem?.quantity ??
-                                          doc.defaultQuantity) + 1,
-                                      )
-                                    }
-                                    className="w-8 h-8 rounded-lg border border-gray-300 text-gray-600 bg-white hover:bg-(--primary-50) disabled:opacity-40 disabled:cursor-not-allowed"
+                                      onClick={() => {
+                                          if (!selected) toggleDocument(doc);
+                                          else updateQuantity(doc.id, selectedItem.quantity + 1);
+                                        }}
+                                    className="w-8 h-8 rounded-lg border border-gray-300 bg-white hover:bg-(--primary-50)"
                                   >
                                     +
                                   </button>
+
                                 </div>
+                              </td>
+                              <td className="px-4 py-3 font-medium text-gray-700">
+                                ₱{(selected ? doc.price * quantity : 0).toLocaleString()}
                               </td>
                             </tr>
                           );

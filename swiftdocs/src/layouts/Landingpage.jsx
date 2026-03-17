@@ -56,7 +56,7 @@ function Landingpage() {
             >
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-(--primary-50) border border-(--primary-100) text-(--primary-700) text-sm font-semibold mb-6">
                 <span className="flex h-2 w-2 rounded-full bg-(--primary-600) animate-pulse"></span>
-                Now serving 50+ institutions
+                Now serving 1
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-6 leading-tight">
                 School Documents <br />
@@ -289,7 +289,7 @@ function Landingpage() {
                 The Process
               </h2>
               <h3 className="text-3xl md:text-4xl font-bold mb-6">
-                Get your documents in 4 easy steps
+                Get your documents in 3 easy steps
               </h3>
               <p className="text-slate-400 text-lg mb-8">
                 Our streamlined process ensures you spend less time worrying
@@ -302,18 +302,6 @@ function Landingpage() {
                     1
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold mb-2">Create Account</h4>
-                    <p className="text-slate-400">
-                      Sign up using your student ID and email address to verify
-                      your identity instantly.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="shrink-0 w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-lg">
-                    2
-                  </div>
-                  <div>
                     <h4 className="text-xl font-bold mb-2">Choose Document</h4>
                     <p className="text-slate-400">
                       Select the type of credential you need from our list of
@@ -323,15 +311,16 @@ function Landingpage() {
                 </div>
                 <div className="flex gap-4">
                   <div className="shrink-0 w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-lg">
-                    3
+                    2
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold mb-2">Submit & Pay</h4>
+                    <h4 className="text-xl font-bold mb-2">Pay </h4>
                     <p className="text-slate-400">
-                      Securely pay the processing fee via credit card or online
-                      banking.
+                      Proceed to the cashier and present your reference number to pay for the requested document. Once the payment is confirmed by the cashier, your request will continue to the processing stage.
                     </p>
                   </div>
+                </div>
+                <div className="flex gap-4">
                 </div>
                 <div className="flex gap-4">
                   <div className="shrink-0 w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-lg">
@@ -592,7 +581,7 @@ function Landingpage() {
               onClick={openModal}
               className="px-8 py-4 bg-white text-(--primary-700) rounded-full font-bold text-lg hover:bg-(--primary-50) transition-colors shadow-xl"
             >
-              Create Free Account
+              Request Document
             </button>
             <button className="px-8 py-4 bg-(--primary-600) border border-(--primary-400) text-white rounded-full font-bold text-lg hover:bg-(--primary-500) transition-colors">
               Contact Support

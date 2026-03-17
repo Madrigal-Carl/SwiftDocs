@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { lazy } from "react";
 
-const AdminDashboard = lazy(() => import("../pages/Admin/AdminDashboard"));
+const AdminDashboard = lazy(() => import("../layouts/Admin/AdminDashboard"));
 
 export default function AdminRoutes() {
   return (

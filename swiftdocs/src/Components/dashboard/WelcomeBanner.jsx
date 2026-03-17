@@ -6,7 +6,7 @@ export default function WelcomeBanner({ onChangeTab }) {
 
   return (
     <div
-      className="h-36 rounded-xl overflow-hidden relative mb-6"
+      className="h-36 rounded-xl overflow-hidden relative"
       style={{ background: "var(--gradient-purple)" }}
     >
       <div className="absolute inset-0 opacity-20">

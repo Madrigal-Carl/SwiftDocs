@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Sidebar from "../../components/Sidebar";
-import Header from "../../components/Header";
-import MainContent from "../../components/MainContent";
+import Sidebar from "../Sidebar";
+import Header from "../Header";
+import MainContent from "../MainContent";
 import { LayoutDashboard, CreditCard, Settings } from "lucide-react";
 
 export default function CashierDashboard() {

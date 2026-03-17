@@ -1,4 +1,4 @@
-import Content from "./dashboard/Content";
+import Content from "../components/dashboard/Content";
 
 export default function MainContent({ selectedTab, onChangeTab }) {
   const renderContent = () => {
@@ -29,9 +29,5 @@ export default function MainContent({ selectedTab, onChangeTab }) {
     }
   };
 
-  return (
-    <div className="flex-1 bg-white rounded-2xl shadow-sm p-6 overflow-auto">
-      {renderContent()}
-    </div>
-  );
+  return <div>{renderContent()}</div>;
 }

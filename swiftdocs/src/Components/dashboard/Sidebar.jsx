@@ -46,7 +46,7 @@ export default function Sidebar({ menuItems = [] }) {
       <div className="p-4 border-t border-(--primary-800)">
         <div className="flex items-center gap-3 bg-(--primary-800)/50 rounded-xl p-4 backdrop-blur-sm">
           <div className="w-10 h-10 rounded-full bg-linear-to-br from-(--primary-400) to-(--primary-600) flex items-center justify-center text-white font-semibold shadow-lg">
-            EM
+            {user.initials}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white font-semibold text-sm truncate">

@@ -1,4 +1,5 @@
 import Sidebar from "../../components/dashboard/Sidebar";
+import Header from "../../components/dashboard/Header";
 import {
   LayoutDashboard,
   FileText,
@@ -53,8 +54,8 @@ export default function AdminDashboard() {
   return (
     <div className="flex h-screen bg-[#f0f4ff] overflow-hidden">
       <Sidebar menuItems={menuItems} />
-      <div className="flex-1 ml-64 flex flex-col p-6">
-        <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+      <div className="flex-1 flex flex-col ml-64 overflow-hidden">
+        <Header />
         {/* Add your main dashboard content here */}
       </div>
     </div>

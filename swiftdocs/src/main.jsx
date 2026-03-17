@@ -11,6 +11,7 @@ import PublicRoutes from "./routes/public_routes";
 import AdminRoutes from "./routes/admin_routes";
 import CashierRoutes from "./routes/cashier_routes";
 import RmoRoutes from "./routes/rmo_routes";
+
 import { Suspense } from "react";
 import AuthLoader from "./components/loaders/AuthLoader";
 import PageLoader from "./components/loaders/PageLoader";

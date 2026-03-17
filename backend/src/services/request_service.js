@@ -146,12 +146,49 @@ async function GetAllRequestsWithStudent() {
             association: "requested_documents",
             include: ["document"],
           },
+          {
+            association: "additional_documents",
+          },
         ],
       },
     ],
   });
 
-  return students.map((s) => s.toJSON());
+  const result = students.map((s) => {
+    const reqInstance = s.request;
+
+    if (!reqInstance) {
+      return {
+        id: s.id,
+        full_name: s.getFullName(),
+        request: null,
+      };
+    }
+
+    const totalDocuments =
+      reqInstance.getTotalDocumentQuantity() +
+      reqInstance.getTotalAdditionalQuantity();
+
+    const totalPrice = reqInstance.getGrandTotal();
+
+    return {
+      id: s.id,
+      full_name: s.getFullName(),
+      request: {
+        id: reqInstance.id,
+        reference_number: reqInstance.reference_number,
+        request_date: reqInstance.request_date,
+        status: reqInstance.status,
+        total_documents: totalDocuments,
+        total_price: totalPrice,
+      },
+    };
+  });
+
+  return result.sort(
+    (a, b) =>
+      new Date(b.request.request_date) - new Date(a.request.request_date),
+  );
 }
 
 module.exports = {

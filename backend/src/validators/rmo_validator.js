@@ -9,14 +9,7 @@ const updateRequestStatusSchema = Joi.object({
       "any.only": "Status must be invoiced, rejected, or released",
       "any.required": "Status is required",
     }),
-  note: Joi.when("status", {
-    is: "rejected",
-    then: Joi.string().min(3).required().messages({
-      "string.empty": "Rejection reason is required",
-      "any.required": "Rejection reason is required",
-    }),
-    otherwise: Joi.optional(),
-  }),
+  note: Joi.optional(),
 });
 
 function validateUpdateRequestStatus(req, res, next) {

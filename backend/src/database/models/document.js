@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: "Document",
       tableName: "documents",
+      paranoid: true,
       underscored: true,
       timestamps: true,
     },

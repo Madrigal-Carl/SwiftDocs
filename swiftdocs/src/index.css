@@ -1,42 +1,192 @@
 @import "tailwindcss";
 
 :root {
-  --primary-purple: #220E9D;
-  --primary-purple-dark: #150578;
-  --primary-light-purple: #4b2fe9;
-  --gradiant-purple: linear-gradient(90deg, #220E9D 75%, #231098 100%);
-  --primary-teal: #1f8f95;
-  --primary-teal-dark: #16666a;
+  /* Colors */
+  --gradient-purple: linear-gradient(
+    90deg,
+    #1e3a8a 75%,
+    #2563eb 100%
+  ); /* now a blue gradient */
 
-  --bg-light: #f5f7fb;
-  --card-bg: #ffffff;
+  --bg-light: #f0f4ff; /* light blue background */
+  --border-light: #d1d9ff; /* soft blue border */
+  --text-dark: #0f172a; /* keep dark text for readability */
 
-  --border-light: #e5e7eb;
-  --text:white;
-
-  --radius-2xl: 32px;
-  --radius-xl: 24px;
-  --radius-lg: 16px;
-  --radius-md: 10px;
-  --radius-sm: 6px;
+  /* Primary colors (Tailwind style) */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-300: #93c5fd;
+  --primary-400: #60a5fa;
+  --primary-500: #3b82f6; /* main blue */
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  --primary-800: #1e40af;
+  --primary-900: #1e3a8a;
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
-  background-color: var(--primary-purple);
+  font-family: "Inter", sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark);
 }
 
-/* Chrome, Edge, Safari */
+/* Glass Navbar */
+.glass-nav {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* Hero gradient */
+.hero-gradient {
+  background: radial-gradient(
+    circle at top right,
+    #e0e7ff 0%,
+    #ffffff 40%,
+    #eef2ff 100%
+  );
+}
+
+/* Gradient Text */
+.text-gradient {
+  background: var(--gradient-purple);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Floating blobs */
+.blob {
+  position: absolute;
+  filter: blur(40px);
+  z-index: -1;
+  opacity: 0.6;
+  animation: pulse-soft 7s infinite;
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.4;
+  }
+}
+
+/* Card hover */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Hide scrollbars */
 ::-webkit-scrollbar {
   display: none;
 }
 
-/* Firefox */
 * {
   scrollbar-width: none;
 }
 
-/* IE / older Edge */
 body {
   -ms-overflow-style: none;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Fade In Up */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease forwards;
+}
+
+/* Glass morphism for modal */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Input focus */
+.input-focus:focus {
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+/* Custom Animations (Tailwind extend) */
+@keyframes slide-in-right {
+  0% {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Animation classes */
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease-out forwards;
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.3s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out forwards;
 }

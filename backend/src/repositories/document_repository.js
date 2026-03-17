@@ -15,4 +15,18 @@ function FindByType(type, transaction) {
   });
 }
 
-module.exports = { CreateDocument, FindDocumentById, FindByType };
+function UpdateDocument(document, data, transaction) {
+  return document.update(data, { transaction });
+}
+
+function DeleteDocument(document, transaction) {
+  return document.destroy({ transaction });
+}
+
+module.exports = {
+  CreateDocument,
+  FindDocumentById,
+  FindByType,
+  UpdateDocument,
+  DeleteDocument,
+};

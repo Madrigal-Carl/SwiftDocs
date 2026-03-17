@@ -1,5 +1,6 @@
 import { useAuth } from "../stores/auth/auth_store";
-import { GraduationCap, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import logo from "../assets/white_outline_logo.png";
 
 export default function Sidebar({ menuItems = [], selectedTab, onSelectTab }) {
   const { user } = useAuth();
@@ -9,9 +10,7 @@ export default function Sidebar({ menuItems = [], selectedTab, onSelectTab }) {
       {/* Logo Section */}
       <div className="p-6 border-b border-(--primary-800)">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center backdrop-blur-sm">
-            <GraduationCap className="w-6 h-6 text-white" />
-          </div>
+          <img src={logo} alt="SwiftDocs Logo" className="w-10 h-10" />
           <div>
             <h1 className="text-white font-bold text-lg leading-tight">
               SwiftDocs

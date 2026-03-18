@@ -1,5 +1,6 @@
 import DashboardContent from "../pages/dashboard/Content";
 import RequestsContent from "../pages/requests/Content";
+import ReportsContent from "../pages/reports/Content";
 import PageLayout from "./PageLayout";
 
 export default function MainContent({ selectedTab, onChangeTab }) {
@@ -26,7 +27,11 @@ export default function MainContent({ selectedTab, onChangeTab }) {
         return <div>⚙️ Document Processing Content</div>;
 
       case "Reports":
-        return <div>📈 Reports Content</div>;
+        return (
+          <PageLayout title="Reports & Analytics">
+            <ReportsContent />
+          </PageLayout>
+        );
 
       case "User Management":
         return <div>👥 User Management Content</div>;

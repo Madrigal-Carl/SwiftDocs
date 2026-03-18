@@ -1,6 +1,8 @@
 "use strict";
 const { Model } = require("sequelize");
 const { nanoid } = require("nanoid");
+const sequelizePaginate = require("sequelize-paginate");
+
 module.exports = (sequelize, DataTypes) => {
   class Request extends Model {
     /**
@@ -209,5 +211,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
   );
+  sequelizePaginate.paginate(Request);
+
   return Request;
 };

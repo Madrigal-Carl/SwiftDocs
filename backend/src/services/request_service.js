@@ -1,4 +1,4 @@
-const sequelize = require("../database/models").sequelize;
+const { sequelize, Request } = require("../database/models");
 const studentRepository = require("../repositories/student_repository");
 const educationRepository = require("../repositories/education_repository");
 const requestRepository = require("../repositories/request_repository");
@@ -136,64 +136,64 @@ async function GetRequestWithStudent(requestId) {
   return request;
 }
 
-async function GetAllRequestsWithStudent() {
-  const students = await studentRepository.FindAllStudents(null, {
+async function GetAllRequestsWithStudent(page = 1, limit = 6) {
+  const { docs, pages, total } = await Request.paginate({
+    page,
+    paginate: limit,
+    order: [["request_date", "DESC"]],
     include: [
       {
-        association: "education",
-        attributes: ["lrn"],
-      },
-      {
-        association: "request",
+        association: "student",
+        attributes: ["id", "first_name", "middle_name", "last_name"],
         include: [
           {
-            association: "requested_documents",
-            include: ["document"],
-          },
-          {
-            association: "additional_documents",
+            association: "education",
+            attributes: ["lrn"],
           },
         ],
+      },
+      {
+        association: "requested_documents",
+        include: ["document"],
+      },
+      {
+        association: "additional_documents",
       },
     ],
   });
 
-  const result = students.map((s) => {
-    const reqInstance = s.request;
-
-    if (!reqInstance) {
-      return {
-        id: s.id,
-        full_name: s.getFullName(),
-        request: null,
-      };
-    }
+  const result = docs.map((req) => {
+    const student = req.student;
 
     const totalDocuments =
-      reqInstance.getTotalDocumentQuantity() +
-      reqInstance.getTotalAdditionalQuantity();
+      req.getTotalDocumentQuantity() + req.getTotalAdditionalQuantity();
 
-    const totalPrice = reqInstance.getGrandTotal();
+    const totalPrice = req.getGrandTotal();
 
     return {
-      id: s.id,
-      full_name: s.getFullName(),
-      lrn: s.education.lrn,
+      id: student.id,
+      full_name: student.getFullName(),
+      lrn: student.education?.lrn,
       request: {
-        id: reqInstance.id,
-        reference_number: reqInstance.reference_number,
-        request_date: reqInstance.request_date,
-        status: reqInstance.status,
+        id: req.id,
+        reference_number: req.reference_number,
+        request_date: req.request_date,
+        status: req.status,
         total_documents: totalDocuments,
         total_price: totalPrice,
       },
     };
   });
 
-  return result.sort(
-    (a, b) =>
-      new Date(b.request.request_date) - new Date(a.request.request_date),
-  );
+  return {
+    data: result,
+    pagination: {
+      total,
+      pages,
+      page,
+      limit,
+    },
+  };
 }
 
 module.exports = {

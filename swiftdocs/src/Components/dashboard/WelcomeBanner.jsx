@@ -1,8 +1,11 @@
 import { ChevronRight, FileText } from "lucide-react";
-import { useAuth } from "../../stores/auth/auth_store";
+import { useAuth } from "../../stores/auth_store";
+import { getTabByRole } from "../../utils/role_tabs";
 
 export default function WelcomeBanner({ onChangeTab }) {
   const { user } = useAuth();
+
+  const targetTab = getTabByRole(user?.role);
 
   return (
     <div
@@ -27,7 +30,7 @@ export default function WelcomeBanner({ onChangeTab }) {
             Here's what's happening with document requests today.
           </p>
           <button
-            onClick={() => onChangeTab("Document Requests")}
+            onClick={() => onChangeTab(targetTab)}
             className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-white text-(--primary-900) rounded-lg font-semibold text-sm hover:bg-(--primary-50) transition-colors shadow-lg"
           >
             View All Requests

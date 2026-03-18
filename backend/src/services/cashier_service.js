@@ -1,59 +1,80 @@
-const studentRepository = require("../repositories/student_repository");
+const { Request } = require("../database/models");
 const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
+const { computeStats } = require("../utils/stats_computation");
 
-async function GetRequestsForCashier() {
+async function GetRequestsForCashier(page = 1, limit = 6) {
+  const allRequests = await Request.findAll({
+    where: { status: allowedStatuses },
+    attributes: ["status", "request_date"],
+  });
+
+  const stats = computeStats(allRequests);
+
   const allowedStatuses = ["paid", "invoiced"];
 
-  const students = await studentRepository.FindAllStudents(null, {
+  const { docs, pages, total } = await Request.paginate({
+    page,
+    paginate: limit,
+    order: [["request_date", "DESC"]],
+    where: {
+      status: allowedStatuses,
+    },
     include: [
       {
-        association: "request",
-        where: {
-          status: allowedStatuses,
-        },
-        required: true,
+        association: "student",
+        attributes: ["id", "first_name", "middle_name", "last_name"],
         include: [
           {
-            association: "requested_documents",
-            include: ["document"],
-          },
-          {
-            association: "additional_documents",
+            association: "education",
+            attributes: ["lrn"],
           },
         ],
+      },
+      {
+        association: "requested_documents",
+        include: ["document"],
+      },
+      {
+        association: "additional_documents",
       },
     ],
   });
 
-  const result = students.map((s) => {
-    const reqInstance = s.request;
+  const result = docs.map((req) => {
+    const student = req.student;
 
     const totalDocuments =
-      reqInstance.getTotalDocumentQuantity() +
-      reqInstance.getTotalAdditionalQuantity();
+      req.getTotalDocumentQuantity() + req.getTotalAdditionalQuantity();
 
-    const totalPrice = reqInstance.getGrandTotal();
+    const totalPrice = req.getGrandTotal();
 
     return {
-      id: s.id,
-      full_name: s.getFullName(),
+      id: student.id,
+      full_name: student.getFullName(),
+      lrn: student.education?.lrn,
       request: {
-        id: reqInstance.id,
-        reference_number: reqInstance.reference_number,
-        request_date: reqInstance.request_date,
-        status: reqInstance.status,
+        id: req.id,
+        reference_number: req.reference_number,
+        request_date: req.request_date,
+        status: req.status,
         total_documents: totalDocuments,
         total_price: totalPrice,
       },
     };
   });
 
-  return result.sort(
-    (a, b) =>
-      new Date(b.request.request_date) - new Date(a.request.request_date),
-  );
+  return {
+    data: result,
+    pagination: {
+      total,
+      pages,
+      page,
+      limit,
+    },
+    stats,
+  };
 }
 
 async function UpdateRequestStatus(requestId, status, account) {

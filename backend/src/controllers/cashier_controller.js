@@ -1,7 +1,10 @@
 const cashierService = require("../services/cashier_service");
 
 async function GetRequestsForCashier(req, res) {
-  const requests = await cashierService.GetRequestsForCashier();
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 6;
+
+  const requests = await cashierService.GetRequestsForCashier(page, limit);
   res.json(requests);
 }
 

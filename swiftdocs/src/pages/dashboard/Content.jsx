@@ -1,8 +1,6 @@
-import WelcomeBanner from "./WelcomeBanner";
-import StatCard from "../StatCard";
-import RecentRequests from "./RecentRequests";
-import DashboardStats from "./DashboardStats";
-import { File, Clock, CheckCircle, BadgeCheck } from "lucide-react";
+import WelcomeBanner from "../../components/dashboard/WelcomeBanner";
+import RecentRequests from "../../components/dashboard/RecentRequests";
+import DashboardStats from "../../components/dashboard/DashboardStats";
 
 export default function Content({ onChangeTab }) {
   return (

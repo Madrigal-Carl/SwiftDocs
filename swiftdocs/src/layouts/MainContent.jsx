@@ -1,13 +1,23 @@
-import Content from "../components/dashboard/Content";
+import DashboardContent from "../pages/dashboard/Content";
+import RequestsContent from "../pages/requests/Content";
+import PageLayout from "./PageLayout";
 
 export default function MainContent({ selectedTab, onChangeTab }) {
   const renderContent = () => {
     switch (selectedTab) {
       case "Dashboard":
-        return <Content onChangeTab={onChangeTab} />;
+        return (
+          <PageLayout title="Dashboard">
+            <DashboardContent onChangeTab={onChangeTab} />
+          </PageLayout>
+        );
 
       case "Document Requests":
-        return <div>📄 Document Requests Content</div>;
+        return (
+          <PageLayout title="Document Requests">
+            <RequestsContent />
+          </PageLayout>
+        );
 
       case "Payment Verification":
         return <div>💳 Payment Verification Content</div>;

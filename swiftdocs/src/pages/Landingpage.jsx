@@ -26,9 +26,32 @@ import {
   Twitter,
 } from "lucide-react";
 import RequestModal from "../components/RequestModal";
+import { fetchRequestByReference } from "../services/request_service"
+
 
 function Landingpage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [referenceNumber, setReferenceNumber] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleTrack = async () => {
+    if (!referenceNumber.trim()) return;
+
+    setLoading(true);
+    setError("");
+
+    try {
+      await fetchRequestByReference(referenceNumber.trim());
+      setError("");
+      alert("Tracking email has been sent. Please check your inbox.");
+
+    } catch (err) {
+      setError(err.message || "Failed to send tracking email");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -506,18 +529,25 @@ function Landingpage() {
                 </h4>
 
                 {/* input */}
-                <div className="flex gap-3">
+                <div className="flex gap-3 mb-4">
                   <input
                     type="text"
                     placeholder="REQ-2026-000123"
+                    value={referenceNumber}
+                    onChange={(e) => setReferenceNumber(e.target.value)}
                     className="flex-1 px-5 py-4 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-(--primary-500)"
                   />
-
-                  <button className="px-6 py-4 bg-(--primary-600) hover:bg-(--primary-700) text-white rounded-xl font-semibold flex items-center gap-2 shadow-lg">
+                  <button
+                    onClick={handleTrack}
+                    disabled={loading}
+                    className="px-6 py-4 bg-(--primary-600) hover:bg-(--primary-700) text-white rounded-xl font-semibold flex items-center gap-2 shadow-lg"
+                  >
                     <Activity className="w-5 h-5" />
-                    Track
+                    {loading ? "Loading..." : "Track"}
                   </button>
                 </div>
+
+                {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
                 {/* example references */}
                 <div className="mt-6">

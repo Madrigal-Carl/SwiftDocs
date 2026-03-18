@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { GraduationCap, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/black_outline_logo.png";
+import logo from "../assets/colored_logo.png";
 
 function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -14,7 +14,7 @@ function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="shrink-0 flex items-center gap-2 cursor-pointer">
-            <img src={logo} alt="SwiftDocs Logo" className="w-10" />
+            <img src={logo} alt="SwiftDocs Logo" className="w-9" />
             <span className="font-bold text-xl tracking-tight text-slate-900">
               Swift<span className="text-(--primary-600)">Docs</span>
             </span>
@@ -54,7 +54,7 @@ function Navigation() {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <button 
+            <button
               onClick={() => navigate("/auth")}
               className="text-slate-600 hover:text-(--primary-600) font-medium px-4 py-2 transition-colors"
             >

@@ -1,16 +1,21 @@
 import { ChevronRight } from "lucide-react";
 import StatusBadge from "./StatusBadge";
 import { useRequestStore } from "../../stores/request/request_store";
+import { useAuth } from "../../stores/auth/auth_store";
+import { getTabByRole } from "../../utils/role_tabs";
 
 export default function RecentRequests({ onChangeTab }) {
   const { requests, loading } = useRequestStore();
+  const { user } = useAuth();
+
+  const targetTab = getTabByRole(user?.role);
 
   return (
     <div className="bg-white border border-(--border-light) rounded-xl shadow-sm overflow-hidden">
       <div className="px-6 py-5 border-b border-(--border-light) flex items-center justify-between">
         <h3 className="font-semibold text-(--text-dark)">Recent Requests</h3>
         <button
-          onClick={() => onChangeTab("Document Requests")}
+          onClick={() => onChangeTab(targetTab)}
           className="text-sm font-medium text-(--primary-600) hover:text-(--primary-700) flex items-center gap-1 transition-colors"
         >
           View All

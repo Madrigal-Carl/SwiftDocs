@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Sidebar from "../Sidebar";
-import Header from "../Header";
 import MainContent from "../MainContent";
 import { LayoutDashboard, CreditCard, Settings } from "lucide-react";
 

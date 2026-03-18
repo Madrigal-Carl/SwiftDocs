@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react";
-import StatusBadge from "./StatusBadge";
+import StatusBadge from "../StatusBadge";
 import { useRequestStore } from "../../stores/request/request_store";
 import { useAuth } from "../../stores/auth/auth_store";
 import { getTabByRole } from "../../utils/role_tabs";
@@ -67,7 +67,7 @@ export default function RecentRequests({ onChangeTab }) {
                 return (
                   <tr
                     key={item.id}
-                    className="hover:bg-(--bg-light)/50 transition-colors even:bg-white odd:bg-gray-50/30"
+                    className="hover:bg-(--primary-50) transition-colors"
                   >
                     {/* Reference */}
                     <td className="px-6 py-4 text-sm font-medium text-(--primary-600) uppercase">

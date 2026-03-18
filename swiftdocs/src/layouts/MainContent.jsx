@@ -1,26 +1,22 @@
-import Header from "./Header";
 import DashboardContent from "../pages/dashboard/Content";
 import RequestsContent from "../pages/requests/Content";
+import PageLayout from "./PageLayout";
 
 export default function MainContent({ selectedTab, onChangeTab }) {
   const renderContent = () => {
     switch (selectedTab) {
       case "Dashboard":
         return (
-          <div className="flex-1 flex flex-col ml-64 overflow-hidden">
-            <Header name="Dashboard" />
-
+          <PageLayout title="Dashboard">
             <DashboardContent onChangeTab={onChangeTab} />
-          </div>
+          </PageLayout>
         );
 
       case "Document Requests":
         return (
-          <div className="flex-1 flex flex-col ml-64 overflow-hidden">
-            <Header name="Document Requests" />
-
-            <RequestsContent onChangeTab={onChangeTab} />
-          </div>
+          <PageLayout title="Document Requests">
+            <RequestsContent />
+          </PageLayout>
         );
 
       case "Payment Verification":

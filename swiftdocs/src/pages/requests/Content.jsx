@@ -1,11 +1,15 @@
-export default function Content({ onChangeTab }) {
+import RequestTable from "../../components/RequestTable";
+import ContentHeader from "../../layouts/ContentHeader";
+
+export default function Content() {
   return (
-    <div className="flex-1 flex flex-col overflow-y-auto p-6 gap-6">
-      {/* <WelcomeBanner onChangeTab={onChangeTab} />
+    <div className="flex-1 flex flex-col p-6 gap-6 min-h-0">
+      <ContentHeader
+        title="Document Requests"
+        description="Manage and review all student document requests"
+      />
 
-      <DashboardStats />
-
-      <RecentRequests onChangeTab={onChangeTab} /> */}
+      <RequestTable />
     </div>
   );
 }

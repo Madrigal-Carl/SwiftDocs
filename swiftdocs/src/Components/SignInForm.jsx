@@ -5,7 +5,7 @@ import { login } from "../services/auth_service";
 import { useAuth } from "../stores/auth_store";
 
 function SignInForm() {
-  const { setUser } = useAuth();
+  const { setUser, reloadUser } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
@@ -52,10 +52,17 @@ function SignInForm() {
           .slice(0, 3);
       };
 
-      setUser({
-        ...res.account,
-        initials: getInitials(res.account.fullname),
-      });
+      await reloadUser();
+
+      setUser((prev) => ({
+        ...prev,
+        initials: prev?.fullname
+          ?.split(" ")
+          .filter(Boolean)
+          .map((w) => w[0].toUpperCase())
+          .join("")
+          .slice(0, 3),
+      }));
 
       // RoleRouter will automatically handle redirect
     } catch (err) {

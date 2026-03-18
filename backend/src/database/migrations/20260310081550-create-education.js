@@ -32,7 +32,7 @@ module.exports = {
         allowNull: false,
       },
       school_last_attended: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       admission_date: {

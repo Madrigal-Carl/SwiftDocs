@@ -36,12 +36,9 @@ export default function RequestTable() {
           >
             <option>All Statuses</option>
             <option>Pending</option>
-            <option>Under Review</option>
-            <option>Approved</option>
-            <option>Payment Pending</option>
-            <option>Processing</option>
-            <option>Ready for Release</option>
-            <option>Completed</option>
+            <option>Invoiced</option>
+            <option>Paid</option>
+            <option>Released</option>
             <option>Rejected</option>
           </select>
           <Filter className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />

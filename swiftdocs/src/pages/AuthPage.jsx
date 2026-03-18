@@ -1,4 +1,4 @@
-import AuthCard from "../components/AuthCard";
+import AuthCard from "../Components/AuthCard";
 import { useNavigate } from "react-router-dom";
 import { Activity, FileInput, ShieldCheck } from "lucide-react";
 import logo from "../assets/white_outline_logo.png";
@@ -63,7 +63,14 @@ function AuthPage() {
 
         {/* Decorative circles */}
         <div className="absolute top-10 right-10 w-40 h-40 bg-white/10 rounded-full" />
-        <div className="absolute bottom-10 left-10 w-52 h-52 bg-white/10 rounded-full" />
+        <div className="absolute top-10 right-10 w-20 h-20 bg-white/10 rounded-full" />
+        <div className="absolute bottom-10 left-10 w-55 h-55 bg-white/10 rounded-full" />
+        <div className="absolute bottom-10 left-10 w-45 h-45 bg-white/10 rounded-full" />
+        <div className="absolute bottom-95 left-98 w-60 h-60 bg-white/10 rounded-full" />
+        <div className="absolute bottom-100 left-100 w-50 h-50 bg-white/10 rounded-full" />
+        <div className="absolute bottom-200 left-1 w-80 h-80 bg-white/10 rounded-full" />
+        <div className="absolute bottom-210 left-3 w-70 h-70 bg-white/10 rounded-full" />
+        <div className="absolute top-200 right-1 w-120 h-120 bg-white/10 rounded-full" />
       </div>
 
       {/* RIGHT PANEL */}

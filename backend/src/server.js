@@ -83,9 +83,6 @@ app.use("/api/cashier", cashierRoutes);
 app.use("/api/rmo", rmoRoutes);
 app.use("/api/documents", documentRoutes);
 
-const devLogin = require("./controllers/dev_login");
-app.get("/api/dev-login", devLogin);
-
 /*
 |--------------------------------------------------------------------------
 | GLOBAL ERROR HANDLER

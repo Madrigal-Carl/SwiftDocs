@@ -6,6 +6,7 @@ const requestedDocumentRepository = require("../repositories/requested_document_
 const documentRepository = require("../repositories/document_repository");
 const additionalDocumentRepository = require("../repositories/additional_document_repository");
 const mailService = require("./mail_service");
+const { computeStats } = require("../utils/stats_computation");
 
 async function RequestDocuments(data) {
   return sequelize.transaction(async (t) => {
@@ -137,6 +138,11 @@ async function GetRequestWithStudent(requestId) {
 }
 
 async function GetAllRequestsWithStudent(page = 1, limit = 6) {
+  const allRequests = await Request.findAll({
+    attributes: ["status", "request_date"],
+  });
+  const stats = computeStats(allRequests);
+
   const { docs, pages, total } = await Request.paginate({
     page,
     paginate: limit,
@@ -193,6 +199,7 @@ async function GetAllRequestsWithStudent(page = 1, limit = 6) {
       page,
       limit,
     },
+    stats,
   };
 }
 

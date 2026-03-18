@@ -2,8 +2,16 @@ const { Request } = require("../database/models");
 const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
+const { computeStats } = require("../utils/stats_computation");
 
 async function GetRequestsForCashier(page = 1, limit = 6) {
+  const allRequests = await Request.findAll({
+    where: { status: allowedStatuses },
+    attributes: ["status", "request_date"],
+  });
+
+  const stats = computeStats(allRequests);
+
   const allowedStatuses = ["paid", "invoiced"];
 
   const { docs, pages, total } = await Request.paginate({
@@ -65,6 +73,7 @@ async function GetRequestsForCashier(page = 1, limit = 6) {
       page,
       limit,
     },
+    stats,
   };
 }
 

@@ -29,6 +29,14 @@ router.get(
   requestController.GetAllRequestsWithStudent,
 );
 
+// Dashboard stats for requests
+router.get(
+  "/analytics",
+  requireAuth,
+  requireRole("rmo", "cashier", "admin"),
+  requestController.GetRequestAnalytics,
+);
+
 // Fetch a request's requested documents
 router.get(
   "/:id",

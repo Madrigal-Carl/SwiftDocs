@@ -138,11 +138,6 @@ async function GetRequestWithStudent(requestId) {
 }
 
 async function GetAllRequestsWithStudent(page = 1, limit = 6) {
-  const allRequests = await Request.findAll({
-    attributes: ["status", "request_date"],
-  });
-  const stats = computeStats(allRequests);
-
   const { docs, pages, total } = await Request.paginate({
     page,
     paginate: limit,
@@ -199,8 +194,15 @@ async function GetAllRequestsWithStudent(page = 1, limit = 6) {
       page,
       limit,
     },
-    stats,
   };
+}
+
+async function GetRequestAnalytics() {
+  const requests = await requestRepository.GetAllRequestStatuses();
+
+  const stats = computeStats(requests);
+
+  return stats;
 }
 
 module.exports = {
@@ -208,4 +210,5 @@ module.exports = {
   SendRequestEmail,
   GetRequestWithStudent,
   GetAllRequestsWithStudent,
+  GetRequestAnalytics,
 };

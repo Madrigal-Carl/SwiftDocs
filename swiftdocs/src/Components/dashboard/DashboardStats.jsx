@@ -6,7 +6,7 @@ import { File } from "lucide-react";
 
 export default function DashboardStats() {
   const { user } = useAuth();
-  const { stats } = useRequestStore();
+  const { stats, analyticsLoading } = useRequestStore();
 
   const statsConfig = ROLE_STATS[user.role] || [];
 
@@ -25,6 +25,7 @@ export default function DashboardStats() {
         trendUp={totalTrend.trendUp}
         icon={File}
         status="default"
+        loading={analyticsLoading}
       />
 
       {statsConfig.map((stat, index) => {
@@ -44,6 +45,7 @@ export default function DashboardStats() {
             trendUp={trendData.trendUp}
             icon={stat.icon}
             status={stat.status}
+            loading={analyticsLoading}
           />
         );
       })}

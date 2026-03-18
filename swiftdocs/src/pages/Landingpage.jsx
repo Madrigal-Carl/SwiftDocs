@@ -26,8 +26,8 @@ import {
   Twitter,
 } from "lucide-react";
 import RequestModal from "../components/RequestModal";
-import { fetchRequestByReference } from "../services/request_service"
-
+import { fetchRequestByReference } from "../services/request_service";
+import Swal from "sweetalert2";
 
 function Landingpage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,11 +42,55 @@ function Landingpage() {
     setError("");
 
     try {
-      await fetchRequestByReference(referenceNumber.trim());
-      setError("");
-      alert("Tracking email has been sent. Please check your inbox.");
+      Swal.fire({
+        title: "Processing Request",
+        html: "Sending your email… please wait",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+        background: "#ffffff",
+        backdrop: "rgba(15, 23, 42, 0.6)",
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
+      await fetchRequestByReference(referenceNumber.trim());
+
+      Swal.close();
+
+      await Swal.fire({
+        title: "Email Sent!",
+        text: "Email has been sent to you. Please check your inbox.",
+        icon: "success",
+        confirmButtonText: "Got it",
+        confirmButtonColor: "#16a34a",
+        buttonsStyling: false,
+        customClass: {
+          popup: "rounded-2xl",
+          confirmButton:
+            "bg-green-600 hover:bg-green-700 text-white text-lg px-12 py-2 rounded-lg font-semibold shadow-lg transition-all",
+          title: "text-xl font-bold",
+          htmlContainer: "text-sm text-slate-600",
+        },
+      });
     } catch (err) {
+      Swal.close();
+
+      await Swal.fire({
+        title: "Failed",
+        text: err.message || "Failed to send tracking email",
+        icon: "error",
+        confirmButtonText: "Try Again",
+        confirmButtonColor: "#dc2626",
+        buttonsStyling: false,
+        customClass: {
+          popup: "rounded-2xl",
+          confirmButton:
+            "bg-red-600 hover:bg-red-700 text-white text-lg px-12 py-2 rounded-lg font-semibold shadow-lg transition-all",
+        },
+      });
+
       setError(err.message || "Failed to send tracking email");
     } finally {
       setLoading(false);

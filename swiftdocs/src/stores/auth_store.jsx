@@ -43,7 +43,7 @@ export function AuthProvider({ children }) {
       value={{
         user,
         loading,
-        setUser,       // ✅ expose setUser to update immediately
+        setUser,
         reloadUser: loadUser,
       }}
     >

@@ -1,16 +1,23 @@
 import { ChevronRight } from "lucide-react";
-import StatusBadge from "./StatusBadge";
-import { useRequestStore } from "../../stores/request/request_store";
+import StatusBadge from "../StatusBadge";
+import { useRequestStore } from "../../stores/request_store";
+import { useAuth } from "../../stores/auth_store";
+import { getTabByRole } from "../../utils/role_tabs";
 
 export default function RecentRequests({ onChangeTab }) {
-  const { requests, loading } = useRequestStore();
+  const { requests, loading, pagination, page, loadRequests } =
+    useRequestStore();
+  const { user } = useAuth();
+
+  const targetTab = getTabByRole(user?.role);
 
   return (
     <div className="bg-white border border-(--border-light) rounded-xl shadow-sm overflow-hidden">
+      {/* Header */}
       <div className="px-6 py-5 border-b border-(--border-light) flex items-center justify-between">
         <h3 className="font-semibold text-(--text-dark)">Recent Requests</h3>
         <button
-          onClick={() => onChangeTab("Document Requests")}
+          onClick={() => onChangeTab(targetTab)}
           className="text-sm font-medium text-(--primary-600) hover:text-(--primary-700) flex items-center gap-1 transition-colors"
         >
           View All
@@ -18,6 +25,7 @@ export default function RecentRequests({ onChangeTab }) {
         </button>
       </div>
 
+      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full table-fixed">
           <thead>
@@ -54,37 +62,31 @@ export default function RecentRequests({ onChangeTab }) {
                 </td>
               </tr>
             ) : (
-              requests.slice(0, 6).map((item) => {
+              requests.map((item) => {
                 const req = item.request;
-
                 if (!req) return null;
 
                 return (
                   <tr
                     key={item.id}
-                    className="hover:bg-(--bg-light)/50 transition-colors even:bg-white odd:bg-gray-50/30"
+                    className="hover:bg-(--primary-50) transition-colors"
                   >
-                    {/* Reference */}
                     <td className="px-6 py-4 text-sm font-medium text-(--primary-600) uppercase">
                       {req.reference_number}
                     </td>
 
-                    {/* Full Name */}
                     <td className="px-6 py-4 text-sm font-medium text-(--text-dark)">
                       {item.full_name}
                     </td>
 
-                    {/* Documents */}
                     <td className="px-6 py-4 text-sm text-gray-600 text-center">
                       {req.total_documents}
                     </td>
 
-                    {/* Date */}
                     <td className="px-6 py-4 text-sm text-gray-600 text-center">
                       {req.request_date}
                     </td>
 
-                    {/* Status */}
                     <td className="px-6 py-4 text-center capitalize">
                       <StatusBadge status={req.status} />
                     </td>

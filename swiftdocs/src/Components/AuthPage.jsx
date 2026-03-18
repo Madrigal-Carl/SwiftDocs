@@ -1,25 +1,25 @@
 import AuthCard from "./AuthCard";
 import { useNavigate } from "react-router-dom";
-import { Activity, FileInput, ShieldCheck,FileText } from "lucide-react";
+import { Activity, FileInput, ShieldCheck, FileText } from "lucide-react";
 
 function AuthPage() {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen flex">
-      
+
       {/* LEFT PANEL */}
       <div className="hidden md:flex w-1/2 bg-linear-to-br from-[#1e3a8a] to-[#2563eb] text-white p-12 flex-col justify-between relative overflow-hidden">
-        
+
         {/* Top Logo */}
         <div className="flex items-center gap-3">
-          <div 
-           onClick={() => navigate("/")}
-          className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-            <FileText className="w-7 h-7"/>
+          <div
+            onClick={() => navigate("/")}
+            className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+            <FileText className="w-7 h-7" />
           </div>
-          <h1 
-           onClick={() => navigate("/")}
-          className="text-xl font-semibold">SwiftDocs</h1>
+          <h1
+            onClick={() => navigate("/")}
+            className="text-xl font-semibold">SwiftDocs</h1>
         </div>
 
         {/* Main Content */}

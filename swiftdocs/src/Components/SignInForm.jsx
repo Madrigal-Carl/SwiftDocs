@@ -40,7 +40,7 @@ function SignInForm() {
       // store token
       if (res.token) localStorage.setItem("token", res.token);
 
-      // ✅ add initials before updating auth context
+      //  add initials before updating auth context
       const getInitials = (fullname) => {
         if (!fullname) return "U";
         return fullname
@@ -75,7 +75,10 @@ function SignInForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      
+      <div className="h-2">
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+      </div>
 
       <div>
         <label className="text-sm font-medium text-gray-700 mb-1 block">

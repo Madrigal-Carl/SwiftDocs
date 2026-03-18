@@ -1,11 +1,11 @@
 import { useState } from "react";
 import Input from "./Input";
-import { IconMail, IconLock, IconEye, IconEyeOff } from "./icons";
+import { Mail, Lock, Eye, EyeClosed } from "lucide-react";
 import { login } from "../services/auth_service";
-import { useAuth } from "../stores/auth/auth_store";
+import { useAuth } from "../stores/auth_store";
 
 function SignInForm() {
-  const { setUser } = useAuth();
+  const { setUser, reloadUser } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
@@ -52,10 +52,17 @@ function SignInForm() {
           .slice(0, 3);
       };
 
-      setUser({
-        ...res.account,
-        initials: getInitials(res.account.fullname),
-      });
+      await reloadUser();
+
+      setUser((prev) => ({
+        ...prev,
+        initials: prev?.fullname
+          ?.split(" ")
+          .filter(Boolean)
+          .map((w) => w[0].toUpperCase())
+          .join("")
+          .slice(0, 3),
+      }));
 
       // RoleRouter will automatically handle redirect
     } catch (err) {
@@ -68,7 +75,6 @@ function SignInForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-
       {error && <p className="text-red-500 text-sm">{error}</p>}
 
       <div>
@@ -76,7 +82,7 @@ function SignInForm() {
           Email Address
         </label>
         <Input
-          icon={<IconMail />}
+          icon={<Mail />}
           type="email"
           name="email"
           value={form.email}
@@ -90,15 +96,18 @@ function SignInForm() {
           Password
         </label>
         <Input
-          icon={<IconLock />}
+          icon={<Lock />}
           type={showPassword ? "text" : "password"}
           name="password"
           value={form.password}
           onChange={handleChange}
           placeholder="Enter your password"
           right={
-            <button type="button" onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? <IconEyeOff /> : <IconEye />}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <EyeClosed /> : <Eye />}
             </button>
           }
         />

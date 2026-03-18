@@ -1,5 +1,5 @@
 import { ChevronRight, FileText } from "lucide-react";
-import { useAuth } from "../../stores/auth/auth_store";
+import { useAuth } from "../../stores/auth_store";
 import { getTabByRole } from "../../utils/role_tabs";
 
 export default function WelcomeBanner({ onChangeTab }) {

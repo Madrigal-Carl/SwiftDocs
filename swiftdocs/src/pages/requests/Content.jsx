@@ -1,4 +1,4 @@
-import RequestTable from "../../components/RequestTable";
+import RequestTable from "../../components/tableo/RequestTable";
 import ContentHeader from "../../layouts/ContentHeader";
 
 export default function Content() {

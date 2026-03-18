@@ -1,14 +1,17 @@
 import { useState } from "react";
-import StatusBadge from "./StatusBadge";
-import ActionDropdown from "./ActionDropdown";
+import StatusBadge from "../StatusBadge";
+import ActionDropdown from "../ActionDropdown";
 import { Search, Filter, ChevronDown } from "lucide-react";
-import { useRequestStore } from "../stores/request/request_store";
+import { useRequestStore } from "../../stores/request_store";
+import Pagination from "./Pagination";
+import TableLoader from "./TableLoader";
 
 export default function RequestTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
 
-  const { requests, loading } = useRequestStore();
+  const { requests, loading, pagination, loadRequests, page } =
+    useRequestStore();
 
   return (
     <div className="flex flex-col gap-4 flex-1 mx-auto w-full">
@@ -52,7 +55,7 @@ export default function RequestTable() {
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-(--text-dark)">All Requests</h3>
             <span className="px-2 py-0.5 bg-(--primary-100) text-(--primary-700) text-xs font-medium rounded-full">
-              {requests.length} results
+              {pagination.total || 0} results
             </span>
           </div>
         </div>
@@ -81,11 +84,7 @@ export default function RequestTable() {
             </tr>
             <tbody className="divide-y divide-(--border-light)">
               {loading ? (
-                <tr>
-                  <td colSpan="7" className="text-center py-6 text-gray-500">
-                    Loading...
-                  </td>
-                </tr>
+                <TableLoader colSpan={6} />
               ) : requests.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="text-center py-6 text-gray-500">
@@ -116,7 +115,7 @@ export default function RequestTable() {
                         {req.total_documents}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 text-center">
-                        {req.request_date}
+                        {new Date(req.request_date).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 capitalize text-center">
                         <StatusBadge status={req.status} />
@@ -131,6 +130,11 @@ export default function RequestTable() {
             </tbody>
           </table>
         </div>
+        <Pagination
+          page={page}
+          pages={pagination.pages || 1}
+          onPageChange={loadRequests}
+        />
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ import {
   Search,
   X,
 } from "lucide-react";
-
+import { createRequest } from "../services/request_service"
 const initialDocs = [
   { id: 1, name: "Diploma (2nd Copy)", price: 300, defaultQuantity: 1 },
   { id: 2, name: "Transcript of Records", price: 500, defaultQuantity: 1 },
@@ -181,19 +181,57 @@ function RequestModal({ isOpen, onClose }) {
     return data;
   };
 
-  const handleSubmit = () => {
-    const payload = {
-      privacyAgreed: agreed,
-      documents: selectedDocuments,
-      studentInfo,
-      academicInfo,
-    };
-    console.log("Request submitted", payload);
-    setFormSubmitted(true);
-    // In production, send to backend via API then close modal on success.
-    setTimeout(() => {
-      onClose();
-    }, 500);
+  const handleSubmit = async () => {
+    try {
+      const cleanPhoneNumber = studentInfo.mobile.replace(/\D/g, "");
+      const payload = {
+        first_name: studentInfo.firstName,
+        middle_name: studentInfo.middleName,
+        last_name: studentInfo.surname,
+        birth_date: studentInfo.birthdate,
+        sex: studentInfo.gender?.toLowerCase(),
+
+        email: studentInfo.email,
+        address: studentInfo.address,
+        phone_number: cleanPhoneNumber,
+
+        lrn: academicInfo.studentNumber,
+        education_level: academicInfo.entryLevel?.toLowerCase(),
+
+        school_last_attended: 1, // ⚠️ static for now (replace if dynamic)
+        admission_date: academicInfo.admissionDate,
+
+        completion_status: academicInfo.completion?.toLowerCase(),
+        attendance_period: academicInfo.attendanceYears,
+
+        program:
+          academicInfo.entryLevel === "College"
+            ? academicInfo.course
+            : academicInfo.track,
+
+        notes: academicInfo.academicNotes,
+
+        documents: selectedDocuments.map((doc) => ({
+          type: doc.name.toLowerCase(),
+          quantity: doc.quantity,
+        })),
+
+        // optional (you can separate later if needed)
+        additionals: [],
+      };
+
+      console.log("Sending payload:", payload);
+
+      await createRequest(payload);
+
+      setFormSubmitted(true);
+
+      setTimeout(() => {
+        onClose();
+      }, 500);
+    } catch (err) {
+      console.error("Submit failed:", err);
+    }
   };
 
   const resetForm = () => {
@@ -228,7 +266,7 @@ function RequestModal({ isOpen, onClose }) {
     setFormSubmitted(false);
   };
 
-  
+
 
   if (!isOpen) return null;
 
@@ -549,10 +587,10 @@ function RequestModal({ isOpen, onClose }) {
 
                                   <button
                                     type="button"
-                                      onClick={() => {
-                                          if (!selected) toggleDocument(doc);
-                                          else updateQuantity(doc.id, selectedItem.quantity + 1);
-                                        }}
+                                    onClick={() => {
+                                      if (!selected) toggleDocument(doc);
+                                      else updateQuantity(doc.id, selectedItem.quantity + 1);
+                                    }}
                                     className="w-8 h-8 rounded-lg border border-gray-300 bg-white hover:bg-(--primary-50)"
                                   >
                                     +

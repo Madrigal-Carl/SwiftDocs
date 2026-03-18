@@ -39,7 +39,7 @@ module.exports = {
         lrn: faker.string.numeric(12),
         education_level: faker.helpers.arrayElement(["college", "senior_high"]),
         program: faker.person.jobArea(),
-        school_last_attended: faker.number.int({ min: 2000, max: 2024 }),
+        school_last_attended: faker.company.name(),
         admission_date: faker.date.past().toISOString().split("T")[0],
         completion_status: faker.helpers.arrayElement([
           "graduate",

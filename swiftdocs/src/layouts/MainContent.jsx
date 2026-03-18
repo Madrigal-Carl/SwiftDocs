@@ -1,13 +1,27 @@
-import Content from "../components/dashboard/Content";
+import Header from "./Header";
+import DashboardContent from "../pages/dashboard/Content";
+import RequestsContent from "../pages/requests/Content";
 
 export default function MainContent({ selectedTab, onChangeTab }) {
   const renderContent = () => {
     switch (selectedTab) {
       case "Dashboard":
-        return <Content onChangeTab={onChangeTab} />;
+        return (
+          <div className="flex-1 flex flex-col ml-64 overflow-hidden">
+            <Header name="Dashboard" />
+
+            <DashboardContent onChangeTab={onChangeTab} />
+          </div>
+        );
 
       case "Document Requests":
-        return <div>📄 Document Requests Content</div>;
+        return (
+          <div className="flex-1 flex flex-col ml-64 overflow-hidden">
+            <Header name="Document Requests" />
+
+            <RequestsContent onChangeTab={onChangeTab} />
+          </div>
+        );
 
       case "Payment Verification":
         return <div>💳 Payment Verification Content</div>;

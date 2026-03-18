@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Sidebar from "../Sidebar";
-import Header from "../Header";
 import MainContent from "../MainContent";
 import {
   LayoutDashboard,
@@ -32,11 +31,7 @@ export default function AdminDashboard() {
         selectedTab={selectedTab}
         onSelectTab={setSelectedTab}
       />
-      <div className="flex-1 flex flex-col ml-64 overflow-hidden">
-        <Header name="Dashboard" />
-
-        <MainContent selectedTab={selectedTab} onChangeTab={setSelectedTab} />
-      </div>
+      <MainContent selectedTab={selectedTab} onChangeTab={setSelectedTab} />
     </div>
   );
 }

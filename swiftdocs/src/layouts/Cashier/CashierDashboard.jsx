@@ -20,12 +20,7 @@ export default function CashierDashboard() {
         selectedTab={selectedTab}
         onSelectTab={setSelectedTab}
       />
-      <div className="flex-1 flex flex-col ml-64 overflow-hidden">
-        <Header name="Dashboard" />
-        <div className="flex-1 p-6 overflow-auto">
-          <MainContent selectedTab={selectedTab} />
-        </div>
-      </div>
+      <MainContent selectedTab={selectedTab} onChangeTab={setSelectedTab} />
     </div>
   );
 }

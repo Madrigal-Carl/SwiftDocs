@@ -1,31 +1,27 @@
-import AuthCard from "./AuthCard";
+import AuthCard from "../components/AuthCard";
 import { useNavigate } from "react-router-dom";
-import { Activity, FileInput, ShieldCheck, FileText } from "lucide-react";
+import { Activity, FileInput, ShieldCheck } from "lucide-react";
+import logo from "../assets/white_outline_logo.png";
 
 function AuthPage() {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen flex">
-
       {/* LEFT PANEL */}
       <div className="hidden md:flex w-1/2 bg-linear-to-br from-[#1e3a8a] to-[#2563eb] text-white p-12 flex-col justify-between relative overflow-hidden">
-
         {/* Top Logo */}
-        <div className="flex items-center gap-3">
-          <div
-            onClick={() => navigate("/")}
-            className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-            <FileText className="w-7 h-7" />
-          </div>
-          <h1
-            onClick={() => navigate("/")}
-            className="text-xl font-semibold">SwiftDocs</h1>
-        </div>
+        <button
+          className="flex items-center gap-3"
+          onClick={() => navigate("/")}
+        >
+          <img src={logo} alt="SwiftDocs Logo" className="w-9" />
+          <h1 className="text-xl font-semibold">SwiftDocs</h1>
+        </button>
 
         {/* Main Content */}
         <div className="max-w-md">
           <h2 className="text-6xl font-bold leading-tight mb-4">
-            Welcome to <br /> <span className="font-semibold">Swifts</span>Docs
+            Welcome to <br /> <span className="font-semibold">Swift</span>Docs
           </h2>
 
           <p className="text-white/80 mb-8">
@@ -46,7 +42,9 @@ function AuthPage() {
               <div className="w-10 h-10 bg-white/20 rounded-xl shadow-md flex items-center justify-center ">
                 <FileInput className="w-7 h-7" />
               </div>
-              <p className="font-semibold text-lg">Real-time request tracking</p>
+              <p className="font-semibold text-lg">
+                Real-time request tracking
+              </p>
             </div>
 
             <div className="flex items-center gap-3">

@@ -1,0 +1,79 @@
+import AuthCard from "./AuthCard";
+import { useNavigate } from "react-router-dom";
+import { Activity, FileInput, ShieldCheck, FileText } from "lucide-react";
+
+function AuthPage() {
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen flex">
+
+      {/* LEFT PANEL */}
+      <div className="hidden md:flex w-1/2 bg-linear-to-br from-[#1e3a8a] to-[#2563eb] text-white p-12 flex-col justify-between relative overflow-hidden">
+
+        {/* Top Logo */}
+        <div className="flex items-center gap-3">
+          <div
+            onClick={() => navigate("/")}
+            className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+            <FileText className="w-7 h-7" />
+          </div>
+          <h1
+            onClick={() => navigate("/")}
+            className="text-xl font-semibold">SwiftDocs</h1>
+        </div>
+
+        {/* Main Content */}
+        <div className="max-w-md">
+          <h2 className="text-6xl font-bold leading-tight mb-4">
+            Welcome to <br /> <span className="font-semibold">Swifts</span>Docs
+          </h2>
+
+          <p className="text-white/80 mb-8">
+            Request and track your school documents quickly and easily without
+            the hassle of long queues.
+          </p>
+
+          {/* Features */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl shadow-md flex items-center justify-center">
+                <Activity className="w-7 h-7" />
+              </div>
+              <p className="font-semibold text-lg">Fast document requests</p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl shadow-md flex items-center justify-center ">
+                <FileInput className="w-7 h-7" />
+              </div>
+              <p className="font-semibold text-lg">Real-time request tracking</p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl shadow-md flex items-center justify-center">
+                <ShieldCheck className="w-7 h-7" />
+              </div>
+              <p className="font-semibold text-lg">Secure and simple process</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <p className="text-white/60 text-sm">
+          © 2026 SwiftDocs. All rights reserved.
+        </p>
+
+        {/* Decorative circles */}
+        <div className="absolute top-10 right-10 w-40 h-40 bg-white/10 rounded-full" />
+        <div className="absolute bottom-10 left-10 w-52 h-52 bg-white/10 rounded-full" />
+      </div>
+
+      {/* RIGHT PANEL */}
+      <div className="w-full md:w-1/2 flex items-center justify-center bg-[#f0f4ff] p-6">
+        <AuthCard />
+      </div>
+    </div>
+  );
+}
+
+export default AuthPage;

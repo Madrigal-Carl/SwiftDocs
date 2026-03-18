@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { GraduationCap, Menu } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/black_outline_logo.png";
 
 function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
   return (
     <nav
       className="fixed w-full z-50 glass-nav transition-all duration-300"
@@ -52,7 +54,10 @@ function Navigation() {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <button className="text-slate-600 hover:text-(--primary-600) font-medium px-4 py-2 transition-colors">
+            <button 
+              onClick={() => navigate("/auth")}
+              className="text-slate-600 hover:text-(--primary-600) font-medium px-4 py-2 transition-colors"
+            >
               Log in
             </button>
             <button className="bg-(--primary-600) hover:bg-(--primary-700) text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-lg hover:shadow-[0_10px_25px_rgba(59,130,246,0.45)] transform hover:-translate-y-0.5">

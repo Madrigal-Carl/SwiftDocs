@@ -9,7 +9,6 @@ export function AuthProvider({ children }) {
 
   const getInitials = (fullname) => {
     if (!fullname) return "U";
-
     return fullname
       .replace(",", " ")
       .split(" ")
@@ -44,6 +43,7 @@ export function AuthProvider({ children }) {
       value={{
         user,
         loading,
+        setUser,       // ✅ expose setUser to update immediately
         reloadUser: loadUser,
       }}
     >

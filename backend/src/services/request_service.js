@@ -140,6 +140,10 @@ async function GetAllRequestsWithStudent() {
   const students = await studentRepository.FindAllStudents(null, {
     include: [
       {
+        association: "education",
+        attributes: ["lrn"],
+      },
+      {
         association: "request",
         include: [
           {
@@ -174,6 +178,7 @@ async function GetAllRequestsWithStudent() {
     return {
       id: s.id,
       full_name: s.getFullName(),
+      lrn: s.education.lrn,
       request: {
         id: reqInstance.id,
         reference_number: reqInstance.reference_number,

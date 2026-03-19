@@ -2,7 +2,7 @@ import { useState } from "react";
 import ContentHeader from "../../layouts/ContentHeader";
 import ReportStats from "../../components/reports/ReportStats";
 import RequestStatisticsTab from "../../components/reports/RequestStatisticsTab";
-// import IncomeReportsTab from "../../components/reports/IncomeReportsTab";
+import IncomeReportsTab from "../../components/reports/IncomeReportsTab";
 // import DocumentTypeTab from "../../components/reports/DocumentTypeTab";
 
 export default function Content() {
@@ -41,7 +41,7 @@ export default function Content() {
 
       <div>
         {activeTab === "requestStats" && <RequestStatisticsTab />}
-        {/* {activeTab === "incomeReports" && <IncomeReportsTab />} */}
+        {activeTab === "incomeReports" && <IncomeReportsTab />}
         {/* {activeTab === "documentTypes" && <DocumentTypeTab />} */}
       </div>
     </div>

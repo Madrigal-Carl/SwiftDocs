@@ -3,7 +3,7 @@ import ContentHeader from "../../layouts/ContentHeader";
 import ReportStats from "../../components/reports/ReportStats";
 import RequestStatisticsTab from "../../components/reports/RequestStatisticsTab";
 import IncomeReportsTab from "../../components/reports/IncomeReportsTab";
-// import DocumentTypeTab from "../../components/reports/DocumentTypeTab";
+import DocumentTypeTab from "../../components/reports/DocumentTypeTab";
 
 export default function Content() {
   const [activeTab, setActiveTab] = useState("requestStats");
@@ -42,7 +42,7 @@ export default function Content() {
       <div>
         {activeTab === "requestStats" && <RequestStatisticsTab />}
         {activeTab === "incomeReports" && <IncomeReportsTab />}
-        {/* {activeTab === "documentTypes" && <DocumentTypeTab />} */}
+        {activeTab === "documentTypes" && <DocumentTypeTab />}
       </div>
     </div>
   );

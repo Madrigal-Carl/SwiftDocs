@@ -24,7 +24,7 @@ export default function DashboardStats() {
         trend={totalTrend.value}
         trendUp={totalTrend.trendUp}
         icon={File}
-        status="default"
+        status="paid"
         loading={analyticsLoading}
       />
 

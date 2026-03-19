@@ -31,7 +31,7 @@ export default function ReportStats() {
         trend={totalTrend.value}
         trendUp={totalTrend.trendUp}
         icon={File}
-        status="default"
+        status="paid"
       />
 
       <StatCard
@@ -49,7 +49,7 @@ export default function ReportStats() {
         trend={avgProcessing.trend.value}
         trendUp={avgProcessing.trend.trendUp}
         icon={Clock}
-        status="invoiced"
+        status="pending"
       />
 
       <StatCard
@@ -58,7 +58,7 @@ export default function ReportStats() {
         trend={completion.trend.value}
         trendUp={completion.trend.trendUp}
         icon={CheckCircle}
-        status="paid"
+        status="invoiced"
       />
     </div>
   );

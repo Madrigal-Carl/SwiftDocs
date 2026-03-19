@@ -1,3 +1,5 @@
+import { STATUS_COLORS } from "../utils/status_colors";
+
 export default function StatCard({
   title,
   value,
@@ -7,12 +9,11 @@ export default function StatCard({
   status,
 }) {
   const colorClasses = {
-    pending: "bg-yellow-50 text-yellow-600",
-    invoiced: "bg-blue-50 text-blue-600",
-    paid: "bg-indigo-50 text-indigo-600",
-    released: "bg-emerald-50 text-emerald-600",
-    rejected: "bg-red-50 text-red-600",
-    default: "bg-(--primary-100) text-(--primary-700)",
+    pending: "bg-yellow-50",
+    invoiced: "bg-cyan-50",
+    paid: "bg-indigo-50",
+    released: "bg-green-50",
+    rejected: "bg-red-50",
   };
 
   return (
@@ -33,6 +34,7 @@ export default function StatCard({
         </div>
         <div
           className={`w-12 h-12 rounded-xl flex items-center justify-center ${colorClasses[status] || colorClasses.default}`}
+          style={{ color: STATUS_COLORS[status] }}
         >
           <Icon className="w-6 h-6" />
         </div>

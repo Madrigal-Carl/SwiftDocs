@@ -5,7 +5,6 @@ function computeStats(requests) {
   const currentYear = now.getFullYear();
 
   const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-  const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
 
   const statuses = ["pending", "paid", "invoiced", "released", "rejected"];
 
@@ -28,7 +27,7 @@ function computeStats(requests) {
   });
 
   // =========================
-  // NEW METRICS VARIABLES
+  // METRICS VARIABLES
   // =========================
 
   let revenueCurrent = 0;
@@ -44,16 +43,11 @@ function computeStats(requests) {
   let totalPrev = 0;
 
   // =========================
-  // 📈 MONTHLY AGGREGATIONS
+  // AGGREGATIONS
   // =========================
 
-  const monthlyCounts = {}; // { '2026-03': 12 }
-  const monthlyRevenue = {}; // { '2026-03': 5000 }
-
-  // =========================
-  // 📄 DOCUMENT TYPE COUNTS
-  // =========================
-
+  const monthlyCounts = {};
+  const monthlyRevenue = {};
   const documentTypeCounts = {};
 
   // =========================
@@ -64,15 +58,15 @@ function computeStats(requests) {
     const status = req.status;
     const date = new Date(req.request_date);
 
+    // ❗ Ignore requests outside current year
+    if (date.getFullYear() !== currentYear) return;
+
     if (countByStatus[status] !== undefined) {
       countByStatus[status]++;
     }
 
-    const isCurrent =
-      date.getMonth() === currentMonth && date.getFullYear() === currentYear;
-
-    const isPrev =
-      date.getMonth() === prevMonth && date.getFullYear() === prevYear;
+    const isCurrent = date.getMonth() === currentMonth;
+    const isPrev = date.getMonth() === prevMonth;
 
     if (isCurrent) {
       currentAll++;
@@ -91,20 +85,19 @@ function computeStats(requests) {
     }
 
     // =========================
-    // 📅 MONTH KEY
+    // MONTH KEY
     // =========================
+
     const monthKey = `${date.getFullYear()}-${String(
       date.getMonth() + 1,
     ).padStart(2, "0")}`;
 
-    // =========================
-    // 📈 COUNT PER MONTH
-    // =========================
     monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
 
     // =========================
-    // 💰 REVENUE (PAID + RELEASED ONLY)
+    // REVENUE
     // =========================
+
     const isRevenueStatus = status === "paid" || status === "released";
 
     const totalPrice =
@@ -112,17 +105,16 @@ function computeStats(requests) {
       (typeof req.getGrandTotal === "function" ? req.getGrandTotal() : 0);
 
     if (isRevenueStatus && totalPrice) {
-      // overall revenue
       if (isCurrent) revenueCurrent += totalPrice;
       if (isPrev) revenuePrev += totalPrice;
 
-      // monthly revenue
       monthlyRevenue[monthKey] = (monthlyRevenue[monthKey] || 0) + totalPrice;
     }
 
     // =========================
-    // ⏱ PROCESSING TIME
+    // PROCESSING TIME
     // =========================
+
     if (req.request_completed) {
       const completedDate = new Date(req.request_completed);
       const diffDays = (completedDate - date) / (1000 * 60 * 60 * 24);
@@ -132,16 +124,18 @@ function computeStats(requests) {
     }
 
     // =========================
-    // ✅ COMPLETION RATE
+    // COMPLETION RATE
     // =========================
+
     if (status === "released") {
       if (isCurrent) completedCurrent++;
       if (isPrev) completedPrev++;
     }
 
     // =========================
-    // 📄 DOCUMENT TYPE COUNT
+    // DOCUMENT TYPE COUNT
     // =========================
+
     if (isRevenueStatus) {
       const summary =
         typeof req.getDocumentSummary === "function"
@@ -172,7 +166,7 @@ function computeStats(requests) {
   }
 
   // =========================
-  // EXISTING TREND
+  // TOTAL TREND
   // =========================
 
   const totalTrend = calcTrend(currentAll, prevAll);
@@ -192,7 +186,7 @@ function computeStats(requests) {
   });
 
   // =========================
-  // 💰 REVENUE RESULT
+  // REVENUE
   // =========================
 
   const revenueTrend = calcTrend(revenueCurrent, revenuePrev);
@@ -206,7 +200,7 @@ function computeStats(requests) {
   };
 
   // =========================
-  // ⏱ AVG PROCESSING TIME
+  // AVG PROCESSING TIME
   // =========================
 
   const avgCurrent = avg(processingDaysCurrent);
@@ -218,12 +212,12 @@ function computeStats(requests) {
     value: `${avgCurrent.toFixed(1)} days`,
     trend: {
       value: `${Math.abs(processingTrend).toFixed(0)}%`,
-      trendUp: processingTrend <= 0, // lower is better
+      trendUp: processingTrend <= 0,
     },
   };
 
   // =========================
-  // ✅ COMPLETION RATE
+  // COMPLETION RATE
   // =========================
 
   const rateCurrent =
@@ -242,11 +236,56 @@ function computeStats(requests) {
   };
 
   // =========================
-  // FINAL RETURN
+  // MONTH FORMAT
+  // =========================
+
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const monthlyRequests = Object.entries(monthlyCounts)
+    .sort(([a], [b]) => new Date(a) - new Date(b))
+    .map(([key, value]) => {
+      const [, month] = key.split("-");
+      return {
+        month: monthNames[parseInt(month) - 1],
+        requests: value,
+      };
+    });
+
+  const monthlyRevenueFormatted = Object.entries(monthlyRevenue)
+    .sort(([a], [b]) => new Date(a) - new Date(b))
+    .map(([key, value]) => {
+      const [, month] = key.split("-");
+      return {
+        month: monthNames[parseInt(month) - 1],
+        revenue: value,
+      };
+    });
+
+  // =========================
+  // TOTAL REQUESTS (CURRENT YEAR ONLY)
+  // =========================
+
+  const totalRequests = Object.values(monthlyCounts).reduce((a, b) => a + b, 0);
+
+  // =========================
+  // RETURN
   // =========================
 
   return {
-    totalRequests: requests.length,
+    totalRequests,
     countByStatus,
     monthlyTrend,
 
@@ -254,8 +293,9 @@ function computeStats(requests) {
     avgProcessingTime,
     completionRate,
 
-    monthlyCounts,
-    monthlyRevenue,
+    monthlyRequests,
+    monthlyRevenue: monthlyRevenueFormatted,
+
     documentTypeCounts,
   };
 }

@@ -15,12 +15,15 @@ async function getAccount(req, res) {
 }
 
 async function updateAccount(req, res) {
+  const io = req.app.get("io");
   const id = req.params.id;
   const data = req.body;
 
   const account = await accountService.updateAccount(id, data);
 
   if (!account) return res.status(404).json({ message: "Account not found" });
+
+  io.emit("accountsUpdated", account);
 
   res.json(account);
 }

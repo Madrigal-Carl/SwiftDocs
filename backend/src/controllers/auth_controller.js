@@ -1,7 +1,12 @@
 const authService = require("../services/auth_service");
 
 async function register(req, res) {
+  const io = req.app.get("io");
+
   const result = await authService.register(req.body, res);
+
+  io.emit("accountsUpdated", result);
+
   res.status(201).json(result);
 }
 

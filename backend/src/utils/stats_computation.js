@@ -143,7 +143,13 @@ function computeStats(requests) {
           : [];
 
       summary.forEach((doc) => {
-        const type = doc.type || "Unknown";
+        let type;
+
+        if (doc.category === "additional") {
+          type = "Others";
+        } else {
+          type = doc.type || "Unknown";
+        }
 
         documentTypeCounts[type] =
           (documentTypeCounts[type] || 0) + (doc.quantity || 0);

@@ -8,16 +8,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import CustomTooltip from "./CustomTooltip";
+import { useRequestStore } from "../../stores/request_store";
 
 export default function IncomeReportsTab() {
-  const revenueData = [
-    { month: "Oct", revenue: 800 },
-    { month: "Nov", revenue: 950 },
-    { month: "Dec", revenue: 700 },
-    { month: "Jan", revenue: 1200 },
-    { month: "Feb", revenue: 1050 },
-    { month: "Mar", revenue: 1250 },
-  ];
+  const { stats } = useRequestStore();
+
+  const revenueData = stats?.monthlyRevenue || [];
 
   return (
     <div className="bg-white border border-(--border-light) rounded-xl shadow-sm p-6">
@@ -39,9 +35,9 @@ export default function IncomeReportsTab() {
               axisLine={false}
               tickLine={false}
               tick={{ fill: "#64748b", fontSize: 12 }}
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value) => `₱${value}`}
             />
-            <Tooltip content={<CustomTooltip valuePrefix="$" />} />
+            <Tooltip content={<CustomTooltip valuePrefix="₱" />} />
             <Line
               type="monotone"
               dataKey="revenue"

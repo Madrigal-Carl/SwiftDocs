@@ -23,7 +23,7 @@ export default function Content() {
 
       <ReportStats />
 
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-2">
         {tabs.map((tab) => (
           <button
             key={tab.id}

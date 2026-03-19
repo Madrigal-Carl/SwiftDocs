@@ -34,7 +34,7 @@ export default function RequestStatisticsTab() {
         <h3 className="text-lg font-semibold text-(--text-dark) mb-6">
           Monthly Requests
         </h3>
-        <div className="h-72">
+        <div className="h-82">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={monthlyData}>
               <CartesianGrid

@@ -20,7 +20,7 @@ export default function IncomeReportsTab() {
       <h3 className="text-lg font-semibold text-(--text-dark) mb-6">
         Monthly Revenue
       </h3>
-      <div className="h-80">
+      <div className="h-82">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={revenueData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />

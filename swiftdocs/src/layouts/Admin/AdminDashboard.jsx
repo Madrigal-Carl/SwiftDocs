@@ -17,8 +17,6 @@ export default function AdminDashboard() {
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard" },
     { icon: FileText, label: "Document Requests" },
-    { icon: CreditCard, label: "Payment Verification" },
-    { icon: FileCheck, label: "Document Processing" },
     { icon: BarChart3, label: "Reports" },
     { icon: Users, label: "User Management" },
     { icon: Settings, label: "Settings" },

@@ -137,7 +137,7 @@ async function GetRequestWithStudent(requestId) {
   return request;
 }
 
-async function GetAllRequestsWithStudent(page = 1, limit = 6) {
+async function GetAllRequestsWithStudent(page = 1, limit = 10) {
   const { docs, pages, total } =
     await requestRepository.FetchAllRequestsWithStudent(page, limit);
 

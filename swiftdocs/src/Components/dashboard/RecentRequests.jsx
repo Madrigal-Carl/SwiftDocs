@@ -62,7 +62,8 @@ export default function RecentRequests({ onChangeTab }) {
                 </td>
               </tr>
             ) : (
-              requests.map((item) => {
+              // Limit to 6 items
+              requests.slice(0, 6).map((item) => {
                 const req = item.request;
                 if (!req) return null;
 

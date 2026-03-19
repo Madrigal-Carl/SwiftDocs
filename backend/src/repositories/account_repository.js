@@ -1,7 +1,7 @@
 const { Account } = require("../database/models");
 const { Op } = require("sequelize");
 
-async function fetchAllAccounts(page = 1, limit = 6) {
+async function fetchAllAccounts(page = 1, limit = 10) {
   return Account.paginate({
     page,
     paginate: limit,

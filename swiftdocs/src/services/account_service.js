@@ -1,0 +1,27 @@
+import api from "../api/api";
+
+// get all accounts (with pagination)
+export async function getAllAccounts(page = 1, limit = 5) {
+  const res = await api.get("/accounts", {
+    params: { page, limit },
+  });
+  return res.data;
+}
+
+// get single account
+export async function getAccountById(id) {
+  const res = await api.get(`/accounts/${id}`);
+  return res.data;
+}
+
+// update account
+export async function updateAccount(id, data) {
+  const res = await api.patch(`/accounts/${id}`, data);
+  return res.data;
+}
+
+// get account analytics
+export async function getUserStats() {
+  const res = await api.get("/accounts/analytics");
+  return res.data;
+}

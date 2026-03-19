@@ -59,9 +59,8 @@ async function updateAccount(id, data) {
 }
 
 async function getUserStats() {
-  const accounts = await accountRepository.fetchAllAccounts();
+  const accounts = await accountRepository.fetchAllAccountsRaw();
 
-  // Exclude admins
   const nonAdminAccounts = accounts.filter((acc) => acc.role !== "admin");
 
   const activeUsers = nonAdminAccounts.filter((acc) => acc.status === "active");

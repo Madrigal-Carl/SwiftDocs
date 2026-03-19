@@ -4,17 +4,20 @@ export const ROLE_STATS = {
   admin: [
     {
       title: "Pending Requests",
-      status: "yellow",
+      status: "pending",
+      color: "yellow",
       icon: Clock,
     },
     {
       title: "Released Documents",
-      status: "green",
+      status: "released",
+      color: "green",
       icon: CheckCircle,
     },
     {
       title: "Rejected Requests",
-      status: "red",
+      status: "rejected",
+      color: "red",
       icon: XCircle,
     },
   ],
@@ -22,35 +25,31 @@ export const ROLE_STATS = {
   cashier: [
     {
       title: "Pending Requests",
-      status: "yellow",
+      status: "pending",
+      color: "yellow",
       icon: Clock,
     },
     {
       title: "Pending Payments",
-      status: "cyan",
+      status: "invoiced",
+      color: "cyan",
       icon: File,
     },
-    {
-      title: "Paid Requests",
-      status: "blue",
-      icon: CreditCard,
-    },
+    { title: "Paid Requests", status: "paid", color: "blue", icon: CreditCard },
   ],
 
   rmo: [
     {
       title: "Pending Requests",
-      status: "yellow",
+      status: "pending",
+      color: "yellow",
       icon: Clock,
     },
-    {
-      title: "Paid Requests",
-      status: "blue",
-      icon: CreditCard,
-    },
+    { title: "Paid Requests", status: "paid", color: "blue", icon: CreditCard },
     {
       title: "Released Documents",
-      status: "green",
+      status: "released",
+      color: "green",
       icon: CheckCircle,
     },
   ],

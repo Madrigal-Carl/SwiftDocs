@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Filter, ChevronDown } from "lucide-react";
+import { useAccountStore } from "../../stores/account_store";
 import Pagination from "../Pagination";
 import TableLoader from "../TableLoader";
 import ActionDropdown from "./ActionDropdown";
@@ -10,53 +11,12 @@ export default function UserTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
 
-  const users = [
-    {
-      id: 3,
-      name: "Maria Santos",
-      email: "maria.santos@university.edu",
-      role: "rmo",
-      status: "active",
-      joinedAt: "2026-03-19",
-      initials: "MS",
-    },
-    {
-      id: 4,
-      name: "Juan Dela Cruz",
-      email: "juan.cruz@university.edu",
-      role: "rmo",
-      status: "active",
-      joinedAt: "2026-03-19",
-      initials: "JC",
-    },
-    {
-      id: 7,
-      name: "Mark Villanueva",
-      email: "mark.villanueva@university.edu",
-      role: "rmo",
-      status: "active",
-      joinedAt: "2026-03-19",
-      initials: "MV",
-    },
-    {
-      id: 8,
-      name: "Patricia Lim",
-      email: "patricia.lim@university.edu",
-      role: "cashier",
-      status: "active",
-      joinedAt: "2026-03-19",
-      initials: "PL",
-    },
-    {
-      id: 9,
-      name: "Roberto Cruz",
-      email: "roberto.cruz@university.edu",
-      role: "cashier",
-      status: "active",
-      joinedAt: "2026-03-19",
-      initials: "RC",
-    },
-  ];
+  const { accounts, loading, pagination, loadAccounts, page } =
+    useAccountStore();
+
+  useEffect(() => {
+    loadAccounts(1);
+  }, []);
 
   return (
     <div className="flex flex-col gap-4 flex-1 mx-auto w-full">
@@ -94,7 +54,7 @@ export default function UserTable() {
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-(--text-dark)">All Users</h3>
             <span className="px-2 py-0.5 bg-(--primary-100) text-(--primary-700) text-xs font-medium rounded-full">
-              15 results
+              {pagination.total || 0} results
             </span>
           </div>
         </div>
@@ -124,49 +84,56 @@ export default function UserTable() {
               </tr>
             </thead>
             <tbody className="divide-y divide-(--border-light)">
-              {users.map((user) => (
-                <tr
-                  key={user.id}
-                  className="hover:bg-(--bg-light)/50 transition-colors"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-linear-to-br from-(--primary-400) to-(--primary-600) text-white flex items-center justify-center font-semibold text-sm">
-                        {user.initials}
-                      </div>
-                      <span className="text-sm font-medium text-(--text-dark)">
-                        {user.name}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {user.email}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap capitalize">
-                    <RoleBadge role={user.role} />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap capitalize">
-                    <StatusBadge status={user.status} />
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {user.joinedAt}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <ActionDropdown
-                      user={user}
-                      onClose={() => setOpenDropdownId(null)}
-                    />
+              {loading ? (
+                <TableLoader colSpan={6} />
+              ) : accounts.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="text-center py-6 text-gray-500">
+                    No users found
                   </td>
                 </tr>
-              ))}
+              ) : (
+                accounts.map((user) => (
+                  <tr key={user.id} className="hover:bg-(--bg-light)/50">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-linear-to-br from-(--primary-400) to-(--primary-600) text-white flex items-center justify-center font-semibold text-sm">
+                          {user.name?.charAt(0)}
+                        </div>
+                        <span className="text-sm font-medium">{user.name}</span>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 text-sm text-gray-600">
+                      {user.email}
+                    </td>
+
+                    <td className="px-6 py-4 capitalize">
+                      <RoleBadge role={user.role} />
+                    </td>
+
+                    <td className="px-6 py-4 capitalize">
+                      <StatusBadge status={user.status} />
+                    </td>
+
+                    <td className="px-6 py-4 text-sm text-gray-600">
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <ActionDropdown user={user} />
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
-        {/* <Pagination
+        <Pagination
           page={page}
           pages={pagination.pages || 1}
-          onPageChange={loadRequests}
-        /> */}
+          onPageChange={loadAccounts}
+        />
       </div>
     </div>
   );

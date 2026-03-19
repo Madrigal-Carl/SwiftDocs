@@ -33,7 +33,7 @@ async function GetAllRequestStatuses() {
   });
 }
 
-async function FetchAllRequestsWithStudent(page = 1, limit = 6) {
+async function FetchAllRequestsWithStudent(page = 1, limit = 10) {
   const requestIncludes = [
     {
       association: "student",

@@ -44,7 +44,7 @@ export default function DashboardStats() {
             trend={trendData.value}
             trendUp={trendData.trendUp}
             icon={stat.icon}
-            status={stat.status}
+            status={stat.color}
             loading={analyticsLoading}
           />
         );

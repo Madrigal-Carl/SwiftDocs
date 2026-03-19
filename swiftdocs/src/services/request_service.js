@@ -1,6 +1,6 @@
 import api from "../api/api";
 
-export async function fetchAllRequests(page = 1, limit = 6) {
+export async function fetchAllRequests(page = 1, limit = 10) {
   const res = await api.get("/request", {
     params: { page, limit },
   });

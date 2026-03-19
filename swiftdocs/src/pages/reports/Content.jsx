@@ -15,7 +15,7 @@ export default function Content() {
   ];
 
   return (
-    <div className="flex-1 flex flex-col overflow-y-auto p-6 gap-6">
+    <div className="flex flex-col gap-6 p-6">
       <ContentHeader
         title="Reports & Analytics"
         description="Track performance metrics and document request insights"
@@ -23,14 +23,14 @@ export default function Content() {
 
       <ReportStats />
 
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-2">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               activeTab === tab.id
-                ? "bg-white border border-(--border-light) shadow-sm text-(--text-dark)"
+                ? "bg-white shadow-sm text-(--text-dark)"
                 : "bg-(--primary-50) text-slate-600 hover:bg-(--primary-100)"
             }`}
           >

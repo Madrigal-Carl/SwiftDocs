@@ -5,16 +5,19 @@ export const ROLE_STATS = {
     {
       title: "Pending Requests",
       status: "pending",
+      color: "yellow",
       icon: Clock,
     },
     {
       title: "Released Documents",
       status: "released",
+      color: "green",
       icon: CheckCircle,
     },
     {
       title: "Rejected Requests",
       status: "rejected",
+      color: "red",
       icon: XCircle,
     },
   ],
@@ -23,34 +26,30 @@ export const ROLE_STATS = {
     {
       title: "Pending Requests",
       status: "pending",
+      color: "yellow",
       icon: Clock,
     },
     {
       title: "Pending Payments",
       status: "invoiced",
+      color: "cyan",
       icon: File,
     },
-    {
-      title: "Paid Requests",
-      status: "paid",
-      icon: CreditCard,
-    },
+    { title: "Paid Requests", status: "paid", color: "blue", icon: CreditCard },
   ],
 
   rmo: [
     {
       title: "Pending Requests",
       status: "pending",
+      color: "yellow",
       icon: Clock,
     },
-    {
-      title: "Paid Requests",
-      status: "paid",
-      icon: CreditCard,
-    },
+    { title: "Paid Requests", status: "paid", color: "blue", icon: CreditCard },
     {
       title: "Released Documents",
       status: "released",
+      color: "green",
       icon: CheckCircle,
     },
   ],

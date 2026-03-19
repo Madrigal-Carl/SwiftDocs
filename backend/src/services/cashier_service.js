@@ -4,7 +4,7 @@ const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
 
-async function GetRequestsForCashier(page = 1, limit = 6) {
+async function GetRequestsForCashier(page = 1, limit = 10) {
   const allRequests = await Request.findAll({
     where: { status: allowedStatuses },
     attributes: ["status", "request_date"],

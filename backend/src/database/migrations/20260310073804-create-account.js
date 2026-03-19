@@ -34,6 +34,11 @@ module.exports = {
         type: Sequelize.ENUM("admin", "cashier", "rmo"),
         allowNull: false,
       },
+      status: {
+        type: Sequelize.ENUM("active", "inactive"),
+        allowNull: false,
+        defaultValue: "active",
+      },
       remember_me: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,

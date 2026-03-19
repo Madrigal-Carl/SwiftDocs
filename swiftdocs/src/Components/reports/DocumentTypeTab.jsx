@@ -33,7 +33,7 @@ export default function DocumentTypeTab() {
         Requests by Document Type
       </h3>
 
-      <div className="h-80 overflow-y-auto pr-2">
+      <div className="h-82 overflow-y-auto pr-2">
         <div style={{ height: chartHeight }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart

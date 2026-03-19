@@ -1,5 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
+const sequelizePaginate = require("sequelize-paginate");
+
 module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
     /**
@@ -61,6 +63,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM("admin", "cashier", "rmo"),
         allowNull: false,
       },
+      status: {
+        type: DataTypes.ENUM("active", "inactive"),
+        allowNull: false,
+        defaultValue: "active",
+      },
       remember_me: {
         type: DataTypes.BOOLEAN,
         default: false,
@@ -74,5 +81,7 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
     },
   );
+  sequelizePaginate.paginate(Account);
+
   return Account;
 };

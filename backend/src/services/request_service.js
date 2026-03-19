@@ -137,31 +137,9 @@ async function GetRequestWithStudent(requestId) {
   return request;
 }
 
-async function GetAllRequestsWithStudent(page = 1, limit = 6) {
-  const { docs, pages, total } = await Request.paginate({
-    page,
-    paginate: limit,
-    order: [["request_date", "DESC"]],
-    include: [
-      {
-        association: "student",
-        attributes: ["id", "first_name", "middle_name", "last_name"],
-        include: [
-          {
-            association: "education",
-            attributes: ["lrn"],
-          },
-        ],
-      },
-      {
-        association: "requested_documents",
-        include: ["document"],
-      },
-      {
-        association: "additional_documents",
-      },
-    ],
-  });
+async function GetAllRequestsWithStudent(page = 1, limit = 10) {
+  const { docs, pages, total } =
+    await requestRepository.FetchAllRequestsWithStudent(page, limit);
 
   const result = docs.map((req) => {
     const student = req.student;

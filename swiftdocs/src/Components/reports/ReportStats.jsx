@@ -31,7 +31,7 @@ export default function ReportStats() {
         trend={totalTrend.value}
         trendUp={totalTrend.trendUp}
         icon={File}
-        status="paid"
+        status="blue"
       />
 
       <StatCard
@@ -40,7 +40,7 @@ export default function ReportStats() {
         trend={revenue.trend.value}
         trendUp={revenue.trend.trendUp}
         icon={PhilippinePeso}
-        status="released"
+        status="green"
       />
 
       <StatCard
@@ -49,7 +49,7 @@ export default function ReportStats() {
         trend={avgProcessing.trend.value}
         trendUp={avgProcessing.trend.trendUp}
         icon={Clock}
-        status="pending"
+        status="yellow"
       />
 
       <StatCard
@@ -58,7 +58,7 @@ export default function ReportStats() {
         trend={completion.trend.value}
         trendUp={completion.trend.trendUp}
         icon={CheckCircle}
-        status="invoiced"
+        status="green"
       />
     </div>
   );

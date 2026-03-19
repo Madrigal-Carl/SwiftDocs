@@ -3,8 +3,8 @@ import StatusBadge from "../StatusBadge";
 import ActionDropdown from "./ActionDropdown";
 import { Search, Filter, ChevronDown } from "lucide-react";
 import { useRequestStore } from "../../stores/request_store";
-import Pagination from "./Pagination";
-import TableLoader from "./TableLoader";
+import Pagination from "../Pagination";
+import TableLoader from "../TableLoader";
 
 export default function RequestTable() {
   const [searchQuery, setSearchQuery] = useState("");

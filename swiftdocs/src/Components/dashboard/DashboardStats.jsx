@@ -24,7 +24,7 @@ export default function DashboardStats() {
         trend={totalTrend.value}
         trendUp={totalTrend.trendUp}
         icon={File}
-        status="paid"
+        status="blue"
         loading={analyticsLoading}
       />
 
@@ -44,7 +44,7 @@ export default function DashboardStats() {
             trend={trendData.value}
             trendUp={trendData.trendUp}
             icon={stat.icon}
-            status={stat.status}
+            status={stat.color}
             loading={analyticsLoading}
           />
         );

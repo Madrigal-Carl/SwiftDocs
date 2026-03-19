@@ -1,22 +1,41 @@
 const { Account } = require("../database/models");
+const { Op } = require("sequelize");
 
-async function findByEmail(email) {
-  return await Account.findOne({
-    where: { email },
+async function fetchAllAccounts(page = 1, limit = 10) {
+  return Account.paginate({
+    page,
+    paginate: limit,
+    order: [["createdAt", "DESC"]],
+    where: {
+      role: { [Op.not]: "admin" },
+    },
+  });
+}
+
+async function fetchAllAccountsRaw() {
+  return Account.findAll({
+    where: {
+      role: { [Op.not]: "admin" },
+    },
   });
 }
 
 async function findById(id) {
-  return await Account.findByPk(id);
+  return Account.findByPk(id);
+}
+
+async function findByEmail(email) {
+  return Account.findOne({
+    where: { email },
+  });
 }
 
 async function create(data) {
-  return await Account.create(data);
+  return Account.create(data);
 }
 
 async function updateRememberMe(id, remember) {
   const account = await Account.findByPk(id);
-
   if (!account) return null;
 
   account.remember_me = remember;
@@ -26,8 +45,10 @@ async function updateRememberMe(id, remember) {
 }
 
 module.exports = {
-  findByEmail,
+  fetchAllAccounts,
+  fetchAllAccountsRaw,
   findById,
+  findByEmail,
   create,
   updateRememberMe,
 };

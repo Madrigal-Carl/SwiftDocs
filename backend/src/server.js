@@ -76,12 +76,14 @@ const requestRoutes = require("./routes/request_routes");
 const cashierRoutes = require("./routes/cashier_routes");
 const rmoRoutes = require("./routes/rmo_routes");
 const documentRoutes = require("./routes/document_routes");
+const accountRoutes = require("./routes/account_routes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/request", requestRoutes);
 app.use("/api/cashier", cashierRoutes);
 app.use("/api/rmo", rmoRoutes);
 app.use("/api/documents", documentRoutes);
+app.use("/api/accounts", accountRoutes);
 
 /*
 |--------------------------------------------------------------------------

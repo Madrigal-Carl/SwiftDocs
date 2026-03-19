@@ -1,4 +1,5 @@
 import ContentHeader from "../../layouts/ContentHeader";
+import ReportStats from "../../components/reports/ReportStats";
 
 export default function Content() {
   return (
@@ -7,6 +8,8 @@ export default function Content() {
         title="Reports & Analytics"
         description="Track performance metrics and document request insights"
       />
+
+      <ReportStats />
     </div>
   );
 }

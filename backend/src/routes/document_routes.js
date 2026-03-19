@@ -28,4 +28,7 @@ router.delete(
   documentController.DeleteDocument
 );
 
+// get all documents
+router.get("/", documentController.GetAllDocuments);
+
 module.exports = router;

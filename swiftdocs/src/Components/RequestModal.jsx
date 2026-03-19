@@ -13,28 +13,13 @@ import {
   X,
 } from "lucide-react";
 import { createRequest } from "../services/request_service"
-const initialDocs = [
-  { id: 1, name: "Diploma (2nd Copy)", price: 300, defaultQuantity: 1 },
-  { id: 2, name: "Transcript of Records", price: 500, defaultQuantity: 1 },
-  { id: 3, name: "True Copy of Grades", price: 200, defaultQuantity: 1 },
-  { id: 4, name: "Form 137 (SHS Only)", price: 200, defaultQuantity: 1 },
-  { id: 5, name: "Form 138 (SHS Only)", price: 200, defaultQuantity: 1 },
-  { id: 6, name: "Honorable Dismissal", price: 1000, defaultQuantity: 1 },
-  { id: 7, name: "Certificate of Good Moral", price: 200, defaultQuantity: 1 },
-  { id: 8, name: "CTC (Certified True Copy)", price: 100, defaultQuantity: 1 },
-  { id: 9, name: "Certificate of Honor / Awards", price: 250, defaultQuantity: 1 },
-  { id: 10, name: "Course Description", price: 200, defaultQuantity: 1 },
-  { id: 11, name: "Certificate of Grades", price: 200, defaultQuantity: 1 },
-  { id: 12, name: "WES Application", price: 4000, defaultQuantity: 1 },
-  { id: 13, name: "CAV Application", price: 500, defaultQuantity: 1 },
-];
-
+import { getAllDocuments } from "../services/document_service"
 
 function RequestModal({ isOpen, onClose }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [agreed, setAgreed] = useState(false);
   const [searchInput, setSearchInput] = useState("");
-  const [availableDocuments, setAvailableDocuments] = useState(initialDocs);
+  const [availableDocuments, setAvailableDocuments] = useState([]);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
 
   const [studentInfo, setStudentInfo] = useState({
@@ -67,7 +52,25 @@ function RequestModal({ isOpen, onClose }) {
   useEffect(() => {
     if (!isOpen) {
       resetForm();
+      return;
     }
+
+    // Fetch documents from backend
+    const fetchDocuments = async () => {
+      try {
+        const docs = await getAllDocuments(); // your API call
+        const formattedDocs = docs.map((doc) => ({
+          ...doc,
+          name: doc.type,
+          defaultQuantity: 1,
+        }));
+        setAvailableDocuments(formattedDocs);
+      } catch (err) {
+        console.error("Failed to fetch documents:", err);
+      }
+    };
+
+    fetchDocuments();
   }, [isOpen]);
 
   const progressWidth = useMemo(
@@ -238,7 +241,7 @@ function RequestModal({ isOpen, onClose }) {
     setCurrentStep(1);
     setAgreed(false);
     setSearchInput("");
-    setAvailableDocuments(initialDocs);
+    setAvailableDocuments([]);
     setSelectedDocuments([]);
     setStudentInfo({
       firstName: "",

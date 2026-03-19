@@ -25,9 +25,16 @@ async function updateRememberMe(id, remember) {
   return account;
 }
 
+async function fetchAllAccounts() {
+  return await Account.findAll({
+    order: [["createdAt", "DESC"]],
+  });
+}
+
 module.exports = {
   findByEmail,
   findById,
   create,
   updateRememberMe,
+  fetchAllAccounts,
 };

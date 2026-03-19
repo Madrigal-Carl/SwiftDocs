@@ -19,13 +19,7 @@ const registerSchema = Joi.object({
     "string.email": "Email must be valid",
     "any.required": "Email is required",
   }),
-  password: Joi.string().pattern(passwordRegex).required().messages({
-    "string.empty": "Password is required",
-    "string.pattern.base":
-      "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
-    "any.required": "Password is required",
-  }),
-  role: Joi.string().valid("admin", "cashier", "rmo").required().messages({
+  role: Joi.string().valid("cashier", "rmo").required().messages({
     "any.only": "Role must be admin, cashier, or rmo",
     "any.required": "Role is required",
   }),

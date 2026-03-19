@@ -38,8 +38,18 @@ async function DeleteDocument(req, res) {
   }
 }
 
+async function GetAllDocuments(req, res) {
+  try {
+    const includeDeleted = req.query.includeDeleted === "true";
+    const documents = await documentService.GetAllDocuments({ includeDeleted });
+    res.json(documents);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch documents" });
+  }
+}
 module.exports = {
   CreateDocument,
   UpdateDocument,
   DeleteDocument,
+  GetAllDocuments,
 };

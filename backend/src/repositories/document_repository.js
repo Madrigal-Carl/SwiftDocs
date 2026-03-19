@@ -32,6 +32,14 @@ function FindDeletedByType(type = null, transaction) {
     transaction,
   });
 }
+
+function FindAllDocuments(transaction, includeDeleted = false) {
+  return Document.findAll({
+    transaction,
+    paranoid: !includeDeleted, // if true, include soft-deleted
+    order: [["id", "ASC"]],
+  });
+}
 module.exports = {
   CreateDocument,
   FindDocumentById,
@@ -39,4 +47,5 @@ module.exports = {
   UpdateDocument,
   DeleteDocument,
   FindDeletedByType,
+  FindAllDocuments,
 };

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { createRequest } from "../services/request_service"
 import { getAllDocuments } from "../services/document_service"
+import { Toast } from "../utils/swal"; // adjust path if needed
 
 function RequestModal({ isOpen, onClose }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -187,6 +188,7 @@ function RequestModal({ isOpen, onClose }) {
   const handleSubmit = async () => {
     try {
       const cleanPhoneNumber = studentInfo.mobile.replace(/\D/g, "");
+
       const payload = {
         first_name: studentInfo.firstName,
         middle_name: studentInfo.middleName,
@@ -201,7 +203,7 @@ function RequestModal({ isOpen, onClose }) {
         lrn: academicInfo.studentNumber,
         education_level: academicInfo.entryLevel?.toLowerCase(),
 
-        school_last_attended: 1, // ⚠️ static for now (replace if dynamic)
+        school_last_attended: 1,
         admission_date: academicInfo.admissionDate,
 
         completion_status: academicInfo.completion?.toLowerCase(),
@@ -219,21 +221,29 @@ function RequestModal({ isOpen, onClose }) {
           quantity: doc.quantity,
         })),
 
-        // optional (you can separate later if needed)
         additionals: [],
       };
-
-      console.log("Sending payload:", payload);
 
       await createRequest(payload);
 
       setFormSubmitted(true);
 
+      Toast.fire({
+        icon: "success",
+        title: "Request submitted successfully!",
+      });
+
       setTimeout(() => {
         onClose();
       }, 500);
+
     } catch (err) {
       console.error("Submit failed:", err);
+
+      Toast.fire({
+        icon: "error",
+        title: "Failed to submit request",
+      });
     }
   };
 

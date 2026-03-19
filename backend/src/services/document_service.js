@@ -85,8 +85,16 @@ async function DeleteDocument(id) {
   });
 }
 
+async function GetAllDocuments({ includeDeleted = false } = {}) {
+  return sequelize.transaction(async (t) => {
+    // If includeDeleted is true, fetch all including soft-deleted
+    const documents = await documentRepository.FindAllDocuments(t, includeDeleted);
+    return documents;
+  });
+}
 module.exports = {
   CreateDocument,
   UpdateDocument,
   DeleteDocument,
+  GetAllDocuments,
 };

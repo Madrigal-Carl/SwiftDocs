@@ -33,9 +33,39 @@ async function GetAllRequestStatuses() {
   });
 }
 
+async function FetchAllRequestsWithStudent(page = 1, limit = 6) {
+  const requestIncludes = [
+    {
+      association: "student",
+      attributes: ["id", "first_name", "middle_name", "last_name"],
+      include: [
+        {
+          association: "education",
+          attributes: ["lrn"],
+        },
+      ],
+    },
+    {
+      association: "requested_documents",
+      include: ["document"],
+    },
+    {
+      association: "additional_documents",
+    },
+  ];
+
+  return Request.paginate({
+    page,
+    paginate: limit,
+    order: [["request_date", "DESC"]],
+    include: requestIncludes,
+  });
+}
+
 module.exports = {
   CreateRequest,
   FindRequestById,
   FindByReferenceNumber,
   GetAllRequestStatuses,
+  FetchAllRequestsWithStudent,
 };

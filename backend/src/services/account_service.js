@@ -1,15 +1,30 @@
 const accountRepository = require("../repositories/account_repository");
 
-async function getAllAccounts() {
-  const accounts = await accountRepository.fetchAllAccounts();
-  return accounts.map((account) => ({
+async function getAllAccounts(page = 1, limit = 5) {
+  const { docs, pages, total } = await accountRepository.fetchAllAccounts(
+    page,
+    limit,
+  );
+
+  const result = docs.map((account) => ({
     id: account.id,
     full_name: account.getFullName(),
     email: account.email,
     role: account.role,
+    status: account.status,
     created_at: account.createdAt,
     updated_at: account.updatedAt,
   }));
+
+  return {
+    data: result,
+    pagination: {
+      total,
+      pages,
+      page,
+      limit,
+    },
+  };
 }
 
 async function getAccountById(id) {

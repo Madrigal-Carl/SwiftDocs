@@ -1,7 +1,11 @@
 const accountService = require("../services/account_service");
 
 async function getAllAccounts(req, res) {
-  const accounts = await accountService.getAllAccounts();
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+
+  const accounts = await accountService.getAllAccounts(page, limit);
+
   res.json(accounts);
 }
 

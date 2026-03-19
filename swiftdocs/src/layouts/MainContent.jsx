@@ -1,6 +1,7 @@
 import DashboardContent from "../pages/dashboard/Content";
 import RequestsContent from "../pages/requests/Content";
 import ReportsContent from "../pages/reports/Content";
+import UsersContent from "../pages/users/Content";
 import PageLayout from "./PageLayout";
 
 export default function MainContent({ selectedTab, onChangeTab }) {
@@ -34,7 +35,11 @@ export default function MainContent({ selectedTab, onChangeTab }) {
         );
 
       case "User Management":
-        return <div>👥 User Management Content</div>;
+        return (
+          <PageLayout title="User Management">
+            <UsersContent />
+          </PageLayout>
+        );
 
       case "Settings":
         return <div>⚙️ Settings Content</div>;

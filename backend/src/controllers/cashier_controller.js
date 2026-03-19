@@ -17,7 +17,7 @@ async function UpdateRequestStatus(req, res) {
     req.user,
   );
 
-  io.emit("studentsUpdated");
+  io.emit("requestsUpdated");
 
   res.json(request);
 }

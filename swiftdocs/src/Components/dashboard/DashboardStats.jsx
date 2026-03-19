@@ -1,14 +1,12 @@
 import StatCard from "../StatCard";
 import { ROLE_STATS } from "../../utils/stats_config";
-import { countByStatus } from "../../utils/request_stats";
 import { useAuth } from "../../stores/auth_store";
 import { useRequestStore } from "../../stores/request_store";
-import { getMonthlyTrend } from "../../utils/request_trend";
 import { File } from "lucide-react";
 
 export default function DashboardStats() {
   const { user } = useAuth();
-  const { requests, stats } = useRequestStore();
+  const { stats, analyticsLoading } = useRequestStore();
 
   const statsConfig = ROLE_STATS[user.role] || [];
 
@@ -26,7 +24,8 @@ export default function DashboardStats() {
         trend={totalTrend.value}
         trendUp={totalTrend.trendUp}
         icon={File}
-        status="default"
+        status="paid"
+        loading={analyticsLoading}
       />
 
       {statsConfig.map((stat, index) => {
@@ -46,6 +45,7 @@ export default function DashboardStats() {
             trendUp={trendData.trendUp}
             icon={stat.icon}
             status={stat.status}
+            loading={analyticsLoading}
           />
         );
       })}

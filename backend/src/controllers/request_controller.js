@@ -39,9 +39,16 @@ async function GetAllRequestsWithStudent(req, res) {
   res.json(requests);
 }
 
+async function GetRequestAnalytics(req, res) {
+  const stats = await requestService.GetRequestAnalytics();
+
+  res.json(stats);
+}
+
 module.exports = {
   CreateRequest,
   SendRequestEmail,
   GetRequest,
   GetAllRequestsWithStudent,
+  GetRequestAnalytics,
 };

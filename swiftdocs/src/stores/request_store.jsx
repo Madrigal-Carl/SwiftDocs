@@ -1,7 +1,10 @@
 import { create } from "zustand";
 import socket from "../sockets/socket";
 
-import { fetchAllRequests } from "../services/request_service";
+import {
+  fetchAllRequests,
+  fetchRequestAnalytics,
+} from "../services/request_service";
 import { fetchCashierRequests } from "../services/cashier_service";
 
 const requestFetchers = {
@@ -28,6 +31,7 @@ export const useRequestStore = create((set, get) => ({
 
     if (role) {
       get().loadRequests();
+      get().loadAnalytics();
     }
   },
 
@@ -49,7 +53,6 @@ export const useRequestStore = create((set, get) => ({
       set({
         requests: data.data,
         pagination: data.pagination,
-        stats: data.stats,
         page,
       });
     } catch (err) {
@@ -59,9 +62,27 @@ export const useRequestStore = create((set, get) => ({
     }
   },
 
+  loadAnalytics: async () => {
+    try {
+      set({ analyticsLoading: true });
+
+      const stats = await fetchRequestAnalytics();
+
+      set({ stats });
+    } catch (err) {
+      console.error("Failed to load analytics:", err);
+    } finally {
+      set({ analyticsLoading: false });
+    }
+  },
+
   reloadRequests: () => {
     const { page } = get();
     get().loadRequests(page);
+  },
+
+  reloadAnalytics: () => {
+    get().loadAnalytics();
   },
 
   initSocket: () => {
@@ -73,6 +94,7 @@ export const useRequestStore = create((set, get) => ({
 
     socket.on("requestsUpdated", () => {
       get().reloadRequests();
+      get().reloadAnalytics();
     });
   },
 }));

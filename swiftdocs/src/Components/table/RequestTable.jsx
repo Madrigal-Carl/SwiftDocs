@@ -1,6 +1,6 @@
 import { useState } from "react";
 import StatusBadge from "../StatusBadge";
-import ActionDropdown from "../ActionDropdown";
+import ActionDropdown from "./ActionDropdown";
 import { Search, Filter, ChevronDown } from "lucide-react";
 import { useRequestStore } from "../../stores/request_store";
 import Pagination from "./Pagination";

@@ -26,3 +26,8 @@ export async function fetchRequestByReference(referenceNumber) {
     throw err.response?.data || { message: "Failed to fetch request" };
   }
 }
+
+export async function fetchRequestAnalytics() {
+  const res = await api.get("/request/analytics");
+  return res.data;
+}

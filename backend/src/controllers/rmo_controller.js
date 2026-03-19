@@ -10,7 +10,7 @@ async function UpdateRequestStatus(req, res) {
     req.body.note,
   );
 
-  io.emit("studentsUpdated");
+  io.emit("requestsUpdated");
 
   res.json(request);
 }
@@ -23,7 +23,7 @@ async function SetAdditionalDocumentPrice(req, res) {
     Number(id),
     additionalDocumentId,
     unitPrice,
-    account
+    account,
   );
 
   res.json(result);

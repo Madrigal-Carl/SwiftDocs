@@ -30,7 +30,7 @@ export default function Content() {
             onClick={() => setActiveTab(tab.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               activeTab === tab.id
-                ? "bg-white border border-(--border-light) shadow-sm text-(--text-dark)"
+                ? "bg-white shadow-sm text-(--text-dark)"
                 : "bg-(--primary-50) text-slate-600 hover:bg-(--primary-100)"
             }`}
           >

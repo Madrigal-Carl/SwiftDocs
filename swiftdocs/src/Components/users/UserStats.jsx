@@ -3,7 +3,7 @@ import { UsersRound, UserCheck, UserCog, PhilippinePeso } from "lucide-react";
 
 export default function UserStats() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <CountCard
         title="Total Users"
         value="12"

@@ -3,7 +3,7 @@ import ContentHeader from "../../layouts/ContentHeader";
 
 export default function Content() {
   return (
-    <div className="flex-1 flex flex-col p-6 gap-6 min-h-0">
+    <div className="flex-1 flex flex-col overflow-y-auto p-6 gap-6">
       <ContentHeader
         title="Document Requests"
         description="Manage and review all student document requests"

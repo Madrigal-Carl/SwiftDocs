@@ -401,50 +401,35 @@ export default function RequestView() {
           />
 
           {/*  Notes Card */}
-          {/* <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
+          <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
                 <BookOpen className="w-4 h-4 text-(--primary-600)" />
               </div>
-              <h3 className="font-semibold text-(--text-dark)">
-                 Notes
-              </h3>
+              <h3 className="font-semibold text-(--text-dark)">Remarks</h3>
             </div>
 
             <div className="space-y-3 mb-4">
-              {request.notes.map((note) => (
-                <div
-                  key={note.id}
-                  className="bg-(--bg-light) p-3 rounded-lg"
-                >
+              {(request.logs || []).map((log) => (
+                <div key={log.id} className="bg-(--bg-light) p-3 rounded-lg">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-semibold text-(--primary-600)">
-                      {note.author}
+                      {log.role.toUpperCase()}
                     </span>
-                    <span className="text-xs text-gray-400">{note.date}</span>
+                    <span className="text-xs text-gray-400">
+                      {log.createdAt.split("T")[0]}
+                    </span>
                   </div>
-                  <p className="text-sm text-gray-700">{note.text}</p>
+                  <p className="text-sm text-gray-700">{log.notes}</p>
                 </div>
               ))}
-            </div>
 
-            <div className="space-y-3">
-              <textarea
-                value={newNote}
-                onChange={(e) => setNewNote(e.target.value)}
-                placeholder="Add a new note..."
-                className="w-full p-3 text-sm border border-(--border-light) rounded-lg bg-(--bg-light) focus:outline-none focus:ring-2 focus:ring-[var(--primary-300)] resize-none"
-                rows="3"
-              />
-              <button
-                onClick={handleAddNote}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg bg-(--primary-600) text-white hover:bg-[var(--primary-700)] transition-colors"
-              >
-                <Send className="w-4 h-4" />
-                Add Note
-              </button>
+              {/* If no logs */}
+              {(!request.logs || request.logs.length === 0) && (
+                <p className="text-sm text-gray-500">No notes available.</p>
+              )}
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

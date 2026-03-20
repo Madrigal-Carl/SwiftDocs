@@ -3,7 +3,9 @@ import { MoreHorizontal, Eye, Check, X } from "lucide-react";
 
 export default function ActionDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const [openUp, setOpenUp] = useState(false);
   const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -11,21 +13,41 @@ export default function ActionDropdown() {
         setIsOpen(false);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const toggleDropdown = () => {
+    if (!isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+
+      if (spaceBelow < 200) {
+        setOpenUp(true);
+      } else {
+        setOpenUp(false);
+      }
+    }
+
+    setIsOpen(!isOpen);
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        ref={buttonRef}
+        onClick={toggleDropdown}
         className="p-2 rounded-md hover:bg-(--primary-50) transition-colors"
       >
         <MoreHorizontal className="w-5 h-5 text-gray-600" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-(--border-light) py-1 z-50">
+        <div
+          className={`absolute right-0 w-48 bg-white rounded-lg shadow-lg border border-(--border-light) py-1 z-50
+          ${openUp ? "bottom-full mb-2" : "top-full mt-2"}`}
+        >
           <button className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--primary-50) flex items-center gap-2">
             <Eye className="w-4 h-4" />
             View Request

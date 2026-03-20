@@ -24,6 +24,10 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
+      purpose: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       request_date: {
         type: Sequelize.DATEONLY,
         allowNull: false,

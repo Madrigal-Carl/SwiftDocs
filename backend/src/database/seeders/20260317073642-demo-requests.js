@@ -67,6 +67,7 @@ module.exports = {
 
       const request = await Request.create({
         student_id: student.id,
+        purpose: faker.lorem.sentence(),
         status,
         request_date: faker.date.recent(),
         notes: faker.lorem.sentence(),

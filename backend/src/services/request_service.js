@@ -132,6 +132,9 @@ async function GetRequestWithStudent(requestId) {
       {
         association: "additional_documents",
       },
+      {
+        association: "logs",
+      },
     ],
   });
 
@@ -200,6 +203,9 @@ async function GetRequestByReferenceNumber(referenceNumber) {
         },
         {
           association: "additional_documents",
+        },
+        {
+          association: "logs",
         },
       ],
     },

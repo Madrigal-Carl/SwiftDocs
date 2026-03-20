@@ -88,6 +88,7 @@ async function RequestDocuments(data) {
 }
 
 async function SendRequestEmail(referenceNumber) {
+  referenceNumber = referenceNumber.trim().toLowerCase();
   const request = await requestRepository.FindByReferenceNumber(
     referenceNumber,
     {

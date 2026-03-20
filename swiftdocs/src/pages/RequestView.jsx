@@ -16,6 +16,7 @@ import StatusBadge from "../components/StatusBadge";
 import { fetchRequestByReference } from "../services/request_service.js";
 import Loader from "../components/Loader";
 import ProgressTracker from "../components/view/ProgressTracker.jsx";
+import PaymentInformationCard from "../components/view/PaymentInformationCard.jsx";
 
 export default function RequestView() {
   const { reference_number } = useParams();
@@ -354,16 +355,15 @@ export default function RequestView() {
                   )}
 
                   {/* Notes */}
-                  {request.notes && (
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
-                        Purpose / Notes
-                      </p>
-                      <p className="text-sm text-gray-600 bg-(--bg-light) p-3 rounded-lg">
-                        {request.notes}
-                      </p>
-                    </div>
-                  )}
+                  <div>
+                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
+                      Purpose / Notes
+                    </p>
+                    <p className="text-sm text-gray-600 bg-(--bg-light) p-3 rounded-lg">
+                      {request.purpose}
+                      {request.notes ? ` - ${request.notes}` : ""}
+                    </p>
+                  </div>
 
                   {/* Total */}
                   <div className="flex items-center justify-between pt-3 border-t border-(--border-light)">
@@ -378,15 +378,66 @@ export default function RequestView() {
               );
             })()}
           </div>
+        </div>
 
-          {/* Admin / RMO Notes Card */}
+        {/* Right Column - Smaller */}
+        <div className="space-y-6">
+          {/* Payment Information Card */}
+          <PaymentInformationCard
+            amount={[
+              ...(request.requested_documents || []),
+              ...(request.additional_documents || []),
+            ].reduce((sum, doc) => {
+              const price = doc.document?.price || doc.unit_price || 0;
+              const quantity = doc.quantity || 0;
+              return sum + price * quantity;
+            }, 0)}
+            status={request.status}
+            proof={request.receipts?.map((r) => r.path) || []}
+          />
+
+          {/* Timeline Card */}
+          {/* <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
+                <Clock className="w-4 h-4 text-(--primary-600)" />
+              </div>
+              <h3 className="font-semibold text-(--text-dark)">
+                Timeline
+              </h3>
+            </div>
+
+            <div className="space-y-0">
+              {timelineEvents.map((event, index) => (
+                <div key={index} className="flex gap-3 pb-4 last:pb-0">
+                  <div className="flex flex-col items-center">
+                    <div className="w-8 h-8 rounded-full bg-(--bg-light) flex items-center justify-center">
+                      {getTimelineIcon(event.status)}
+                    </div>
+                    {index !== timelineEvents.length - 1 && (
+                      <div className="w-0.5 flex-1 bg-(--border-light) my-1"></div>
+                    )}
+                  </div>
+                  <div className="pb-4 last:pb-0">
+                    <p className="text-sm font-semibold text-(--text-dark)">
+                      {event.status}
+                    </p>
+                    <p className="text-xs text-gray-500 mb-1">{event.date}</p>
+                    <p className="text-xs text-gray-600">{event.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div> */}
+
+          {/*  Notes Card */}
           {/* <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
                 <BookOpen className="w-4 h-4 text-(--primary-600)" />
               </div>
               <h3 className="font-semibold text-(--text-dark)">
-                Admin / RMO Notes
+                 Notes
               </h3>
             </div>
 
@@ -422,88 +473,6 @@ export default function RequestView() {
                 <Send className="w-4 h-4" />
                 Add Note
               </button>
-            </div>
-          </div> */}
-        </div>
-
-        {/* Right Column - Smaller */}
-        <div className="space-y-6">
-          {/* Payment Information Card */}
-          {/* <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
-                <PhilippinePeso className="w-4 h-4 text-(--primary-600)" />
-              </div>
-              <h3 className="font-semibold text-(--text-dark)">
-                Payment Information
-              </h3>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Amount</span>
-                <span className="text-lg font-bold text-(--text-dark)">
-                  ₱{request.payment.amount.toFixed(2)}
-                </span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Status</span>
-                <span
-                  className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${getPaymentStatusStyle(request.payment.status)}`}
-                >
-                  {request.payment.status}
-                </span>
-              </div>
-
-              {request.payment.status === "Invoiced" && (
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-xs text-blue-700">
-                    Payment invoice has been sent to the student's email.
-                  </p>
-                </div>
-              )}
-
-              {request.payment.status === "Paid" && (
-                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-xs text-green-700">
-                    Payment confirmed. Document processing in progress.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div> */}
-
-          {/* Timeline Card */}
-          {/* <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
-                <Clock className="w-4 h-4 text-(--primary-600)" />
-              </div>
-              <h3 className="font-semibold text-(--text-dark)">
-                Timeline
-              </h3>
-            </div>
-
-            <div className="space-y-0">
-              {timelineEvents.map((event, index) => (
-                <div key={index} className="flex gap-3 pb-4 last:pb-0">
-                  <div className="flex flex-col items-center">
-                    <div className="w-8 h-8 rounded-full bg-(--bg-light) flex items-center justify-center">
-                      {getTimelineIcon(event.status)}
-                    </div>
-                    {index !== timelineEvents.length - 1 && (
-                      <div className="w-0.5 flex-1 bg-(--border-light) my-1"></div>
-                    )}
-                  </div>
-                  <div className="pb-4 last:pb-0">
-                    <p className="text-sm font-semibold text-(--text-dark)">
-                      {event.status}
-                    </p>
-                    <p className="text-xs text-gray-500 mb-1">{event.date}</p>
-                    <p className="text-xs text-gray-600">{event.description}</p>
-                  </div>
-                </div>
-              ))}
             </div>
           </div> */}
         </div>

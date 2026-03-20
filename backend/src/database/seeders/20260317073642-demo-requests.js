@@ -12,7 +12,8 @@ module.exports = {
       Additional_Document,
       Document,
       Log,
-      Account, // assuming you have accounts seeded
+      Account,
+      Receipt,
     } = require("../models");
 
     // Get existing documents and accounts
@@ -201,6 +202,24 @@ module.exports = {
 
       if (logs.length > 0) {
         await Log.bulkCreate(logs);
+      }
+
+      // 7️⃣ Create Receipts for paid/released
+      if (status === "paid" || status === "released") {
+        const receiptCount = faker.number.int({ min: 1, max: 3 });
+
+        const receipts = [];
+
+        for (let i = 0; i < receiptCount; i++) {
+          receipts.push({
+            request_id: request.id,
+            path: "uploads/proofs/payment_sample.jpg",
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+        }
+
+        await Receipt.bulkCreate(receipts);
       }
     }
   },

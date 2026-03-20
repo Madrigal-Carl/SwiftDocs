@@ -135,6 +135,9 @@ async function GetRequestWithStudent(requestId) {
       {
         association: "logs",
       },
+      {
+        association: "receipts",
+      },
     ],
   });
 
@@ -206,6 +209,9 @@ async function GetRequestByReferenceNumber(referenceNumber) {
         },
         {
           association: "logs",
+        },
+        {
+          association: "receipts",
         },
       ],
     },

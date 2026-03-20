@@ -5,14 +5,14 @@ const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
 
 async function GetRequestsForCashier(page = 1, limit = 10) {
+  const allowedStatuses = ["paid", "invoiced"];
+
   const allRequests = await Request.findAll({
     where: { status: allowedStatuses },
     attributes: ["status", "request_date"],
   });
 
   const stats = computeStats(allRequests);
-
-  const allowedStatuses = ["paid", "invoiced"];
 
   const { docs, pages, total } = await Request.paginate({
     page,

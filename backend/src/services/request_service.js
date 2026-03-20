@@ -27,7 +27,7 @@ async function RequestDocuments(data) {
 
     const requestData = {
       student_id: student.id,
-      status: "pending",
+      purpose: data.purpose,
       notes: data.notes,
     };
     const request = await requestRepository.CreateRequest(requestData, t);

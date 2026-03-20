@@ -77,7 +77,7 @@ async function GetRequestsForCashier(page = 1, limit = 10) {
   };
 }
 
-async function UpdateRequestStatus(requestId, status, account) {
+async function UpdateRequestStatus(requestId, status, account, note = null) {
   const allowedStatuses = ["paid"];
 
   if (!allowedStatuses.includes(status)) {
@@ -118,6 +118,7 @@ async function UpdateRequestStatus(requestId, status, account) {
     action: status,
     from_status: previousStatus,
     to_status: request.status,
+    notes: note,
   });
 
   await mailService.SendCashierUpdateMail({

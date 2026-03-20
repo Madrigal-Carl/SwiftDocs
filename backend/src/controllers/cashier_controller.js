@@ -15,6 +15,7 @@ async function UpdateRequestStatus(req, res) {
     Number(req.params.id),
     req.body.status,
     req.user,
+    req.body.note,
   );
 
   io.emit("requestsUpdated");

@@ -6,6 +6,7 @@ const updateRequestStatusSchema = Joi.object({
     "any.only": "Status must be paid",
     "any.required": "Status is required",
   }),
+  note: Joi.string().trim().empty("").default(null).optional(),
 });
 
 function validateUpdateRequestStatus(req, res, next) {

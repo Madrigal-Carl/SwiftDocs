@@ -52,12 +52,13 @@ async function UpdateRequestStatus(requestId, status, account, note = null) {
     action: status,
     from_status: previousStatus,
     to_status: request.status,
+    notes: note,
   });
 
   await mailService.SendRMOUpdateMail({
     request,
     status,
-    reason: status === "rejected" ? note : null,
+    reason: note,
   });
 
   return {
@@ -67,17 +68,26 @@ async function UpdateRequestStatus(requestId, status, account, note = null) {
   };
 }
 
-async function SetAdditionalDocumentPrice(requestId, additionalDocumentId, unitPrice, account) {
+async function SetAdditionalDocumentPrice(
+  requestId,
+  additionalDocumentId,
+  unitPrice,
+) {
   if (!additionalDocumentId) {
     throw new Error("Missing additionalDocumentId in request body");
   }
 
-  const additionalDoc = await Additional_Document.findByPk(additionalDocumentId, {
-  include: [{ model: Request, as: "request" }],
-  });
+  const additionalDoc = await Additional_Document.findByPk(
+    additionalDocumentId,
+    {
+      include: [{ model: Request, as: "request" }],
+    },
+  );
 
   if (!additionalDoc) {
-    throw new Error(`Additional document with id ${additionalDocumentId} not found`);
+    throw new Error(
+      `Additional document with id ${additionalDocumentId} not found`,
+    );
   }
 
   if (additionalDoc.request_id !== Number(requestId)) {
@@ -89,6 +99,7 @@ async function SetAdditionalDocumentPrice(requestId, additionalDocumentId, unitP
 
   return additionalDoc;
 }
+
 module.exports = {
   UpdateRequestStatus,
   SetAdditionalDocumentPrice,

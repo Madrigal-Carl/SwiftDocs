@@ -426,7 +426,7 @@ export default function RequestView() {
 
               {/* If no logs */}
               {(!request.logs || request.logs.length === 0) && (
-                <p className="text-sm text-gray-500">No notes available.</p>
+                <p className="text-sm text-gray-500">No remarks available.</p>
               )}
             </div>
           </div>

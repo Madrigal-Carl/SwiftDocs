@@ -98,9 +98,11 @@ export default function UserTable() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-linear-to-br from-(--primary-400) to-(--primary-600) text-white flex items-center justify-center font-semibold text-sm">
-                          {user.name?.charAt(0)}
+                          {user.full_name?.charAt(0)}
                         </div>
-                        <span className="text-sm font-medium">{user.name}</span>
+                        <span className="text-sm font-medium">
+                          {user.full_name}
+                        </span>
                       </div>
                     </td>
 

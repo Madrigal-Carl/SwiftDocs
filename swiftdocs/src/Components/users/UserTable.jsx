@@ -85,7 +85,7 @@ export default function UserTable() {
             </thead>
             <tbody className="divide-y divide-(--border-light)">
               {loading ? (
-                <TableLoader colSpan={6} />
+                <TableLoader colSpan={6} rows={5} />
               ) : accounts.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center py-6 text-gray-500">

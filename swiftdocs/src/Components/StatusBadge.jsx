@@ -21,11 +21,18 @@ export default function StatusBadge({ status }) {
     inactive: STATUS_COLORS.rejected,
   };
 
+  const color = textColorMap[status];
+
   return (
     <span
-      className={`px-2 py-1 rounded-md text-xs font-medium ${bgStyles[status]}`}
-      style={{ color: textColorMap[status] }}
+      className={`px-2 py-1 rounded-md text-xs font-medium capitalize ${bgStyles[status]}`}
+      style={{ color }}
     >
+      {/* Dot */}
+      <span
+        className="w-2 h-2 rounded-full inline-block mr-1"
+        style={{ backgroundColor: color }}
+      ></span>
       {status}
     </span>
   );

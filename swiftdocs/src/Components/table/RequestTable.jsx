@@ -84,7 +84,7 @@ export default function RequestTable() {
                 <TableLoader colSpan={6} />
               ) : requests.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="text-center py-6 text-gray-500">
+                  <td colSpan="6" className="text-center py-6 text-gray-500">
                     No requests found
                   </td>
                 </tr>
@@ -118,7 +118,7 @@ export default function RequestTable() {
                         <StatusBadge status={req.status} />
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <ActionDropdown request={item} />
+                        <ActionDropdown ref={req.reference_number} />
                       </td>
                     </tr>
                   );

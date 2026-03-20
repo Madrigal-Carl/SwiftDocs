@@ -13,12 +13,17 @@ export async function fetchRequestById(id) {
   return res.data;
 }
 
+export async function fetchRequestByReference(referenceNumber) {
+  const res = await api.get(`/request/reference/${referenceNumber}`);
+  return res.data;
+}
+
 export async function createRequest(data) {
   const res = await api.post("/request", data);
   return res.data;
 }
 
-export async function fetchRequestByReference(referenceNumber) {
+export async function requestEmailStatus(referenceNumber) {
   try {
     const res = await api.post(`/request/status/${referenceNumber}/send-email`);
     return res.data;

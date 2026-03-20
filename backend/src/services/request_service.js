@@ -184,10 +184,35 @@ async function GetRequestAnalytics() {
   return stats;
 }
 
+async function GetRequestByReferenceNumber(referenceNumber) {
+  // Use repository to fetch the request by reference_number
+  const request = await requestRepository.FindByReferenceNumber(
+    referenceNumber,
+    {
+      include: [
+        {
+          association: "student",
+          include: ["education"],
+        },
+        {
+          association: "requested_documents",
+          include: ["document"],
+        },
+        {
+          association: "additional_documents",
+        },
+      ],
+    },
+  );
+
+  return request;
+}
+
 module.exports = {
   RequestDocuments,
   SendRequestEmail,
   GetRequestWithStudent,
   GetAllRequestsWithStudent,
+  GetRequestByReferenceNumber,
   GetRequestAnalytics,
 };

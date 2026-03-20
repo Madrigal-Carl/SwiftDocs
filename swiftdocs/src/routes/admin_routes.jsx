@@ -7,6 +7,7 @@ export default function AdminRoutes() {
   return (
     <Routes>
       <Route path="/" element={<AdminDashboard />} />
+      <Route path="/request/:reference_number" element={<AdminDashboard />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

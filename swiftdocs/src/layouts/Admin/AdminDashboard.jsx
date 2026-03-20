@@ -4,8 +4,6 @@ import MainContent from "../MainContent";
 import {
   LayoutDashboard,
   FileText,
-  CreditCard,
-  FileCheck,
   BarChart3,
   Users,
   Settings,

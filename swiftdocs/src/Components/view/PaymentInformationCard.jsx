@@ -3,14 +3,19 @@ import StatusBadge from "../StatusBadge";
 
 export default function PaymentInformationCard({ amount, status, proof = [] }) {
   const showProof = status === "paid" || status === "released";
-  const proofs = Array.isArray(proof) ? proof : [proof]; // fallback safety
+  const proofs = Array.isArray(proof) ? proof : [proof];
 
   return (
     <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
       {/* Header */}
-      <h3 className="font-semibold text-(--text-dark) mb-4">
-        Payment Information
-      </h3>
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
+          <PhilippinePeso className="w-4 h-4 text-(--primary-600)" />
+        </div>
+        <h3 className="font-semibold text-(--text-dark)">
+          Payment Information
+        </h3>
+      </div>
 
       <div className="divide-y divide-(--border-light)">
         {/* Amount */}

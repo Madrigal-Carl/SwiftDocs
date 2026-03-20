@@ -7,12 +7,33 @@ import {
   XCircle,
 } from "lucide-react";
 
-export default function ProgressTracker({ status }) {
+export default function ProgressTracker({ status, completedDate, logs = [] }) {
+  const getTransitionDate = (from, to) => {
+    const log = logs
+      .filter((l) => l.from_status === from && l.to_status === to)
+      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))[0];
+    return log ? log.createdAt.split("T")[0] : null;
+  };
+
+  const rejectedDate = getTransitionDate("pending", "rejected");
+
+  const dates = {
+    underReview: getTransitionDate("pending", "invoiced"),
+    paymentPending: getTransitionDate("invoiced", "paid"),
+    processing: getTransitionDate("paid", "released"),
+    completed: completedDate,
+  };
+
   const steps = [
-    { id: 1, label: "Under Review", icon: FileText },
-    { id: 2, label: "Payment Pending", icon: CreditCard },
-    { id: 3, label: "Processing", icon: FileCheck },
-    { id: 4, label: "Completed", icon: BadgeCheck },
+    { id: 1, label: "Under Review", icon: FileText, date: dates.underReview },
+    {
+      id: 2,
+      label: "Payment Pending",
+      icon: CreditCard,
+      date: dates.paymentPending,
+    },
+    { id: 3, label: "Processing", icon: FileCheck, date: dates.processing },
+    { id: 4, label: "Completed", icon: BadgeCheck, date: dates.completed },
   ];
 
   const completedColors = [
@@ -51,14 +72,12 @@ export default function ProgressTracker({ status }) {
         Request Progress
       </h1>
 
-      {/* LEFT ALIGNED WRAPPER */}
       <div className="w-1/2">
         <div
           className={`flex items-center relative ${
             isRejected ? "justify-start" : "justify-center"
           }`}
         >
-          {/* Base connecting line (dynamic length) */}
           <div
             className={`absolute top-5 left-1/2 -translate-x-1/2 h-0.5 bg-gray-200 ${
               isRejected ? "w-full" : "w-[80%]"
@@ -88,7 +107,7 @@ export default function ProgressTracker({ status }) {
               <div
                 key={step.id}
                 className="flex flex-col items-center relative z-10"
-                style={{ width: "20%" }} // still 5 slots reserved
+                style={{ width: "20%" }}
               >
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${stepClass}`}
@@ -98,6 +117,12 @@ export default function ProgressTracker({ status }) {
                 <span className={`mt-2 text-xs font-medium ${stepTextColor}`}>
                   {step.label}
                 </span>
+
+                {step.date && (
+                  <span className="text-[10px] text-gray-400 mt-0.5">
+                    {step.date}
+                  </span>
+                )}
               </div>
             );
           })}
@@ -114,6 +139,11 @@ export default function ProgressTracker({ status }) {
               <span className="mt-2 text-xs font-medium text-red-500">
                 Rejected
               </span>
+              {rejectedDate && (
+                <span className="text-[10px] text-gray-400 mt-0.5">
+                  {rejectedDate}
+                </span>
+              )}
             </div>
           )}
         </div>

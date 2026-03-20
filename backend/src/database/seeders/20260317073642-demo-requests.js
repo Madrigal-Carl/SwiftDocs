@@ -72,6 +72,7 @@ module.exports = {
         status,
         request_date: faker.date.recent(),
         notes: faker.lorem.sentence(),
+        request_completed: status === "released" ? new Date() : null,
       });
 
       // 4️⃣ Requested Documents

@@ -82,7 +82,11 @@ export default function RequestView() {
         )}
       </div>
 
-      <ProgressTracker status={request.status} />
+      <ProgressTracker
+        status={request.status}
+        completedDate={request.request_completed}
+        logs={request.logs}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Larger */}
@@ -395,40 +399,6 @@ export default function RequestView() {
             status={request.status}
             proof={request.receipts?.map((r) => r.path) || []}
           />
-
-          {/* Timeline Card */}
-          {/* <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
-                <Clock className="w-4 h-4 text-(--primary-600)" />
-              </div>
-              <h3 className="font-semibold text-(--text-dark)">
-                Timeline
-              </h3>
-            </div>
-
-            <div className="space-y-0">
-              {timelineEvents.map((event, index) => (
-                <div key={index} className="flex gap-3 pb-4 last:pb-0">
-                  <div className="flex flex-col items-center">
-                    <div className="w-8 h-8 rounded-full bg-(--bg-light) flex items-center justify-center">
-                      {getTimelineIcon(event.status)}
-                    </div>
-                    {index !== timelineEvents.length - 1 && (
-                      <div className="w-0.5 flex-1 bg-(--border-light) my-1"></div>
-                    )}
-                  </div>
-                  <div className="pb-4 last:pb-0">
-                    <p className="text-sm font-semibold text-(--text-dark)">
-                      {event.status}
-                    </p>
-                    <p className="text-xs text-gray-500 mb-1">{event.date}</p>
-                    <p className="text-xs text-gray-600">{event.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div> */}
 
           {/*  Notes Card */}
           {/* <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">

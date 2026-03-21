@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Search, Filter, ChevronDown } from "lucide-react";
 import { useAccountStore } from "../../stores/account_store";
 import Pagination from "../Pagination";
@@ -13,10 +13,6 @@ export default function UserTable() {
 
   const { accounts, loading, pagination, loadAccounts, page } =
     useAccountStore();
-
-  useEffect(() => {
-    loadAccounts(1);
-  }, []);
 
   return (
     <div className="flex flex-col gap-4 flex-1 mx-auto w-full">

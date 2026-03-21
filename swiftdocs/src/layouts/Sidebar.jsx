@@ -55,7 +55,7 @@ export default function Sidebar({ menuItems = [], selectedTab, onSelectTab }) {
 
       {/* User Card */}
       <div className="p-4 border-t border-(--primary-800)">
-        <div className="flex items-center gap-3 bg-(--primary-800)/50 rounded-xl p-4 backdrop-blur-sm">
+        <div className="flex items-center gap-3 rounded-xl p-4">
           <div className="w-10 h-10 rounded-full bg-linear-to-br from-(--primary-400) to-(--primary-600) flex items-center justify-center text-white font-semibold shadow-lg">
             {user.initials}
           </div>
@@ -67,7 +67,6 @@ export default function Sidebar({ menuItems = [], selectedTab, onSelectTab }) {
               {user.role}
             </p>
           </div>
-          <ChevronDown className="w-4 h-4 text-(--primary-200)" />
         </div>
       </div>
     </aside>

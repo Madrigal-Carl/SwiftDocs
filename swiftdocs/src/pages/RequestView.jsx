@@ -457,7 +457,7 @@ export default function RequestView() {
                   <div key={log.id} className="bg-(--bg-light) p-3 rounded-lg">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs font-semibold text-(--primary-600)">
-                        {log.role.toUpperCase()}
+                        {`${log.role.toUpperCase()} - ${log.account_full_name}`}
                       </span>
                       <span className="text-xs text-gray-400">
                         {log.createdAt.split("T")[0]}

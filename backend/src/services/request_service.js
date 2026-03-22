@@ -134,6 +134,12 @@ async function GetRequestWithStudent(requestId) {
       },
       {
         association: "logs",
+        include: [
+          {
+            association: "account",
+            attributes: ["id", "first_name", "middle_name", "last_name"],
+          },
+        ],
       },
       {
         association: "receipts",
@@ -141,7 +147,29 @@ async function GetRequestWithStudent(requestId) {
     ],
   });
 
-  return request;
+  const formattedLogs = (request.logs || []).map((log) => {
+    const account = log.account;
+
+    let full_name = null;
+
+    if (account) {
+      const middleInitial = account.middle_name
+        ? ` ${account.middle_name.charAt(0).toUpperCase()}.`
+        : "";
+
+      full_name = `${account.last_name}, ${account.first_name}${middleInitial}`;
+    }
+
+    return {
+      ...log.toJSON(),
+      account_full_name: full_name,
+    };
+  });
+
+  return {
+    ...request.toJSON(),
+    logs: formattedLogs,
+  };
 }
 
 async function GetAllRequestsWithStudent(page = 1, limit = 10) {
@@ -209,6 +237,12 @@ async function GetRequestByReferenceNumber(referenceNumber) {
         },
         {
           association: "logs",
+          include: [
+            {
+              association: "account",
+              attributes: ["id", "first_name", "middle_name", "last_name"],
+            },
+          ],
         },
         {
           association: "receipts",
@@ -217,7 +251,29 @@ async function GetRequestByReferenceNumber(referenceNumber) {
     },
   );
 
-  return request;
+  const formattedLogs = (request.logs || []).map((log) => {
+    const account = log.account;
+
+    let full_name = null;
+
+    if (account) {
+      const middleInitial = account.middle_name
+        ? ` ${account.middle_name.charAt(0).toUpperCase()}.`
+        : "";
+
+      full_name = `${account.last_name}, ${account.first_name}${middleInitial}`;
+    }
+
+    return {
+      ...log.toJSON(),
+      account_full_name: full_name,
+    };
+  });
+
+  return {
+    ...request.toJSON(),
+    logs: formattedLogs,
+  };
 }
 
 module.exports = {

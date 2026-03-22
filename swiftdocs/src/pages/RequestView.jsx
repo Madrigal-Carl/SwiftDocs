@@ -21,6 +21,7 @@ import { getRequestPermissions } from "../utils/requestPermissions.js";
 import { updateRmoRequestStatus } from "../services/rmo_service.js";
 import { showToast } from "../utils/swal.js";
 import { getNextStatus } from "../utils/requestStatus.js";
+import { updateCashierRequestStatus } from "../services/cashier_service";
 
 export default function RequestView() {
   const { reference_number } = useParams();
@@ -476,7 +477,7 @@ export default function RequestView() {
         action={modalAction}
         request={request}
         onClose={() => setModalOpen(false)}
-        onSubmit={async (remarks) => {
+        onSubmit={async (remarks, files) => {
           const nextStatus = getNextStatus(
             user.role,
             request.status,
@@ -489,14 +490,25 @@ export default function RequestView() {
           }
 
           try {
-            await updateRmoRequestStatus(request.id, nextStatus, remarks);
+            if (user.role === "cashier") {
+              const formData = new FormData();
+              formData.append("status", nextStatus);
+              formData.append("note", remarks);
+
+              files.forEach((file) => {
+                formData.append("proofs", file);
+              });
+
+              await updateCashierRequestStatus(request.id, formData);
+            } else {
+              await updateRmoRequestStatus(request.id, nextStatus, remarks);
+            }
+
             showToast("success", `Request ${nextStatus} successfully!`);
             setModalOpen(false);
             navigate(-1);
           } catch (err) {
-            const message = err.message || "Failed to update request status";
-            showToast("error", message);
-            console.error("Failed to update request status:", err);
+            showToast("error", err.response?.data?.message || err.message);
           }
         }}
       />

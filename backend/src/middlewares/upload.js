@@ -2,8 +2,10 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
+// ✅ Go up TWO levels: src/middlewares → backend/
+const uploadPath = path.join(__dirname, "../../uploads/proofs");
+
 // ensure directory exists
-const uploadPath = path.join(__dirname, "..", "uploads", "proofs");
 if (!fs.existsSync(uploadPath)) {
   fs.mkdirSync(uploadPath, { recursive: true });
 }

@@ -9,6 +9,7 @@ export default function RequestActionModal({
   action,
 }) {
   const [remarks, setRemarks] = useState("");
+  const [files, setFiles] = useState([]);
 
   if (!isOpen || !request) return null;
 
@@ -18,8 +19,9 @@ export default function RequestActionModal({
     : request.full_name || "Unknown";
 
   const handleSubmit = async () => {
-    await onSubmit(remarks);
+    await onSubmit(remarks, files);
     setRemarks("");
+    setFiles([]);
   };
 
   const isReject = action === "reject";
@@ -69,6 +71,28 @@ export default function RequestActionModal({
             </div>
           </div>
         </div>
+
+        {action === "approve" && (
+          <div className="mb-6">
+            <label className="text-xs text-gray-500 uppercase tracking-wider">
+              Upload Payment Proofs
+            </label>
+
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={(e) => setFiles(Array.from(e.target.files))}
+              className="w-full mt-2 text-sm"
+            />
+
+            {files.length > 0 && (
+              <p className="text-xs text-gray-400 mt-1">
+                {files.length} file(s) selected
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Remarks */}
         <div className="mb-6">

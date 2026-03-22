@@ -10,6 +10,7 @@ import RequestActionModal from "../RequestActionModal.jsx";
 import { showToast } from "../../utils/swal.js";
 import { getNextStatus } from "../../utils/requestStatus.js";
 import { updateRmoRequestStatus } from "../../services/rmo_service.js";
+import { updateCashierRequestStatus } from "../../services/cashier_service";
 
 export default function RequestTable() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -165,7 +166,7 @@ export default function RequestTable() {
           setModalOpen(false);
           setSelectedRequest(null);
         }}
-        onSubmit={async (remarks) => {
+        onSubmit={async (remarks, files) => {
           const nextStatus = getNextStatus(
             user.role,
             selectedRequest.status,
@@ -178,18 +179,30 @@ export default function RequestTable() {
           }
 
           try {
-            await updateRmoRequestStatus(
-              selectedRequest.id,
-              nextStatus,
-              remarks,
-            );
+            if (user.role === "cashier") {
+              const formData = new FormData();
+              formData.append("status", nextStatus);
+              formData.append("note", remarks);
+
+              files.forEach((file) => {
+                formData.append("proofs", file);
+              });
+
+              await updateCashierRequestStatus(selectedRequest.id, formData);
+            } else {
+              await updateRmoRequestStatus(
+                selectedRequest.id,
+                nextStatus,
+                remarks,
+              );
+            }
+
             showToast("success", `Request ${nextStatus} successfully!`);
             setModalOpen(false);
             setSelectedRequest(null);
-
             loadRequests(page);
           } catch (err) {
-            showToast("error", err.message || "Failed to update request");
+            showToast("error", err.message || err.message);
           }
         }}
       />

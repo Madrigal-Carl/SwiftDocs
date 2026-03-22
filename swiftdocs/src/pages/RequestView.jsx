@@ -18,6 +18,7 @@ import PaymentInformationCard from "../components/view/PaymentInformationCard.js
 import { useAuth } from "../stores/auth_store.jsx";
 import RequestActionModal from "../components/view/RequestActionModal";
 import { updateRmoRequestStatus } from "../services/rmo_service.js";
+import { getRequestPermissions } from "../utils/requestPermissions.js";
 
 export default function RequestView() {
   const { reference_number } = useParams();
@@ -48,39 +49,9 @@ export default function RequestView() {
     return <Loader />;
   }
 
-  const canApprove = (() => {
-    if (!user || !request) return false;
-
-    const role = user.role;
-    const status = request.status;
-
-    if (status === "released" || status === "rejected") return false;
-
-    if (role === "rmo") {
-      return ["pending", "paid"].includes(status);
-    }
-
-    if (role === "cashier") {
-      return status === "invoiced";
-    }
-
-    return false;
-  })();
-
-  const canReject = (() => {
-    if (!user || !request) return false;
-
-    const role = user.role;
-    const status = request.status;
-
-    if (status === "released" || status === "rejected") return false;
-
-    if (role === "rmo") {
-      return status === "pending";
-    }
-
-    return false;
-  })();
+  const permissions = getRequestPermissions(user?.role, request?.status);
+  const canApprove = permissions.approve;
+  const canReject = permissions.reject;
 
   function getNextStatus(role, currentStatus, action) {
     if (action === "reject") {

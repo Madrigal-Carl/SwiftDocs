@@ -5,10 +5,12 @@ import { Search, Filter, ChevronDown } from "lucide-react";
 import { useRequestStore } from "../../stores/request_store";
 import Pagination from "../Pagination";
 import TableLoader from "../TableLoader";
+import { useAuth } from "../../stores/auth_store";
 
 export default function RequestTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
+  const { user } = useAuth();
 
   const { requests, loading, pagination, loadRequests, page } =
     useRequestStore();
@@ -118,7 +120,17 @@ export default function RequestTable() {
                         <StatusBadge status={req.status} />
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <ActionDropdown ref={req.reference_number} />
+                        <ActionDropdown
+                          reference={req.reference_number}
+                          status={req.status}
+                          role={user.role}
+                          onApprove={() => {
+                            console.log("approve", req.id);
+                          }}
+                          onReject={() => {
+                            console.log("reject", req.id);
+                          }}
+                        />
                       </td>
                     </tr>
                   );

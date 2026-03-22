@@ -1,0 +1,108 @@
+import { useState } from "react";
+import { X, FileText, User } from "lucide-react";
+
+export default function RequestActionModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  request,
+  action,
+}) {
+  const [remarks, setRemarks] = useState("");
+
+  if (!isOpen || !request) return null;
+
+  const fullName = `${request.student.first_name} ${request.student.middle_name} ${request.student.last_name}${request.student.suffix ? `, ${request.student.suffix}` : ""}`;
+
+  const handleSubmit = () => {
+    onSubmit(remarks);
+    setRemarks("");
+    onClose();
+  };
+
+  const isReject = action === "reject";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in">
+      <div className="glass-morphism w-full max-w-lg rounded-xl shadow-xl p-6 animate-scale-in">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-semibold text-(--text-dark)">
+            {isReject ? "Reject Request" : "Approve Request"}
+          </h2>
+
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg hover:bg-(--bg-light)"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Request Info */}
+        <div className="space-y-4 mb-5">
+          <div className="flex items-start gap-3 p-3 rounded-lg bg-(--bg-light)">
+            <FileText className="w-4 h-4 mt-1 text-(--primary-600)" />
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wider">
+                Reference Number
+              </p>
+              <p className="text-sm font-semibold text-(--text-dark) uppercase">
+                {request.reference_number}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3 p-3 rounded-lg bg-(--bg-light)">
+            <User className="w-4 h-4 mt-1 text-(--primary-600)" />
+            <div>
+              <p className="text-xs text-gray-500 uppercase tracking-wider">
+                Student Name
+              </p>
+              <p className="text-sm font-semibold text-(--text-dark)">
+                {fullName}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Remarks */}
+        <div className="mb-6">
+          <label className="text-xs text-gray-500 uppercase tracking-wider">
+            Remarks
+          </label>
+
+          <textarea
+            rows="4"
+            value={remarks}
+            onChange={(e) => setRemarks(e.target.value)}
+            placeholder="Enter remarks..."
+            className="w-full mt-2 p-3 text-sm border border-(--border-light) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-500)"
+          />
+        </div>
+
+        {/* Actions */}
+        <div className="flex justify-end gap-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm rounded-lg border border-(--border-light) hover:bg-(--bg-light)"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={handleSubmit}
+            className={`px-5 py-2 text-sm font-semibold rounded-lg text-white shadow-sm transition-colors
+              ${
+                isReject
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-(--primary-600) hover:bg-(--primary-700)"
+              }`}
+          >
+            {isReject ? "Reject Request" : "Approve Request"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

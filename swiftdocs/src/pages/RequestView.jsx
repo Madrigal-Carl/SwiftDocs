@@ -7,8 +7,6 @@ import {
   ArrowLeft,
   User,
   FileText,
-  PhilippinePeso,
-  Send,
   BookOpen,
   Book,
 } from "lucide-react";
@@ -17,10 +15,17 @@ import { fetchRequestByReference } from "../services/request_service.js";
 import Loader from "../components/Loader";
 import ProgressTracker from "../components/view/ProgressTracker.jsx";
 import PaymentInformationCard from "../components/view/PaymentInformationCard.jsx";
+import { useAuth } from "../stores/auth_store.jsx";
+import RequestActionModal from "../components/view/RequestActionModal";
+import { updateRmoRequestStatus } from "../services/rmo_service.js";
 
 export default function RequestView() {
   const { reference_number } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalAction, setModalAction] = useState(null);
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -41,6 +46,65 @@ export default function RequestView() {
 
   if (loading) {
     return <Loader />;
+  }
+
+  const canApprove = (() => {
+    if (!user || !request) return false;
+
+    const role = user.role;
+    const status = request.status;
+
+    if (status === "released" || status === "rejected") return false;
+
+    if (role === "rmo") {
+      return ["pending", "paid"].includes(status);
+    }
+
+    if (role === "cashier") {
+      return status === "invoiced";
+    }
+
+    return false;
+  })();
+
+  const canReject = (() => {
+    if (!user || !request) return false;
+
+    const role = user.role;
+    const status = request.status;
+
+    if (status === "released" || status === "rejected") return false;
+
+    if (role === "rmo") {
+      return status === "pending";
+    }
+
+    return false;
+  })();
+
+  function getNextStatus(role, currentStatus, action) {
+    if (action === "reject") {
+      if (role === "rmo" && currentStatus === "pending") {
+        return "rejected";
+      }
+      return null;
+    }
+
+    if (action === "approve") {
+      if (role === "rmo" && currentStatus === "pending") {
+        return "invoiced";
+      }
+
+      if (role === "cashier" && currentStatus === "invoiced") {
+        return "paid";
+      }
+
+      if (role === "rmo" && currentStatus === "paid") {
+        return "released";
+      }
+    }
+
+    return null;
   }
 
   return (
@@ -68,16 +132,33 @@ export default function RequestView() {
           </div>
         </div>
 
-        {request.status !== "released" && request.status !== "rejected" && (
+        {(canApprove || canReject) && (
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-4 px-4 py-2 text-sm font-semibold rounded-lg border border-red-300 text-red-600 hover:bg-red-50 transition-colors">
-              <CircleX className="w-4 h-4" />
-              Reject
-            </button>
-            <button className="flex items-center gap-4 px-4 py-2 text-sm font-semibold rounded-lg bg-(--primary-600) text-white hover:bg-(--primary-700) transition-colors shadow-sm">
-              <CheckCircle className="w-4 h-4" />
-              Approve
-            </button>
+            {canReject && (
+              <button
+                onClick={() => {
+                  setModalAction("reject");
+                  setModalOpen(true);
+                }}
+                className="flex items-center gap-4 px-4 py-2 text-sm font-semibold rounded-lg border border-red-300 text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <CircleX className="w-4 h-4" />
+                Reject
+              </button>
+            )}
+
+            {canApprove && (
+              <button
+                onClick={() => {
+                  setModalAction("approve");
+                  setModalOpen(true);
+                }}
+                className="flex items-center gap-4 px-4 py-2 text-sm font-semibold rounded-lg bg-(--primary-600) text-white hover:bg-(--primary-700) transition-colors shadow-sm"
+              >
+                <CheckCircle className="w-4 h-4" />
+                Approve
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -432,6 +513,38 @@ export default function RequestView() {
           </div>
         </div>
       </div>
+
+      <RequestActionModal
+        isOpen={modalOpen}
+        action={modalAction}
+        request={request}
+        onClose={() => setModalOpen(false)}
+        onSubmit={async (remarks) => {
+          const nextStatus = getNextStatus(
+            user.role,
+            request.status,
+            modalAction,
+          );
+
+          if (!nextStatus) {
+            console.error("Invalid status transition");
+            return;
+          }
+
+          try {
+            await updateRmoRequestStatus(request.id, nextStatus);
+
+            setRequest((prev) => ({
+              ...prev,
+              status: nextStatus,
+            }));
+
+            setModalOpen(false);
+          } catch (err) {
+            console.error("Failed to update request status:", err);
+          }
+        }}
+      />
     </div>
   );
 }

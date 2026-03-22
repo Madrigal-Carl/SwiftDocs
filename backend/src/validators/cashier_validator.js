@@ -10,6 +10,7 @@ const updateRequestStatusSchema = Joi.object({
 });
 
 function validateUpdateRequestStatus(req, res, next) {
+  // 🔹 Validate body first
   const { error, value } = updateRequestStatusSchema.validate(req.body, {
     abortEarly: true,
     stripUnknown: true,
@@ -21,7 +22,39 @@ function validateUpdateRequestStatus(req, res, next) {
     });
   }
 
+  // 🔹 File validation
+  const files = req.files || [];
+
+  // Only enforce proofs when marking as PAID
+  if (value.status === "paid") {
+    // ❌ No files uploaded
+    if (files.length === 0) {
+      return res.status(400).json({
+        message: "At least 1 proof image is required",
+      });
+    }
+
+    // ❌ More than 3 files (extra safety, multer already limits this)
+    if (files.length > 3) {
+      return res.status(400).json({
+        message: "Maximum of 3 proof images allowed",
+      });
+    }
+
+    // ❌ Invalid file type (double check)
+    const invalidFile = files.find(
+      (file) => !file.mimetype.startsWith("image/"),
+    );
+
+    if (invalidFile) {
+      return res.status(400).json({
+        message: "Only image files are allowed",
+      });
+    }
+  }
+
   req.body = value;
+
   next();
 }
 

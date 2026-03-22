@@ -3,6 +3,7 @@ const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
+const receiptRepository = require("../repositories/receipt_repository");
 
 async function GetRequestsForCashier(page = 1, limit = 10) {
   const allowedStatuses = ["paid", "invoiced"];
@@ -77,7 +78,13 @@ async function GetRequestsForCashier(page = 1, limit = 10) {
   };
 }
 
-async function UpdateRequestStatus(requestId, status, account, note = null) {
+async function UpdateRequestStatus(
+  requestId,
+  status,
+  account,
+  note = null,
+  proofPaths = [],
+) {
   const allowedStatuses = ["paid"];
 
   if (!allowedStatuses.includes(status)) {
@@ -110,6 +117,8 @@ async function UpdateRequestStatus(requestId, status, account, note = null) {
   actions[status]();
 
   await request.save();
+
+  await receiptRepository.CreateReceipts(requestId, proofPaths);
 
   await logRepository.CreateLog({
     account_id: account.id,

@@ -6,11 +6,19 @@ import { useRequestStore } from "../../stores/request_store";
 import Pagination from "../Pagination";
 import TableLoader from "../TableLoader";
 import { useAuth } from "../../stores/auth_store";
+import RequestActionModal from "../RequestActionModal.jsx";
+import { showToast } from "../../utils/swal.js";
+import { getNextStatus } from "../../utils/requestStatus.js";
+import { updateRmoRequestStatus } from "../../services/rmo_service.js";
 
 export default function RequestTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
   const { user } = useAuth();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalAction, setModalAction] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
   const { requests, loading, pagination, loadRequests, page } =
     useRequestStore();
@@ -125,10 +133,14 @@ export default function RequestTable() {
                           status={req.status}
                           role={user.role}
                           onApprove={() => {
-                            console.log("approve", req.id);
+                            setSelectedRequest(req);
+                            setModalAction("approve");
+                            setModalOpen(true);
                           }}
                           onReject={() => {
-                            console.log("reject", req.id);
+                            setSelectedRequest(req);
+                            setModalAction("reject");
+                            setModalOpen(true);
                           }}
                         />
                       </td>
@@ -145,6 +157,42 @@ export default function RequestTable() {
           onPageChange={loadRequests}
         />
       </div>
+      <RequestActionModal
+        isOpen={modalOpen}
+        action={modalAction}
+        request={selectedRequest}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedRequest(null);
+        }}
+        onSubmit={async (remarks) => {
+          const nextStatus = getNextStatus(
+            user.role,
+            selectedRequest.status,
+            modalAction,
+          );
+
+          if (!nextStatus) {
+            showToast("error", "Invalid status transition");
+            return;
+          }
+
+          try {
+            await updateRmoRequestStatus(
+              selectedRequest.id,
+              nextStatus,
+              remarks,
+            );
+            showToast("success", `Request ${nextStatus} successfully!`);
+            setModalOpen(false);
+            setSelectedRequest(null);
+
+            loadRequests(page);
+          } catch (err) {
+            showToast("error", err.message || "Failed to update request");
+          }
+        }}
+      />
     </div>
   );
 }

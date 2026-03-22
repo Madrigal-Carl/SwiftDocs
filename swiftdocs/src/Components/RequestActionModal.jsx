@@ -12,12 +12,14 @@ export default function RequestActionModal({
 
   if (!isOpen || !request) return null;
 
-  const fullName = `${request.student.first_name} ${request.student.middle_name} ${request.student.last_name}${request.student.suffix ? `, ${request.student.suffix}` : ""}`;
+  // Determine full name safely
+  const fullName = request.student
+    ? `${request.student.first_name} ${request.student.middle_name} ${request.student.last_name}${request.student.suffix ? `, ${request.student.suffix}` : ""}`
+    : request.full_name || "Unknown";
 
-  const handleSubmit = () => {
-    onSubmit(remarks);
+  const handleSubmit = async () => {
+    await onSubmit(remarks);
     setRemarks("");
-    onClose();
   };
 
   const isReject = action === "reject";
@@ -30,7 +32,6 @@ export default function RequestActionModal({
           <h2 className="text-lg font-semibold text-(--text-dark)">
             {isReject ? "Reject Request" : "Approve Request"}
           </h2>
-
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-(--bg-light)"
@@ -62,6 +63,9 @@ export default function RequestActionModal({
               <p className="text-sm font-semibold text-(--text-dark)">
                 {fullName}
               </p>
+              {request.lrn && (
+                <p className="text-xs text-gray-400 mt-1">LRN: {request.lrn}</p>
+              )}
             </div>
           </div>
         </div>
@@ -71,7 +75,6 @@ export default function RequestActionModal({
           <label className="text-xs text-gray-500 uppercase tracking-wider">
             Remarks
           </label>
-
           <textarea
             rows="4"
             value={remarks}

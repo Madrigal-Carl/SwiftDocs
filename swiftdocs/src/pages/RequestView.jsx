@@ -16,9 +16,11 @@ import Loader from "../components/Loader";
 import ProgressTracker from "../components/view/ProgressTracker.jsx";
 import PaymentInformationCard from "../components/view/PaymentInformationCard.jsx";
 import { useAuth } from "../stores/auth_store.jsx";
-import RequestActionModal from "../components/view/RequestActionModal";
-import { updateRmoRequestStatus } from "../services/rmo_service.js";
+import RequestActionModal from "../components/RequestActionModal.jsx";
 import { getRequestPermissions } from "../utils/requestPermissions.js";
+import { updateRmoRequestStatus } from "../services/rmo_service.js";
+import { showToast } from "../utils/swal.js";
+import { getNextStatus } from "../utils/requestStatus.js";
 
 export default function RequestView() {
   const { reference_number } = useParams();
@@ -52,31 +54,6 @@ export default function RequestView() {
   const permissions = getRequestPermissions(user?.role, request?.status);
   const canApprove = permissions.approve;
   const canReject = permissions.reject;
-
-  function getNextStatus(role, currentStatus, action) {
-    if (action === "reject") {
-      if (role === "rmo" && currentStatus === "pending") {
-        return "rejected";
-      }
-      return null;
-    }
-
-    if (action === "approve") {
-      if (role === "rmo" && currentStatus === "pending") {
-        return "invoiced";
-      }
-
-      if (role === "cashier" && currentStatus === "invoiced") {
-        return "paid";
-      }
-
-      if (role === "rmo" && currentStatus === "paid") {
-        return "released";
-      }
-    }
-
-    return null;
-  }
 
   return (
     <div className="space-y-6">
@@ -462,24 +439,33 @@ export default function RequestView() {
             </div>
 
             <div className="space-y-3 mb-4">
-              {(request.logs || []).map((log) => (
-                <div key={log.id} className="bg-(--bg-light) p-3 rounded-lg">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-semibold text-(--primary-600)">
-                      {log.role.toUpperCase()}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      {log.createdAt.split("T")[0]}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-700">{log.notes}</p>
-                </div>
-              ))}
+              {(() => {
+                const visibleLogs = (request.logs || []).filter(
+                  (log) => log && log.notes,
+                );
 
-              {/* If no logs */}
-              {(!request.logs || request.logs.length === 0) && (
-                <p className="text-sm text-gray-500">No remarks available.</p>
-              )}
+                if (visibleLogs.length === 0) {
+                  return (
+                    <p className="text-sm text-gray-500">
+                      No remarks available.
+                    </p>
+                  );
+                }
+
+                return visibleLogs.map((log) => (
+                  <div key={log.id} className="bg-(--bg-light) p-3 rounded-lg">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs font-semibold text-(--primary-600)">
+                        {log.role.toUpperCase()}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        {log.createdAt.split("T")[0]}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-700">{log.notes}</p>
+                  </div>
+                ));
+              })()}
             </div>
           </div>
         </div>
@@ -498,20 +484,18 @@ export default function RequestView() {
           );
 
           if (!nextStatus) {
-            console.error("Invalid status transition");
+            showToast("error", "Invalid status transition");
             return;
           }
 
           try {
-            await updateRmoRequestStatus(request.id, nextStatus);
-
-            setRequest((prev) => ({
-              ...prev,
-              status: nextStatus,
-            }));
-
+            await updateRmoRequestStatus(request.id, nextStatus, remarks);
+            showToast("success", `Request ${nextStatus} successfully!`);
             setModalOpen(false);
+            navigate(-1);
           } catch (err) {
+            const message = err.message || "Failed to update request status";
+            showToast("error", message);
             console.error("Failed to update request status:", err);
           }
         }}

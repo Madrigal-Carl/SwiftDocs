@@ -3,19 +3,14 @@ import Input from "./Input";
 import { Mail, Lock, Eye, EyeClosed } from "lucide-react";
 import { login } from "../services/auth_service";
 import { useAuth } from "../stores/auth_store";
+import { Toast } from "../utils/swal"; // make sure this path is correct
 
 function SignInForm() {
   const { setUser, reloadUser } = useAuth();
 
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
-
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-
-  const [error, setError] = useState("");
+  const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
 
   function handleChange(e) {
@@ -25,35 +20,28 @@ function SignInForm() {
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
+    // Validation
     if (!form.email.trim() || !form.password.trim()) {
-      setError("Email and password are required");
+      Toast.fire({
+        icon: "error",
+        title: "Email and password are required",
+      });
       setLoading(false);
       return;
     }
 
     try {
       const payload = { ...form, remember_me: remember };
-      const res = await login(payload);
+      const res = await login(payload); // call auth_service login
 
-      // store token
+      // Optional: store token if your service returns one (some setups use cookies)
       if (res.token) localStorage.setItem("token", res.token);
 
-      //  add initials before updating auth context
-      const getInitials = (fullname) => {
-        if (!fullname) return "U";
-        return fullname
-          .replace(",", " ")
-          .split(" ")
-          .filter(Boolean)
-          .map((word) => word[0].toUpperCase())
-          .join("")
-          .slice(0, 3);
-      };
-
+      // Reload user info from backend
       await reloadUser();
 
+      // Add initials
       setUser((prev) => ({
         ...prev,
         initials: prev?.fullname
@@ -64,10 +52,23 @@ function SignInForm() {
           .slice(0, 3),
       }));
 
-      // RoleRouter will automatically handle redirect
+      // Show success toast
+      Toast.fire({
+        icon: "success",
+        title: res.message || "Login successful",
+      });
+
+      // RoleRouter or other redirects will handle navigation
     } catch (err) {
       console.error("Login error:", err.response?.data);
-      setError(err.response?.data?.message || "Login failed");
+
+      const errorMessage =
+        err.response?.data?.message || err.message || "Login failed";
+
+      Toast.fire({
+        icon: "error",
+        title: errorMessage,
+      });
     } finally {
       setLoading(false);
     }
@@ -75,17 +76,12 @@ function SignInForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-      
-      <div className="h-2">
-        {error && <p className="text-red-500 text-sm">{error}</p>}
-      </div>
-
       <div>
         <label className="text-sm font-medium text-gray-700 mb-1 block">
           Email Address
         </label>
         <Input
-          icon={<Mail className="w-4 h-4"/>}
+          icon={<Mail className="w-4 h-4" />}
           type="email"
           name="email"
           value={form.email}
@@ -99,7 +95,7 @@ function SignInForm() {
           Password
         </label>
         <Input
-          icon={<Lock className="w-4 h-4"/>}
+          icon={<Lock className="w-4 h-4" />}
           type={showPassword ? "text" : "password"}
           name="password"
           value={form.password}
@@ -110,7 +106,11 @@ function SignInForm() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <Eye className="text-gray-400 w-5 h-5 mt-2" /> :   <EyeClosed className="text-gray-400 w-5 h-5 mt-2"/>}
+              {showPassword ? (
+                <EyeClosed className="text-gray-400 w-5 h-5 mt-2" />
+              ) : (
+                <Eye className="text-gray-400 w-5 h-5 mt-2" />
+              )}
             </button>
           }
         />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import StatusBadge from "../StatusBadge";
 import ActionDropdown from "./ActionDropdown";
 import { Search, Filter, ChevronDown } from "lucide-react";
@@ -14,7 +14,7 @@ import { updateCashierRequestStatus } from "../../services/cashier_service";
 
 export default function RequestTable() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Statuses");
+  const [statusFilter, setStatusFilter] = useState(undefined);
   const { user } = useAuth();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -23,6 +23,30 @@ export default function RequestTable() {
 
   const { requests, loading, pagination, loadRequests, page } =
     useRequestStore();
+
+  const prevFilters = useRef({ search: "", status: undefined });
+
+  useEffect(() => {
+    // Only reload if either search or status actually changed
+    if (
+      searchQuery === prevFilters.current.search &&
+      statusFilter === prevFilters.current.status
+    ) {
+      return; // Nothing changed
+    }
+
+    const delay = setTimeout(() => {
+      loadRequests(1, {
+        search: searchQuery || undefined,
+        status: statusFilter,
+      });
+
+      // Update previous values
+      prevFilters.current = { search: searchQuery, status: statusFilter };
+    }, 500);
+
+    return () => clearTimeout(delay);
+  }, [searchQuery, statusFilter, loadRequests]);
 
   return (
     <div className="flex flex-col gap-4 flex-1 mx-auto w-full">
@@ -41,16 +65,20 @@ export default function RequestTable() {
 
         <div className="relative">
           <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            value={statusFilter || ""}
+            onChange={(e) =>
+              setStatusFilter(
+                e.target.value === "" ? undefined : e.target.value,
+              )
+            }
             className="appearance-none pl-9 pr-10 py-2 rounded-lg border border-(--border-light) bg-white focus:outline-none focus:ring-2 focus:ring-(--primary-300) text-sm cursor-pointer"
           >
-            <option>All Statuses</option>
-            <option>Pending</option>
-            <option>Invoiced</option>
-            <option>Paid</option>
-            <option>Released</option>
-            <option>Rejected</option>
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="invoiced">Invoiced</option>
+            <option value="paid">Paid</option>
+            <option value="released">Released</option>
+            <option value="rejected">Rejected</option>
           </select>
           <Filter className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
           <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
@@ -155,7 +183,12 @@ export default function RequestTable() {
         <Pagination
           page={page}
           pages={pagination.pages || 1}
-          onPageChange={loadRequests}
+          onPageChange={(newPage) =>
+            loadRequests(newPage, {
+              search: searchQuery,
+              status: statusFilter,
+            })
+          }
         />
       </div>
       <RequestActionModal

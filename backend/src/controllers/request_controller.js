@@ -33,8 +33,13 @@ async function GetRequest(req, res) {
 async function GetAllRequestsWithStudent(req, res) {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
+  const search = req.query.search || "";
+  const status = req.query.status || "";
 
-  const requests = await requestService.GetAllRequestsWithStudent(page, limit);
+  const requests = await requestService.GetAllRequestsWithStudent(page, limit, {
+    search,
+    status,
+  });
 
   res.json(requests);
 }

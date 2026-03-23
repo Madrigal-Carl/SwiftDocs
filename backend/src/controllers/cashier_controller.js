@@ -3,8 +3,14 @@ const cashierService = require("../services/cashier_service");
 async function GetRequestsForCashier(req, res) {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
+  const search = req.query.search || "";
+  const status = req.query.status || "";
 
-  const requests = await cashierService.GetRequestsForCashier(page, limit);
+  const requests = await cashierService.GetRequestsForCashier(page, limit, {
+    search,
+    status,
+  });
+
   res.json(requests);
 }
 

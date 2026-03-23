@@ -35,7 +35,7 @@ export const useRequestStore = create((set, get) => ({
     }
   },
 
-  loadRequests: async (page = 1) => {
+  loadRequests: async (page = 1, filters = {}) => {
     try {
       const { role } = get();
       if (!role) return;
@@ -48,7 +48,7 @@ export const useRequestStore = create((set, get) => ({
 
       set({ loading: true });
 
-      const data = await fetcher(page);
+      const data = await fetcher(page, 10, filters);
 
       set({
         requests: data.data,

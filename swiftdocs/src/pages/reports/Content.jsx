@@ -23,15 +23,15 @@ export default function Content() {
 
       <ReportStats />
 
-      <div className="flex gap-2 mb-2">
+      <div className="flex items-center gap-1 p-1 bg-(--primary-100)/50 rounded-xl w-fit mb-2">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
               activeTab === tab.id
-                ? "bg-white shadow-sm text-(--text-dark)"
-                : "bg-(--primary-50) text-slate-600 hover:bg-(--primary-100)"
+                ? "bg-white shadow text-gray-900"
+                : "text-gray-500 hover:text-gray-700"
             }`}
           >
             {tab.label}

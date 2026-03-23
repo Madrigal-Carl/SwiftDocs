@@ -1,4 +1,4 @@
-const { sequelize, Request } = require("../database/models");
+const { sequelize } = require("../database/models");
 const studentRepository = require("../repositories/student_repository");
 const educationRepository = require("../repositories/education_repository");
 const requestRepository = require("../repositories/request_repository");
@@ -172,9 +172,9 @@ async function GetRequestWithStudent(requestId) {
   };
 }
 
-async function GetAllRequestsWithStudent(page = 1, limit = 10) {
+async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
   const { docs, pages, total } =
-    await requestRepository.FetchAllRequestsWithStudent(page, limit);
+    await requestRepository.FetchAllRequestsWithStudent(page, limit, filters);
 
   const result = docs.map((req) => {
     const student = req.student;

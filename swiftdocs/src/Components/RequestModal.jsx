@@ -22,7 +22,7 @@ function RequestModal({ isOpen, onClose }) {
   const [searchInput, setSearchInput] = useState("");
   const [availableDocuments, setAvailableDocuments] = useState([]);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
-
+  const [purpose, setPurpose] = useState("");
   const [studentInfo, setStudentInfo] = useState({
     firstName: "",
     surname: "",
@@ -215,6 +215,8 @@ function RequestModal({ isOpen, onClose }) {
             : academicInfo.track,
 
         notes: academicInfo.academicNotes,
+
+        purpose: purpose,
 
         documents: selectedDocuments.map((doc) => ({
           type: doc.name.toLowerCase(),
@@ -482,6 +484,18 @@ function RequestModal({ isOpen, onClose }) {
               <h3 className="text-xl font-bold text-gray-800 mb-6">
                 Select Documents
               </h3>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Purpose of Request
+                </label>
+                <textarea
+                  value={purpose}
+                  onChange={(e) => setPurpose(e.target.value)}
+                  rows="2"
+                  placeholder="Enter purpose (e.g., employment, scholarship, transfer, etc.)"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
+                />
+              </div>
               <div className="flex flex-wrap gap-2 mb-4 p-3 bg-gray-50 rounded-lg min-h-15">
                 {selectedDocuments.length === 0 ? (
                   <p className="text-gray-500">No documents selected yet.</p>

@@ -162,6 +162,7 @@ export default function RequestTable() {
         isOpen={modalOpen}
         action={modalAction}
         request={selectedRequest}
+        role={user.role}
         onClose={() => {
           setModalOpen(false);
           setSelectedRequest(null);

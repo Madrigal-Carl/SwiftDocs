@@ -7,9 +7,12 @@ export default function RequestActionModal({
   onSubmit,
   request,
   action,
+  role,
 }) {
   const [remarks, setRemarks] = useState("");
   const [files, setFiles] = useState([]);
+
+  const [submitting, setSubmitting] = useState(false);
 
   if (!isOpen || !request) return null;
 
@@ -19,9 +22,14 @@ export default function RequestActionModal({
     : request.full_name || "Unknown";
 
   const handleSubmit = async () => {
-    await onSubmit(remarks, files);
-    setRemarks("");
-    setFiles([]);
+    try {
+      setSubmitting(true);
+      await onSubmit(remarks, files);
+      setRemarks("");
+      setFiles([]);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const isReject = action === "reject";
@@ -72,27 +80,29 @@ export default function RequestActionModal({
           </div>
         </div>
 
-        {action === "approve" && (
-          <div className="mb-6">
-            <label className="text-xs text-gray-500 uppercase tracking-wider">
-              Upload Payment Proofs
-            </label>
+        {action === "approve" &&
+          role === "cashier" &&
+          request.status === "invoiced" && (
+            <div className="mb-6">
+              <label className="text-xs text-gray-500 uppercase tracking-wider">
+                Upload Payment Proofs
+              </label>
 
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={(e) => setFiles(Array.from(e.target.files))}
-              className="w-full mt-2 text-sm"
-            />
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) => setFiles(Array.from(e.target.files))}
+                className="w-full mt-2 text-sm"
+              />
 
-            {files.length > 0 && (
-              <p className="text-xs text-gray-400 mt-1">
-                {files.length} file(s) selected
-              </p>
-            )}
-          </div>
-        )}
+              {files.length > 0 && (
+                <p className="text-xs text-gray-400 mt-1">
+                  {files.length} file(s) selected
+                </p>
+              )}
+            </div>
+          )}
 
         {/* Remarks */}
         <div className="mb-6">
@@ -112,21 +122,28 @@ export default function RequestActionModal({
         <div className="flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm rounded-lg border border-(--border-light) hover:bg-(--bg-light)"
+            disabled={submitting}
+            className="px-4 py-2 text-sm rounded-lg border border-(--border-light) hover:bg-(--bg-light) disabled:opacity-50"
           >
             Cancel
           </button>
 
           <button
             onClick={handleSubmit}
-            className={`px-5 py-2 text-sm font-semibold rounded-lg text-white shadow-sm transition-colors
-              ${
-                isReject
-                  ? "bg-red-600 hover:bg-red-700"
-                  : "bg-(--primary-600) hover:bg-(--primary-700)"
-              }`}
+            disabled={submitting}
+            className={`px-5 py-2 text-sm font-semibold rounded-lg text-white shadow-sm transition-colors flex items-center justify-center gap-2
+    ${submitting ? "opacity-60 cursor-not-allowed" : ""}
+    ${
+      isReject
+        ? "bg-red-600 hover:bg-red-700"
+        : "bg-(--primary-600) hover:bg-(--primary-700)"
+    }`}
           >
-            {isReject ? "Reject Request" : "Approve Request"}
+            {submitting
+              ? "Processing..."
+              : isReject
+                ? "Reject Request"
+                : "Approve Request"}
           </button>
         </div>
       </div>

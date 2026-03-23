@@ -476,6 +476,7 @@ export default function RequestView() {
         isOpen={modalOpen}
         action={modalAction}
         request={request}
+        role={user.role}
         onClose={() => setModalOpen(false)}
         onSubmit={async (remarks, files) => {
           const nextStatus = getNextStatus(

@@ -17,6 +17,18 @@ const updateRequestStatusSchema = Joi.object({
     }),
     otherwise: Joi.string().trim().empty("").default(null).optional(),
   }),
+  additional_documents: Joi.when("status", {
+    is: "invoiced",
+    then: Joi.array()
+      .items(
+        Joi.object({
+          id: Joi.number().required(),
+          unit_price: Joi.number().min(0).required(),
+        }),
+      )
+      .optional(),
+    otherwise: Joi.forbidden(),
+  }),
 });
 
 function validateUpdateRequestStatus(req, res, next) {

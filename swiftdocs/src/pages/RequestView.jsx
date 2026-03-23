@@ -33,6 +33,22 @@ export default function RequestView() {
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const isRmoPending = user?.role === "rmo" && request?.status === "pending";
+
+  const [additionalDocsState, setAdditionalDocsState] = useState([]);
+
+  useEffect(() => {
+    if (request?.additional_documents) {
+      setAdditionalDocsState(request.additional_documents);
+    }
+  }, [request]);
+
+  const handlePriceChange = (index, value) => {
+    const updated = [...additionalDocsState];
+    updated[index].unit_price = parseFloat(value) || 0;
+    setAdditionalDocsState(updated);
+  };
+
   useEffect(() => {
     const getRequest = async () => {
       try {
@@ -310,7 +326,9 @@ export default function RequestView() {
 
             {(() => {
               const requestedDocs = request.requested_documents || [];
-              const additionalDocs = request.additional_documents || [];
+              const additionalDocs = isRmoPending
+                ? additionalDocsState
+                : request.additional_documents || [];
 
               const documents = requestedDocs.map((item) => ({
                 type: item.document?.type,
@@ -352,6 +370,46 @@ export default function RequestView() {
                   );
                 });
 
+              const renderOthers = (list) =>
+                list.map((doc, index) => {
+                  const subtotal = doc.price * doc.quantity;
+
+                  return (
+                    <div
+                      key={index}
+                      className="p-3 rounded-lg border border-(--border-light)"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="font-medium text-(--text-dark) capitalize">
+                          {doc.type}
+                        </p>
+
+                        {isRmoPending ? (
+                          <input
+                            type="number"
+                            value={doc.price}
+                            onChange={(e) =>
+                              handlePriceChange(index, e.target.value)
+                            }
+                            className="w-24 px-2 py-1 text-sm border border-(--border-light) rounded-lg text-right"
+                          />
+                        ) : (
+                          <p className="text-sm text-gray-500">
+                            ₱{doc.price.toFixed(2)}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-xs text-gray-500">Subtotal</span>
+                        <span className="font-semibold text-(--text-dark)">
+                          ₱{subtotal.toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                });
+
               const totalAmount = [...documents, ...others].reduce(
                 (sum, doc) => sum + doc.price * doc.quantity,
                 0,
@@ -377,7 +435,11 @@ export default function RequestView() {
                         Others
                       </p>
                       <div className="border-t border-(--border-light) mb-3"></div>
-                      <div className="space-y-3">{renderList(others)}</div>
+                      <div className="space-y-3">
+                        {isRmoPending
+                          ? renderOthers(others)
+                          : renderList(others)}
+                      </div>
                     </div>
                   )}
 
@@ -420,7 +482,9 @@ export default function RequestView() {
           <PaymentInformationCard
             amount={[
               ...(request.requested_documents || []),
-              ...(request.additional_documents || []),
+              ...(isRmoPending
+                ? additionalDocsState
+                : request.additional_documents || []),
             ].reduce((sum, doc) => {
               const price = doc.document?.price || doc.unit_price || 0;
               const quantity = doc.quantity || 0;
@@ -490,6 +554,17 @@ export default function RequestView() {
             return;
           }
 
+          if (user.role === "rmo" && nextStatus === "invoiced") {
+            const hasInvalid = additionalDocsState.some(
+              (doc) => !doc.unit_price || doc.unit_price <= 0,
+            );
+
+            if (hasInvalid) {
+              showToast("error", "All additional documents must have a price");
+              return;
+            }
+          }
+
           try {
             if (user.role === "cashier") {
               const formData = new FormData();
@@ -502,14 +577,26 @@ export default function RequestView() {
 
               await updateCashierRequestStatus(request.id, formData);
             } else {
-              await updateRmoRequestStatus(request.id, nextStatus, remarks);
+              const formattedAdditionalDocs = additionalDocsState.map(
+                (doc) => ({
+                  id: doc.id,
+                  unit_price: doc.unit_price,
+                }),
+              );
+
+              await updateRmoRequestStatus(
+                request.id,
+                nextStatus,
+                remarks,
+                nextStatus === "invoiced" ? formattedAdditionalDocs : [],
+              );
             }
 
             showToast("success", `Request ${nextStatus} successfully!`);
             setModalOpen(false);
             navigate(-1);
           } catch (err) {
-            showToast("error", err.response?.data?.message || err.message);
+            showToast("error", err.message || err.message);
           }
         }}
       />

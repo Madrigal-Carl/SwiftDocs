@@ -8,6 +8,7 @@ async function UpdateRequestStatus(req, res) {
     req.body.status,
     req.user,
     req.body.note,
+    req.body.additional_documents,
   );
 
   io.emit("requestsUpdated");
@@ -15,20 +16,6 @@ async function UpdateRequestStatus(req, res) {
   res.json(request);
 }
 
-async function SetAdditionalDocumentPrice(req, res) {
-  const { id } = req.params;
-  const { additionalDocumentId, unitPrice } = req.body;
-
-  const result = await rmoService.SetAdditionalDocumentPrice(
-    Number(id),
-    additionalDocumentId,
-    unitPrice,
-  );
-
-  res.json(result);
-}
-
 module.exports = {
   UpdateRequestStatus,
-  SetAdditionalDocumentPrice,
 };

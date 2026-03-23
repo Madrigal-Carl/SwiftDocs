@@ -14,12 +14,4 @@ router.patch(
   rmoController.UpdateRequestStatus,
 );
 
-// PATCH to set additional document price
-router.patch(
-  "/additional-documents/:id/price",
-  requireAuth,
-  requireRole("rmo"),
-  rmoController.SetAdditionalDocumentPrice
-);
-
 module.exports = router;

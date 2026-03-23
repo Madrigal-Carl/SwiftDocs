@@ -1,13 +1,55 @@
-const { Request } = require("../database/models");
+const { Request, Sequelize } = require("../database/models");
+const { Op } = Sequelize;
 const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
 const receiptRepository = require("../repositories/receipt_repository");
 
-async function GetRequestsForCashier(page = 1, limit = 10) {
+async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
+  let { search = "", status = "" } = filters;
+
   const allowedStatuses = ["paid", "invoiced"];
 
+  // ✅ Normalize inputs
+  search = search.trim();
+  status = status.trim();
+
+  const where = {
+    status: allowedStatuses, // default restriction
+  };
+
+  // ✅ If specific status is selected, override but still validate
+  if (status !== "" && allowedStatuses.includes(status)) {
+    where.status = status;
+  }
+
+  // ✅ Search filter (same as your main logic)
+  if (search !== "") {
+    const safeSearch = search.replace(/'/g, "''").toLowerCase();
+
+    where[Op.or] = [
+      Sequelize.where(
+        Sequelize.fn("LOWER", Sequelize.col("Request.reference_number")),
+        {
+          [Op.like]: `%${safeSearch}%`,
+        },
+      ),
+
+      Sequelize.literal(`
+        EXISTS (
+          SELECT 1 FROM students AS student
+          WHERE student.id = Request.student_id
+          AND (
+            LOWER(student.first_name) LIKE '%${safeSearch}%'
+            OR LOWER(student.last_name) LIKE '%${safeSearch}%'
+          )
+        )
+      `),
+    ];
+  }
+
+  // ✅ Stats (respect allowed statuses only)
   const allRequests = await Request.findAll({
     where: { status: allowedStatuses },
     attributes: ["status", "request_date"],
@@ -15,13 +57,12 @@ async function GetRequestsForCashier(page = 1, limit = 10) {
 
   const stats = computeStats(allRequests);
 
+  // ✅ Paginated query with filters
   const { docs, pages, total } = await Request.paginate({
     page,
     paginate: limit,
     order: [["request_date", "DESC"]],
-    where: {
-      status: allowedStatuses,
-    },
+    where,
     include: [
       {
         association: "student",
@@ -41,6 +82,7 @@ async function GetRequestsForCashier(page = 1, limit = 10) {
         association: "additional_documents",
       },
     ],
+    distinct: true,
   });
 
   const result = docs.map((req) => {

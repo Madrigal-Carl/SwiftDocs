@@ -2,7 +2,7 @@ import SignInPage from "./SignInForm";
 
 function AuthCard() {
   return (
-    <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
+    <div className="w-full max-w-xl rounded-2xl  p-8">
       {/* Header */}
       <div className="mb-6">
         <h2 className="text-4xl font-bold text-gray-900">Welcome back</h2>

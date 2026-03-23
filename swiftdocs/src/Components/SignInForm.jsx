@@ -85,7 +85,7 @@ function SignInForm() {
           Email Address
         </label>
         <Input
-          icon={<Mail />}
+          icon={<Mail className="w-4 h-4"/>}
           type="email"
           name="email"
           value={form.email}
@@ -99,7 +99,7 @@ function SignInForm() {
           Password
         </label>
         <Input
-          icon={<Lock />}
+          icon={<Lock className="w-4 h-4"/>}
           type={showPassword ? "text" : "password"}
           name="password"
           value={form.password}
@@ -110,7 +110,7 @@ function SignInForm() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <EyeClosed /> : <Eye />}
+              {showPassword ? <Eye className="text-gray-400 w-5 h-5 mt-2" /> :   <EyeClosed className="text-gray-400 w-5 h-5 mt-2"/>}
             </button>
           }
         />

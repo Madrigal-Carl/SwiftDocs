@@ -1,11 +1,26 @@
+import { useNavigate } from "react-router-dom";
 import { createContext, useContext, useEffect, useState } from "react";
 import { getCurrentUser } from "../services/auth_service";
+import { logout as logoutService } from "../services/auth_service";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    try {
+      await logoutService();
+    } catch (err) {
+      console.error("Logout failed:", err);
+    } finally {
+      setUser(null);
+      navigate("/");
+    }
+  };
 
   const getInitials = (fullname) => {
     if (!fullname) return "U";
@@ -45,6 +60,7 @@ export function AuthProvider({ children }) {
         loading,
         setUser,
         reloadUser: loadUser,
+        logout,
       }}
     >
       {children}

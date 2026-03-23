@@ -27,7 +27,7 @@ async function RequestDocuments(data) {
 
     const requestData = {
       student_id: student.id,
-      status: "pending",
+      purpose: data.purpose,
       notes: data.notes,
     };
     const request = await requestRepository.CreateRequest(requestData, t);
@@ -88,6 +88,7 @@ async function RequestDocuments(data) {
 }
 
 async function SendRequestEmail(referenceNumber) {
+  referenceNumber = referenceNumber.trim().toLowerCase();
   const request = await requestRepository.FindByReferenceNumber(
     referenceNumber,
     {
@@ -131,10 +132,44 @@ async function GetRequestWithStudent(requestId) {
       {
         association: "additional_documents",
       },
+      {
+        association: "logs",
+        include: [
+          {
+            association: "account",
+            attributes: ["id", "first_name", "middle_name", "last_name"],
+          },
+        ],
+      },
+      {
+        association: "receipts",
+      },
     ],
   });
 
-  return request;
+  const formattedLogs = (request.logs || []).map((log) => {
+    const account = log.account;
+
+    let full_name = null;
+
+    if (account) {
+      const middleInitial = account.middle_name
+        ? ` ${account.middle_name.charAt(0).toUpperCase()}.`
+        : "";
+
+      full_name = `${account.last_name}, ${account.first_name}${middleInitial}`;
+    }
+
+    return {
+      ...log.toJSON(),
+      account_full_name: full_name,
+    };
+  });
+
+  return {
+    ...request.toJSON(),
+    logs: formattedLogs,
+  };
 }
 
 async function GetAllRequestsWithStudent(page = 1, limit = 10) {
@@ -183,10 +218,69 @@ async function GetRequestAnalytics() {
   return stats;
 }
 
+async function GetRequestByReferenceNumber(referenceNumber) {
+  // Use repository to fetch the request by reference_number
+  const request = await requestRepository.FindByReferenceNumber(
+    referenceNumber,
+    {
+      include: [
+        {
+          association: "student",
+          include: ["education"],
+        },
+        {
+          association: "requested_documents",
+          include: ["document"],
+        },
+        {
+          association: "additional_documents",
+        },
+        {
+          association: "logs",
+          include: [
+            {
+              association: "account",
+              attributes: ["id", "first_name", "middle_name", "last_name"],
+            },
+          ],
+        },
+        {
+          association: "receipts",
+        },
+      ],
+    },
+  );
+
+  const formattedLogs = (request.logs || []).map((log) => {
+    const account = log.account;
+
+    let full_name = null;
+
+    if (account) {
+      const middleInitial = account.middle_name
+        ? ` ${account.middle_name.charAt(0).toUpperCase()}.`
+        : "";
+
+      full_name = `${account.last_name}, ${account.first_name}${middleInitial}`;
+    }
+
+    return {
+      ...log.toJSON(),
+      account_full_name: full_name,
+    };
+  });
+
+  return {
+    ...request.toJSON(),
+    logs: formattedLogs,
+  };
+}
+
 module.exports = {
   RequestDocuments,
   SendRequestEmail,
   GetRequestWithStudent,
   GetAllRequestsWithStudent,
+  GetRequestByReferenceNumber,
   GetRequestAnalytics,
 };

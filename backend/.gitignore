@@ -3,3 +3,8 @@ node_modules/
 
 # Environment variables
 .env
+
+# Proof Uploads
+uploads/proofs/*
+!uploads/proofs/.gitignore
+!uploads/proofs/payment_sample.jpg

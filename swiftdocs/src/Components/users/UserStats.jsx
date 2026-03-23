@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import CountCard from "../CountCard";
+import CountCard from "./CountCard";
 import { UsersRound, UserCheck, UserCog, PhilippinePeso } from "lucide-react";
 import { useAccountStore } from "../../stores/account_store";
 

@@ -1,9 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../stores/auth_store";
 import { ChevronDown } from "lucide-react";
 import logo from "../assets/white_outline_logo.png";
 
 export default function Sidebar({ menuItems = [], selectedTab, onSelectTab }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSelectTab = (label) => {
+    onSelectTab(label);
+    navigate("/");
+  };
 
   return (
     <aside className="w-64 bg-(--primary-900) flex flex-col h-screen fixed left-0 top-0 z-20">
@@ -30,7 +37,7 @@ export default function Sidebar({ menuItems = [], selectedTab, onSelectTab }) {
             return (
               <li key={index}>
                 <button
-                  onClick={() => onSelectTab(item.label)}
+                  onClick={() => handleSelectTab(item.label)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                     isActive
                       ? "bg-(--primary-800) text-white shadow-lg shadow-black/10"
@@ -48,7 +55,7 @@ export default function Sidebar({ menuItems = [], selectedTab, onSelectTab }) {
 
       {/* User Card */}
       <div className="p-4 border-t border-(--primary-800)">
-        <div className="flex items-center gap-3 bg-(--primary-800)/50 rounded-xl p-4 backdrop-blur-sm">
+        <div className="flex items-center gap-3 rounded-xl p-4">
           <div className="w-10 h-10 rounded-full bg-linear-to-br from-(--primary-400) to-(--primary-600) flex items-center justify-center text-white font-semibold shadow-lg">
             {user.initials}
           </div>
@@ -60,7 +67,6 @@ export default function Sidebar({ menuItems = [], selectedTab, onSelectTab }) {
               {user.role}
             </p>
           </div>
-          <ChevronDown className="w-4 h-4 text-(--primary-200)" />
         </div>
       </div>
     </aside>

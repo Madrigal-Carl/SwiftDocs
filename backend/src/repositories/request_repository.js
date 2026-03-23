@@ -57,7 +57,7 @@ async function FetchAllRequestsWithStudent(page = 1, limit = 10) {
   return Request.paginate({
     page,
     paginate: limit,
-    order: [["request_date", "DESC"]],
+    order: [["created_at", "DESC"]],
     include: requestIncludes,
   });
 }

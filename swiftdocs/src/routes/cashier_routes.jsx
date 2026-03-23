@@ -9,6 +9,7 @@ export default function CashierRoutes() {
   return (
     <Routes>
       <Route path="/" element={<CashierDashboard />} />
+      <Route path="/request/:reference_number" element={<CashierDashboard />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

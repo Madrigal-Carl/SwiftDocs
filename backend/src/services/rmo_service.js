@@ -3,7 +3,13 @@ const { Request, Additional_Document } = require("../database/models");
 const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
 
-async function UpdateRequestStatus(requestId, status, account, note = null) {
+async function UpdateRequestStatus(
+  requestId,
+  status,
+  account,
+  note = null,
+  additionalDocs = [],
+) {
   const allowedStatuses = ["invoiced", "rejected", "released"];
 
   if (!allowedStatuses.includes(status)) {
@@ -29,6 +35,35 @@ async function UpdateRequestStatus(requestId, status, account, note = null) {
     throw new Error("Request not found");
   }
 
+  if (status === "invoiced") {
+    if (!request.isPending()) {
+      throw new Error("Only pending requests can be invoiced");
+    }
+
+    if (additionalDocs && additionalDocs.length > 0) {
+      const hasZeroPrice = request.additional_documents.some(
+        (doc) => doc.unit_price <= 0,
+      );
+
+      if (hasZeroPrice) {
+        throw new Error("All additional documents must have a price");
+      }
+
+      for (const doc of additionalDocs) {
+        const additional = request.additional_documents.find(
+          (ad) => ad.id === doc.id,
+        );
+
+        if (!additional) {
+          throw new Error(`Additional document ${doc.id} not found`);
+        }
+
+        additional.unit_price = doc.unit_price;
+        await additional.save();
+      }
+    }
+  }
+
   const previousStatus = request.status;
 
   const actions = {
@@ -52,12 +87,13 @@ async function UpdateRequestStatus(requestId, status, account, note = null) {
     action: status,
     from_status: previousStatus,
     to_status: request.status,
+    notes: note,
   });
 
   await mailService.SendRMOUpdateMail({
     request,
     status,
-    reason: status === "rejected" ? note : null,
+    reason: note,
   });
 
   return {
@@ -67,29 +103,6 @@ async function UpdateRequestStatus(requestId, status, account, note = null) {
   };
 }
 
-async function SetAdditionalDocumentPrice(requestId, additionalDocumentId, unitPrice, account) {
-  if (!additionalDocumentId) {
-    throw new Error("Missing additionalDocumentId in request body");
-  }
-
-  const additionalDoc = await Additional_Document.findByPk(additionalDocumentId, {
-  include: [{ model: Request, as: "request" }],
-  });
-
-  if (!additionalDoc) {
-    throw new Error(`Additional document with id ${additionalDocumentId} not found`);
-  }
-
-  if (additionalDoc.request_id !== Number(requestId)) {
-    throw new Error("Document does not belong to this request");
-  }
-
-  additionalDoc.unit_price = unitPrice;
-  await additionalDoc.save();
-
-  return additionalDoc;
-}
 module.exports = {
   UpdateRequestStatus,
-  SetAdditionalDocumentPrice,
 };

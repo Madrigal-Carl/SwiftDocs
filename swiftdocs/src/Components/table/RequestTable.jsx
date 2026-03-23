@@ -5,10 +5,21 @@ import { Search, Filter, ChevronDown } from "lucide-react";
 import { useRequestStore } from "../../stores/request_store";
 import Pagination from "../Pagination";
 import TableLoader from "../TableLoader";
+import { useAuth } from "../../stores/auth_store";
+import RequestActionModal from "../RequestActionModal.jsx";
+import { showToast } from "../../utils/swal.js";
+import { getNextStatus } from "../../utils/requestStatus.js";
+import { updateRmoRequestStatus } from "../../services/rmo_service.js";
+import { updateCashierRequestStatus } from "../../services/cashier_service";
 
 export default function RequestTable() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Statuses");
+  const { user } = useAuth();
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalAction, setModalAction] = useState(null);
+  const [selectedRequest, setSelectedRequest] = useState(null);
 
   const { requests, loading, pagination, loadRequests, page } =
     useRequestStore();
@@ -84,7 +95,7 @@ export default function RequestTable() {
                 <TableLoader colSpan={6} />
               ) : requests.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="text-center py-6 text-gray-500">
+                  <td colSpan="6" className="text-center py-6 text-gray-500">
                     No requests found
                   </td>
                 </tr>
@@ -118,7 +129,21 @@ export default function RequestTable() {
                         <StatusBadge status={req.status} />
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <ActionDropdown request={item} />
+                        <ActionDropdown
+                          reference={req.reference_number}
+                          status={req.status}
+                          role={user.role}
+                          onApprove={() => {
+                            setSelectedRequest(req);
+                            setModalAction("approve");
+                            setModalOpen(true);
+                          }}
+                          onReject={() => {
+                            setSelectedRequest(req);
+                            setModalAction("reject");
+                            setModalOpen(true);
+                          }}
+                        />
                       </td>
                     </tr>
                   );
@@ -133,6 +158,55 @@ export default function RequestTable() {
           onPageChange={loadRequests}
         />
       </div>
+      <RequestActionModal
+        isOpen={modalOpen}
+        action={modalAction}
+        request={selectedRequest}
+        role={user.role}
+        onClose={() => {
+          setModalOpen(false);
+          setSelectedRequest(null);
+        }}
+        onSubmit={async (remarks, files) => {
+          const nextStatus = getNextStatus(
+            user.role,
+            selectedRequest.status,
+            modalAction,
+          );
+
+          if (!nextStatus) {
+            showToast("error", "Invalid status transition");
+            return;
+          }
+
+          try {
+            if (user.role === "cashier") {
+              const formData = new FormData();
+              formData.append("status", nextStatus);
+              formData.append("note", remarks);
+
+              files.forEach((file) => {
+                formData.append("proofs", file);
+              });
+
+              await updateCashierRequestStatus(selectedRequest.id, formData);
+            } else {
+              await updateRmoRequestStatus(
+                selectedRequest.id,
+                nextStatus,
+                remarks,
+              );
+            }
+
+            showToast("success", `Request ${nextStatus} successfully!`);
+            setModalOpen(false);
+            setSelectedRequest(null);
+            loadRequests(page);
+          } catch (err) {
+            showToast("error", err.message || err.message);
+          }
+        }}
+      />
     </div>
   );
 }

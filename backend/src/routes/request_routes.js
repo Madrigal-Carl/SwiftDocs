@@ -45,4 +45,12 @@ router.get(
   requestController.GetRequest,
 );
 
+// Fetch a request by reference_number
+router.get(
+  "/reference/:referenceNumber",
+  requireAuth,
+  requireRole("rmo", "cashier", "admin"),
+  requestController.GetRequestByReferenceNumber,
+);
+
 module.exports = router;

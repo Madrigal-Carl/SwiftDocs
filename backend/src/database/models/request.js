@@ -161,6 +161,10 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
         allowNull: false,
       },
+      purpose: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
       request_date: {
         type: DataTypes.DATEONLY,
         allowNull: false,

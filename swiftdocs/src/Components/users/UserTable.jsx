@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Search, Filter, ChevronDown } from "lucide-react";
 import { useAccountStore } from "../../stores/account_store";
 import Pagination from "../Pagination";
@@ -13,10 +13,6 @@ export default function UserTable() {
 
   const { accounts, loading, pagination, loadAccounts, page } =
     useAccountStore();
-
-  useEffect(() => {
-    loadAccounts(1);
-  }, []);
 
   return (
     <div className="flex flex-col gap-4 flex-1 mx-auto w-full">
@@ -85,7 +81,7 @@ export default function UserTable() {
             </thead>
             <tbody className="divide-y divide-(--border-light)">
               {loading ? (
-                <TableLoader colSpan={6} />
+                <TableLoader colSpan={6} rows={5} />
               ) : accounts.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center py-6 text-gray-500">
@@ -98,9 +94,11 @@ export default function UserTable() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-linear-to-br from-(--primary-400) to-(--primary-600) text-white flex items-center justify-center font-semibold text-sm">
-                          {user.name?.charAt(0)}
+                          {user.full_name?.charAt(0)}
                         </div>
-                        <span className="text-sm font-medium">{user.name}</span>
+                        <span className="text-sm font-medium">
+                          {user.full_name}
+                        </span>
                       </div>
                     </td>
 

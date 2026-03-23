@@ -42,6 +42,10 @@ const schema = Joi.object({
     "string.empty": "LRN is required",
     "any.required": "LRN is required",
   }),
+  purpose: Joi.string().required().messages({
+    "string.empty": "Purpose is required",
+    "any.required": "Purpose is required",
+  }),
   education_level: Joi.string()
     .valid("college", "senior_high")
     .required()

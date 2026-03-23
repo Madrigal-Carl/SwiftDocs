@@ -3,16 +3,17 @@ const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
+const receiptRepository = require("../repositories/receipt_repository");
 
 async function GetRequestsForCashier(page = 1, limit = 10) {
+  const allowedStatuses = ["paid", "invoiced"];
+
   const allRequests = await Request.findAll({
     where: { status: allowedStatuses },
     attributes: ["status", "request_date"],
   });
 
   const stats = computeStats(allRequests);
-
-  const allowedStatuses = ["paid", "invoiced"];
 
   const { docs, pages, total } = await Request.paginate({
     page,
@@ -77,7 +78,13 @@ async function GetRequestsForCashier(page = 1, limit = 10) {
   };
 }
 
-async function UpdateRequestStatus(requestId, status, account) {
+async function UpdateRequestStatus(
+  requestId,
+  status,
+  account,
+  note = null,
+  proofPaths = [],
+) {
   const allowedStatuses = ["paid"];
 
   if (!allowedStatuses.includes(status)) {
@@ -111,6 +118,8 @@ async function UpdateRequestStatus(requestId, status, account) {
 
   await request.save();
 
+  await receiptRepository.CreateReceipts(requestId, proofPaths);
+
   await logRepository.CreateLog({
     account_id: account.id,
     request_id: requestId,
@@ -118,6 +127,7 @@ async function UpdateRequestStatus(requestId, status, account) {
     action: status,
     from_status: previousStatus,
     to_status: request.status,
+    notes: note,
   });
 
   await mailService.SendCashierUpdateMail({

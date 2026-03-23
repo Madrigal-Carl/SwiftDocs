@@ -7,6 +7,7 @@ export default function RmoRoutes() {
   return (
     <Routes>
       <Route path="/" element={<RmoDashboard />} />
+      <Route path="/request/:reference_number" element={<RmoDashboard />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "../assets/colored_logo.png";
 
-export default function TableLoader({ colSpan = 6, rows = 7 }) {
+export default function TableLoader({ colSpan = 6, rows = 11 }) {
   return (
     <>
       {Array.from({ length: rows }).map((_, idx) => (

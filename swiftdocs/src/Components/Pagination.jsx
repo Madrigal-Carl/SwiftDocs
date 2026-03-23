@@ -81,7 +81,7 @@ export default function Pagination({ page = 1, pages = 1, onPageChange }) {
         <button
           onClick={() => onPageChange(page + 1)}
           disabled={page >= pages}
-          className="relative inline-flex items-center rounded-r-md px-3 py-2 text-[var(--primary-600)] bg-white hover:bg-[var(--primary-50)] disabled:opacity-50 transition-colors"
+          className="relative inline-flex items-center rounded-r-md px-3 py-2 text-(--primary-600) bg-white hover:bg-(--primary-50) disabled:opacity-50 transition-colors"
         >
           <span className="sr-only">Next</span>
           <ChevronRight className="h-5 w-5" />

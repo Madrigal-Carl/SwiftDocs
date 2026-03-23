@@ -11,8 +11,8 @@ export default function Content() {
       {!reference_number ? (
         <>
           <ContentHeader
-            title="Document Requests"
-            description="Manage and review all student document requests"
+            title="Payment Verification"
+            description="Verify student payments for document requests"
           />
           <RequestTable />
         </>

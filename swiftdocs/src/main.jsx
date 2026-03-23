@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import { AuthProvider, useAuth } from "./stores/auth_store";
 import { useRequestStore } from "./stores/request_store";
+import { useAccountStore } from "./stores/account_store";
 
 import PublicRoutes from "./routes/public_routes";
 import AdminRoutes from "./routes/admin_routes";
@@ -18,12 +19,21 @@ function RoleRouter() {
   const setRole = useRequestStore((state) => state.setRole);
   const initSocket = useRequestStore((state) => state.initSocket);
 
+  const loadAccounts = useAccountStore((s) => s.loadAccounts);
+  const loadAnalytics = useAccountStore((s) => s.loadAnalytics);
+
   const initialized = useRef(false);
 
   useEffect(() => {
     if (user?.role && !initialized.current) {
       setRole(user.role);
       initSocket();
+
+      if (user.role === "admin") {
+        loadAccounts(1);
+        loadAnalytics();
+      }
+
       initialized.current = true;
     }
   }, [user]);

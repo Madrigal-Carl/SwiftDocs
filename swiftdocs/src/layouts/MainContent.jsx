@@ -2,6 +2,8 @@ import DashboardContent from "../pages/dashboard/Content";
 import RequestsContent from "../pages/requests/Content";
 import ReportsContent from "../pages/reports/Content";
 import UsersContent from "../pages/users/Content";
+import ProcessContent from "../pages/process/Content";
+import PaymentContent from "../pages/payment/Content";
 import PageLayout from "./PageLayout";
 
 export default function MainContent({ selectedTab, onChangeTab }) {
@@ -22,10 +24,18 @@ export default function MainContent({ selectedTab, onChangeTab }) {
         );
 
       case "Payment Verification":
-        return <div>💳 Payment Verification Content</div>;
+        return (
+          <PageLayout title="Payment Verification">
+            <PaymentContent />
+          </PageLayout>
+        );
 
       case "Document Processing":
-        return <div>⚙️ Document Processing Content</div>;
+        return (
+          <PageLayout title="Document Processing">
+            <ProcessContent />
+          </PageLayout>
+        );
 
       case "Reports":
         return (

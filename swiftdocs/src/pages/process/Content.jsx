@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import RequestTable from "../../components/table/RequestTable";
-import ContentHeader from "../../layouts/ContentHeader";
+import SectionHeader from "../../layouts/SectionHeader";
 import RequestView from "../../pages/RequestView";
 
 export default function Content() {
@@ -10,9 +10,11 @@ export default function Content() {
     <div className="flex flex-col gap-6 p-6">
       {!reference_number ? (
         <>
-          <ContentHeader
-            title="Document Requests"
-            description="Manage and review all student document requests"
+          <SectionHeader
+            title="Document Processing"
+            description="Process approved document requests and manage releases"
+            actionLabel="New Request"
+            onAction={() => console.log("clicked")}
           />
           <RequestTable />
         </>

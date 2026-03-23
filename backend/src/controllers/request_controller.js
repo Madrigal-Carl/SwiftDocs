@@ -45,10 +45,24 @@ async function GetRequestAnalytics(req, res) {
   res.json(stats);
 }
 
+async function GetRequestByReferenceNumber(req, res) {
+  const referenceNumber = req.params.referenceNumber.trim().toLowerCase();
+
+  const request =
+    await requestService.GetRequestByReferenceNumber(referenceNumber);
+
+  if (!request) {
+    return res.status(404).json({ message: "Request not found" });
+  }
+
+  res.json(request);
+}
+
 module.exports = {
   CreateRequest,
   SendRequestEmail,
   GetRequest,
+  GetRequestByReferenceNumber,
   GetAllRequestsWithStudent,
   GetRequestAnalytics,
 };

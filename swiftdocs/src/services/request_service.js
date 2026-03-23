@@ -1,8 +1,13 @@
 import api from "../api/api";
 
-export async function fetchAllRequests(page = 1, limit = 10) {
+export async function fetchAllRequests(page = 1, limit = 10, filters = {}) {
   const res = await api.get("/request", {
-    params: { page, limit },
+    params: {
+      page,
+      limit,
+      search: filters.search || "",
+      status: filters.status || "",
+    },
   });
 
   return res.data;

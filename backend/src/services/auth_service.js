@@ -81,13 +81,13 @@ async function login({ email, password, remember_me }, res) {
   const account = await accountRepository.findByEmail(normalizedEmail);
 
   if (!account) {
-    throw new Error("Invalid email or password");
+    return res.status(400).json({ message: "Invalid Email" });
   }
 
   const isMatch = await bcrypt.compare(password, account.password);
 
   if (!isMatch) {
-    throw new Error("Invalid email or password");
+    return res.status(400).json({ message: "Invalid Password" });
   }
 
   const updatedAccount = await accountRepository.updateRememberMe(

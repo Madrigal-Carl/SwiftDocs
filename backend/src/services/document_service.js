@@ -1,100 +1,101 @@
 const sequelize = require("../database/models").sequelize;
 const documentRepository = require("../repositories/document_repository");
 
-//create document
+async function GetAllDocuments() {
+  return documentRepository.GetAllDocuments();
+}
+
+async function GetDocumentById(id) {
+  const document = await documentRepository.FindDocumentById(id);
+
+  if (!document) {
+    const error = new Error("Document not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return document;
+}
+
 async function CreateDocument(data) {
   return sequelize.transaction(async (t) => {
-    const { type, price } = data;
+    const { type, price = 0 } = data;
 
-    if (!type) throw new Error("Document type is required");
+    type = type.toLowerCase().trim();
 
-    // 1️⃣ Check for existing active document with the same type
-    const existingActive = await documentRepository.FindByType(type, t);
-    if (existingActive) {
-      throw new Error("Document type already exists");
+    // 1️⃣ Check active document
+    const existing = await documentRepository.FindDeletedDocumentByType(
+      type,
+      t,
+    );
+    if (existing && !existing.deleted_at) {
+      const error = new Error("Document type already exists");
+      error.statusCode = 400;
+      throw error;
     }
 
-    // 2️⃣ Look for any soft-deleted document (slot reuse)
-    const deletedDoc = await documentRepository.FindDeletedByType(null, t);
-
-    if (deletedDoc) {
-      // Restore the soft-deleted row (clears deleted_at automatically)
-      await deletedDoc.restore({ transaction: t });
-
-      // Update type and price after restoring
-      await documentRepository.UpdateDocument(
-        deletedDoc,
-        { type, price: price || 0 },
-        t
-      );
-
-      return deletedDoc;
+    // 2️⃣ Restore if soft-deleted
+    if (existing && existing.deleted_at) {
+      await existing.restore({ transaction: t });
+      return documentRepository.UpdateDocument(existing, { price }, t);
     }
 
-    // 3️⃣ Otherwise, create a new document
-    return documentRepository.CreateDocument({ type, price: price || 0 }, t);
+    // 3️⃣ Otherwise create new
+    return documentRepository.CreateDocument({ type, price }, t);
   });
 }
 
-
-//update document
 async function UpdateDocument(id, data) {
   return sequelize.transaction(async (t) => {
-    const { type, price } = data;
-
     const document = await documentRepository.FindDocumentById(id, t);
 
     if (!document) {
-      throw new Error("Document not found");
+      const error = new Error("Document not found");
+      error.statusCode = 404;
+      throw error;
     }
 
-    if (type && type !== document.type) {
-      const existing = await documentRepository.FindByType(type, t);
+    if (data.type) {
+      data.type = data.type.toLowerCase().trim();
 
-      if (existing) {
-        throw new Error("Document type already exists");
+      if (data.type !== document.type) {
+        const existing = await documentRepository.FindDeletedDocumentByType(
+          data.type,
+          t,
+        );
+
+        if (existing && !existing.deleted_at) {
+          const error = new Error("Document type already exists");
+          error.statusCode = 400;
+          throw error;
+        }
       }
     }
 
-    await document.update(
-      {
-        type: type ?? document.type,
-        price: price ?? document.price,
-      },
-      { transaction: t }
-    );
-
-    return document;
+    return documentRepository.UpdateDocument(document, data, t);
   });
 }
 
-//soft delete document
 async function DeleteDocument(id) {
   return sequelize.transaction(async (t) => {
     const document = await documentRepository.FindDocumentById(id, t);
 
     if (!document) {
-      throw new Error("Document not found");
+      const error = new Error("Document not found");
+      error.statusCode = 404;
+      throw error;
     }
 
-    await document.destroy({ transaction: t });
+    await documentRepository.SoftDeleteDocument(document, t);
 
-    return {
-      message: "Document deleted successfully",
-    };
+    return { message: "Document deleted successfully" };
   });
 }
 
-async function GetAllDocuments({ includeDeleted = false } = {}) {
-  return sequelize.transaction(async (t) => {
-    // If includeDeleted is true, fetch all including soft-deleted
-    const documents = await documentRepository.FindAllDocuments(t, includeDeleted);
-    return documents;
-  });
-}
 module.exports = {
+  GetAllDocuments,
+  GetDocumentById,
   CreateDocument,
   UpdateDocument,
   DeleteDocument,
-  GetAllDocuments,
 };

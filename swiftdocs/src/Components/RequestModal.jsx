@@ -12,9 +12,9 @@ import {
   Search,
   X,
 } from "lucide-react";
-import { createRequest } from "../services/request_service"
-import { getAllDocuments } from "../services/document_service"
-import { Toast } from "../utils/swal"; // adjust path if needed
+import { createRequest } from "../services/request_service";
+import { getAllDocuments } from "../services/document_service";
+import { Toast } from "../utils/swal";
 
 function RequestModal({ isOpen, onClose }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -238,7 +238,6 @@ function RequestModal({ isOpen, onClose }) {
       setTimeout(() => {
         onClose();
       }, 500);
-
     } catch (err) {
       console.error("Submit failed:", err);
 
@@ -280,8 +279,6 @@ function RequestModal({ isOpen, onClose }) {
     });
     setFormSubmitted(false);
   };
-
-
 
   if (!isOpen) return null;
 
@@ -436,7 +433,21 @@ function RequestModal({ isOpen, onClose }) {
                     By using SwiftDocs Document Request System, you acknowledge:
                   </p>
                   <p className="text-gray-600 text-sm ">
-                    Pursuant to RA 10173 or the Data Privacy Act of 2012, we recognize the importance of privacy and are committed to maintaining the accuracy, confidentiality, and security of your personal information. In filling out this form, you understand that the information provided will be collected, processed, protected, shared, retained and to be used by the Informatics Records for its pursuits of legitimate purposes. You, hereby allow Informatics Records - to collect, use and share personal data for its pursuits of legitimate interests as an educational institution. Informatics Records, agrees to abide by all its rules, policies and regulations pertaining to Data Privacy and confidentiality. This consent and authorization remains valid and subsisting for a limited period consistent with purposes or until otherwise revoked or canceled in writing.
+                    Pursuant to RA 10173 or the Data Privacy Act of 2012, we
+                    recognize the importance of privacy and are committed to
+                    maintaining the accuracy, confidentiality, and security of
+                    your personal information. In filling out this form, you
+                    understand that the information provided will be collected,
+                    processed, protected, shared, retained and to be used by the
+                    Informatics Records for its pursuits of legitimate purposes.
+                    You, hereby allow Informatics Records - to collect, use and
+                    share personal data for its pursuits of legitimate interests
+                    as an educational institution. Informatics Records, agrees
+                    to abide by all its rules, policies and regulations
+                    pertaining to Data Privacy and confidentiality. This consent
+                    and authorization remains valid and subsisting for a limited
+                    period consistent with purposes or until otherwise revoked
+                    or canceled in writing.
                   </p>
                 </div>
                 <div className="flex items-start">
@@ -576,7 +587,9 @@ function RequestModal({ isOpen, onClose }) {
                           const selectedItem = selectedDocuments.find(
                             (item) => item.id === doc.id,
                           );
-                          const quantity = selected ? selectedItem?.quantity ?? 1 : 0;
+                          const quantity = selected
+                            ? (selectedItem?.quantity ?? 1)
+                            : 0;
                           return (
                             <tr
                               key={doc.id}
@@ -593,10 +606,11 @@ function RequestModal({ isOpen, onClose }) {
                               <td className="px-4 py-3">{doc.name}</td>
                               <td className="px-4 py-3">
                                 <div className="flex items-center gap-1">
-
                                   <button
                                     type="button"
-                                    onClick={() => updateQuantity(doc.id, quantity - 1)}
+                                    onClick={() =>
+                                      updateQuantity(doc.id, quantity - 1)
+                                    }
                                     className="w-8 h-8 rounded-lg border border-gray-300 bg-white hover:bg-(--primary-50)"
                                   >
                                     -
@@ -607,7 +621,10 @@ function RequestModal({ isOpen, onClose }) {
                                     min={1}
                                     value={quantity}
                                     onChange={(e) =>
-                                      updateQuantity(doc.id, Number(e.target.value) || 1)
+                                      updateQuantity(
+                                        doc.id,
+                                        Number(e.target.value) || 1,
+                                      )
                                     }
                                     className="w-15 px-2 py-1 border border-gray-300 rounded-lg text-center"
                                   />
@@ -616,17 +633,24 @@ function RequestModal({ isOpen, onClose }) {
                                     type="button"
                                     onClick={() => {
                                       if (!selected) toggleDocument(doc);
-                                      else updateQuantity(doc.id, selectedItem.quantity + 1);
+                                      else
+                                        updateQuantity(
+                                          doc.id,
+                                          selectedItem.quantity + 1,
+                                        );
                                     }}
                                     className="w-8 h-8 rounded-lg border border-gray-300 bg-white hover:bg-(--primary-50)"
                                   >
                                     +
                                   </button>
-
                                 </div>
                               </td>
                               <td className="px-4 py-3 font-medium text-gray-700">
-                                ₱{(selected ? doc.price * quantity : 0).toLocaleString()}
+                                ₱
+                                {(selected
+                                  ? doc.price * quantity
+                                  : 0
+                                ).toLocaleString()}
                               </td>
                             </tr>
                           );

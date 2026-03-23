@@ -1,7 +1,12 @@
 import { useState } from "react";
 import Sidebar from "../Sidebar";
 import MainContent from "../MainContent";
-import { LayoutDashboard, FileCheck, Settings } from "lucide-react";
+import {
+  LayoutDashboard,
+  FileCheck,
+  FilePlusCorner,
+  Settings,
+} from "lucide-react";
 
 export default function RmoDashboard() {
   const [selectedTab, setSelectedTab] = useState("Dashboard");
@@ -9,6 +14,7 @@ export default function RmoDashboard() {
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard" },
     { icon: FileCheck, label: "Document Processing" },
+    { icon: FilePlusCorner, label: "Document" },
     { icon: Settings, label: "Settings" },
   ];
 

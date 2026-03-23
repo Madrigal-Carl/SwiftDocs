@@ -7,8 +7,8 @@ const Authpage = lazy(() => import("../pages/AuthPage"));
 export default function PublicRoutes() {
   return (
     <Routes>
-      <Route path="*" element={<Landingpage />} />
       <Route path="/auth" element={<Authpage />} />
+      <Route path="*" element={<Landingpage />} />
     </Routes>
   );
 }

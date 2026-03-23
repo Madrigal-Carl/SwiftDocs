@@ -190,3 +190,7 @@ html {
 .animate-scale-in {
   animation: scale-in 0.2s ease-out forwards;
 }
+
+input[type="password"]::-ms-reveal {
+  display: none;
+}

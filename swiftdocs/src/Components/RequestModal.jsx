@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { createRequest } from "../services/request_service";
-import { getAllDocuments } from "../services/document_service";
+import { getAllDocumentsNoPagination } from "../services/document_service";
 import { Toast } from "../utils/swal";
 
 function RequestModal({ isOpen, onClose }) {
@@ -50,6 +50,9 @@ function RequestModal({ isOpen, onClose }) {
 
   const [formSubmitted, setFormSubmitted] = useState(false);
 
+  const capitalizeWords = (str) =>
+    str.replace(/\b\w/g, (char) => char.toUpperCase());
+
   useEffect(() => {
     if (!isOpen) {
       resetForm();
@@ -59,10 +62,10 @@ function RequestModal({ isOpen, onClose }) {
     // Fetch documents from backend
     const fetchDocuments = async () => {
       try {
-        const docs = await getAllDocuments(); // your API call
+        const docs = await getAllDocumentsNoPagination();
         const formattedDocs = docs.map((doc) => ({
           ...doc,
-          name: doc.type,
+          name: capitalizeWords(doc.type),
           defaultQuantity: 1,
         }));
         setAvailableDocuments(formattedDocs);

@@ -1,11 +1,19 @@
 import { useState, useEffect } from "react";
 import { Lock, Mail, Shield } from "lucide-react";
-import { useProfileStore } from "../../stores/profile_store";
+import { useAuth } from "../../stores/auth_store";
 import FormInput from "./FormInput";
 
-export default function ProfileForm() {
-  const { profile, updateProfile, resetProfile } = useProfileStore();
+export default function formForm() {
+  const { user, reloadUser } = useAuth();
+
   const [isSaving, setIsSaving] = useState(false);
+
+  const [form, setForm] = useState({
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    email: "",
+  });
 
   const [passwords, setPasswords] = useState({
     currentPassword: "",
@@ -13,24 +21,73 @@ export default function ProfileForm() {
     confirmPassword: "",
   });
 
+  // populate form from auth user
   useEffect(() => {
+    if (!user) return;
+
+    setForm({
+      firstName: user.firstName || "",
+      middleName: user.middleName || "",
+      lastName: user.lastName || "",
+      email: user.email || "",
+    });
+
     setPasswords({
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
     });
-  }, [profile.id]);
+  }, [user]);
 
   const handleChange = (field) => (e) => {
-    // change
+    const value = e.target.value;
+
+    // handle password fields separately
+    if (field in passwords) {
+      setPasswords((prev) => ({ ...prev, [field]: value }));
+    } else {
+      setForm((prev) => ({ ...prev, [field]: value }));
+    }
   };
 
-  const handleSubmit = (e) => {
-    // Update
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+
+    try {
+      await updateAccount({
+        // ← your API
+        first_name: form.firstName,
+        middle_name: form.middleName,
+        last_name: form.lastName,
+        email: form.email,
+        currentPassword: passwords.currentPassword,
+        newPassword: passwords.newPassword,
+      });
+
+      await reloadUser(); // 🔥 refresh global auth
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCancel = () => {
-    // Cancel
+    if (!user) return;
+
+    setForm({
+      firstName: user.firstName || "",
+      middleName: user.middleName || "",
+      lastName: user.lastName || "",
+      email: user.email || "",
+    });
+
+    setPasswords({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
   };
 
   return (
@@ -57,19 +114,19 @@ export default function ProfileForm() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <FormInput
               label="First Name"
-              value={profile.firstName}
+              value={form.firstName}
               onChange={handleChange("firstName")}
               placeholder="Enter first name"
             />
             <FormInput
               label="Middle Name"
-              value={profile.middleName}
+              value={form.middleName}
               onChange={handleChange("middleName")}
               placeholder="Enter middle name"
             />
             <FormInput
               label="Last Name"
-              value={profile.lastName}
+              value={form.lastName}
               onChange={handleChange("lastName")}
               placeholder="Enter last name"
             />
@@ -79,7 +136,7 @@ export default function ProfileForm() {
             <FormInput
               label="Email Address"
               type="email"
-              value={profile.email}
+              value={form.email}
               onChange={handleChange("email")}
               placeholder="Enter email address"
               icon={Mail}
@@ -88,9 +145,9 @@ export default function ProfileForm() {
               <label className="text-sm font-medium text-gray-700 block">
                 Role
               </label>
-              <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 text-sm cursor-not-allowed capitalize">
+              <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 text-sm cursor-not-allowed uppercase">
                 <Shield className="w-4 h-4" />
-                {profile.role}
+                {user.role}
                 <span className="ml-auto text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">
                   Read-only
                 </span>

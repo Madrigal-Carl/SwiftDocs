@@ -1,48 +1,36 @@
-import { useState } from "react";
-import { Lock, Mail, Shield, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Lock, Mail, Shield } from "lucide-react";
+import { useProfileStore } from "../../stores/profile_store";
 import FormInput from "./FormInput";
 
 export default function ProfileForm() {
-  const [formData, setFormData] = useState({
-    firstName: "Elena",
-    middleName: "Garcia",
-    lastName: "Marcos",
-    email: "elena.marcos@university.edu",
+  const { profile, updateProfile, resetProfile } = useProfileStore();
+  const [isSaving, setIsSaving] = useState(false);
+
+  const [passwords, setPasswords] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
-  const [isSaving, setIsSaving] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-
-  const handleChange = (field) => (e) => {
-    setFormData({ ...formData, [field]: e.target.value });
-    if (showSuccess) setShowSuccess(false);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsSaving(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsSaving(false);
-      setShowSuccess(true);
-      setTimeout(() => setShowSuccess(false), 3000);
-    }, 1000);
-  };
-
-  const handleCancel = () => {
-    setFormData({
-      firstName: "Elena",
-      middleName: "Garcia",
-      lastName: "Marcos",
-      email: "elena.marcos@university.edu",
+  useEffect(() => {
+    setPasswords({
       currentPassword: "",
       newPassword: "",
       confirmPassword: "",
     });
-    setShowSuccess(false);
+  }, [profile.id]);
+
+  const handleChange = (field) => (e) => {
+    // change
+  };
+
+  const handleSubmit = (e) => {
+    // Update
+  };
+
+  const handleCancel = () => {
+    // Cancel
   };
 
   return (
@@ -57,12 +45,6 @@ export default function ProfileForm() {
               Update your personal information and password.
             </p>
           </div>
-          {showSuccess && (
-            <div className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-lg text-sm font-medium animate-fade-in">
-              <Check className="w-4 h-4" />
-              Changes saved successfully
-            </div>
-          )}
         </div>
       </div>
 
@@ -75,19 +57,19 @@ export default function ProfileForm() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <FormInput
               label="First Name"
-              value={formData.firstName}
+              value={profile.firstName}
               onChange={handleChange("firstName")}
               placeholder="Enter first name"
             />
             <FormInput
               label="Middle Name"
-              value={formData.middleName}
+              value={profile.middleName}
               onChange={handleChange("middleName")}
               placeholder="Enter middle name"
             />
             <FormInput
               label="Last Name"
-              value={formData.lastName}
+              value={profile.lastName}
               onChange={handleChange("lastName")}
               placeholder="Enter last name"
             />
@@ -97,7 +79,7 @@ export default function ProfileForm() {
             <FormInput
               label="Email Address"
               type="email"
-              value={formData.email}
+              value={profile.email}
               onChange={handleChange("email")}
               placeholder="Enter email address"
               icon={Mail}
@@ -106,9 +88,9 @@ export default function ProfileForm() {
               <label className="text-sm font-medium text-gray-700 block">
                 Role
               </label>
-              <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 text-sm cursor-not-allowed">
+              <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 text-sm cursor-not-allowed capitalize">
                 <Shield className="w-4 h-4" />
-                Administrator
+                {profile.role}
                 <span className="ml-auto text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">
                   Read-only
                 </span>
@@ -126,7 +108,7 @@ export default function ProfileForm() {
             <FormInput
               label="Current Password"
               type="password"
-              value={formData.currentPassword}
+              value={passwords.currentPassword}
               onChange={handleChange("currentPassword")}
               placeholder="Enter current password"
               icon={Lock}
@@ -135,7 +117,7 @@ export default function ProfileForm() {
             <FormInput
               label="New Password"
               type="password"
-              value={formData.newPassword}
+              value={passwords.newPassword}
               onChange={handleChange("newPassword")}
               placeholder="Enter new password"
               icon={Lock}
@@ -143,7 +125,7 @@ export default function ProfileForm() {
             <FormInput
               label="Confirm New Password"
               type="password"
-              value={formData.confirmPassword}
+              value={passwords.confirmPassword}
               onChange={handleChange("confirmPassword")}
               placeholder="Confirm new password"
               icon={Lock}

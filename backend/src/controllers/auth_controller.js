@@ -5,7 +5,7 @@ async function register(req, res) {
 
   const result = await authService.register(req.body, res);
 
-  io.emit("accountsUpdated", result);
+  io.emit("accountsUpdated");
 
   res.status(201).json(result);
 }

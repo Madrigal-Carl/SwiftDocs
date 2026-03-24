@@ -4,9 +4,12 @@ import { useDocumentStore } from "../../stores/document_store";
 import Pagination from "../Pagination";
 import TableLoader from "../TableLoader";
 import ActionDropdown from "./ActionDropdown";
+import DocumentModal from "./DocumentModal";
 
 export default function DocumentTable() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState(null);
 
   const { documents, loading, pagination, loadDocuments, page } =
     useDocumentStore();
@@ -98,7 +101,10 @@ export default function DocumentTable() {
                     <td className="px-6 py-4">
                       <ActionDropdown
                         doc={doc}
-                        onEdit={(doc) => console.log("Edit", doc)}
+                        onEdit={(doc) => {
+                          setSelectedDoc(doc); // set the selected document
+                          setModalOpen(true);  // show the modal
+                        }}
                         onDelete={(doc) => console.log("Delete", doc)}
                       />
                     </td>
@@ -113,6 +119,12 @@ export default function DocumentTable() {
           page={page}
           pages={pagination.pages || 1}
           onPageChange={loadDocuments}
+        />
+        <DocumentModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          document={selectedDoc}
+          mode="edit"
         />
       </div>
     </div>

@@ -1,5 +1,4 @@
 import { create } from "zustand";
-
 import { getAllDocuments } from "../services/document_service";
 
 export const useDocumentStore = create((set, get) => ({
@@ -7,15 +6,24 @@ export const useDocumentStore = create((set, get) => ({
   pagination: {},
   page: 1,
   loading: false,
+  filters: {},
 
-  // load documents
-  loadDocuments: async (page = 1, filters = {}) => {
+  loadDocuments: async (page = 1, filters = null) => {
     try {
       set({ loading: true });
 
-      const data = await getAllDocuments(page, { search: filters.search });
+      const currentFilters = filters ?? get().filters;
 
-      set({ documents: data.data, pagination: data.pagination, page });
+      const data = await getAllDocuments(page, {
+        search: currentFilters.search,
+      });
+
+      set({
+        documents: data.data,
+        pagination: data.pagination,
+        page,
+        filters: currentFilters,
+      });
     } catch (err) {
       console.error("Failed to load documents:", err);
     } finally {
@@ -23,9 +31,8 @@ export const useDocumentStore = create((set, get) => ({
     }
   },
 
-  // reload current page
   reloadDocuments: () => {
-    const { page } = get();
-    get().loadDocuments(page);
+    const { page, filters } = get();
+    get().loadDocuments(page, filters);
   },
 }));

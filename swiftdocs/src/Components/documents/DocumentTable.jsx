@@ -6,12 +6,17 @@ import TableLoader from "../TableLoader";
 import ActionDropdown from "./ActionDropdown";
 
 export default function DocumentTable() {
-  const [searchQuery, setSearchQuery] = useState("");
-
-  const { documents, loading, pagination, loadDocuments, page } =
+  const { documents, loading, pagination, loadDocuments, page, filters } =
     useDocumentStore();
 
-  const prevSearch = useRef("");
+  const [searchQuery, setSearchQuery] = useState(filters.search || "");
+
+  const prevSearch = useRef(filters.search || "");
+
+  useEffect(() => {
+    setSearchQuery(filters.search || "");
+    prevSearch.current = filters.search || "";
+  }, []);
 
   // Debounced search effect
   useEffect(() => {

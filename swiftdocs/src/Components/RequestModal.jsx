@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { createRequest } from "../services/request_service";
 import { getAllDocumentsNoPagination } from "../services/document_service";
-import { Toast } from "../utils/swal";
+import { showToast } from "../utils/swal";
 
 function RequestModal({ isOpen, onClose }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -233,10 +233,7 @@ function RequestModal({ isOpen, onClose }) {
 
       setFormSubmitted(true);
 
-      Toast.fire({
-        icon: "success",
-        title: "Request submitted successfully!",
-      });
+      showToast("success", "Request submitted successfully!");
 
       setTimeout(() => {
         onClose();
@@ -244,10 +241,12 @@ function RequestModal({ isOpen, onClose }) {
     } catch (err) {
       console.error("Submit failed:", err);
 
-      Toast.fire({
-        icon: "error",
-        title: "Failed to submit request",
-      });
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to submit request";
+
+      showToast("error", errorMessage);
     }
   };
 

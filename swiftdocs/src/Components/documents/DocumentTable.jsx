@@ -152,10 +152,10 @@ export default function DocumentTable() {
                             if (!result.isConfirmed) return;
 
                             // Success toast
-                            Toast.fire({
-                              icon: "success",
-                              title: `Document "${doc.type.toUpperCase()}" deleted successfully!`,
-                            });
+                            showToast(
+                              "success",
+                              `Document "${doc.type.toUpperCase()}" deleted successfully!`,
+                            );
 
                             // Reload the table
                             loadDocuments(page);

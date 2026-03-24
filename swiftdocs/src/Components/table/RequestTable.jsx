@@ -171,12 +171,18 @@ export default function RequestTable() {
                           status={req.status}
                           role={user.role}
                           onApprove={() => {
-                            setSelectedRequest(req);
+                            setSelectedRequest({
+                              ...req,
+                              full_name: item.full_name,
+                            });
                             setModalAction("approve");
                             setModalOpen(true);
                           }}
                           onReject={() => {
-                            setSelectedRequest(req);
+                            setSelectedRequest({
+                              ...req,
+                              full_name: item.full_name,
+                            });
                             setModalAction("reject");
                             setModalOpen(true);
                           }}

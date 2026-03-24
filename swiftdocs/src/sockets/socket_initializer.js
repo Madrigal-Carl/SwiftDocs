@@ -3,10 +3,7 @@ import socket from "./socket";
 import { useRequestStore } from "../stores/request_store";
 import { useAccountStore } from "../stores/account_store";
 import { useDocumentStore } from "../stores/document_store";
-<<<<<<< HEAD
 import { authRef } from "../stores/auth_store";
-=======
->>>>>>> 35b68b7188ccacc4dcbd1607304b247e79aa1c14
 
 let initialized = false;
 

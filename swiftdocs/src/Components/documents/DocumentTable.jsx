@@ -4,9 +4,14 @@ import { useDocumentStore } from "../../stores/document_store";
 import Pagination from "../Pagination";
 import TableLoader from "../TableLoader";
 import ActionDropdown from "./ActionDropdown";
+import DocumentModal from "./DocumentModal";
+import { updateDocument, deleteDocument } from "../../services/document_service";
+import { Toast } from "../../utils/swal";
 
 export default function DocumentTable() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState(null);
 
   const { documents, loading, pagination, loadDocuments, page } =
     useDocumentStore();
@@ -98,8 +103,41 @@ export default function DocumentTable() {
                     <td className="px-6 py-4">
                       <ActionDropdown
                         doc={doc}
-                        onEdit={(doc) => console.log("Edit", doc)}
-                        onDelete={(doc) => console.log("Delete", doc)}
+                        onEdit={(doc) => {
+                          setSelectedDoc(doc);
+                          setModalOpen(true);
+                        }}
+                        onDelete={async (doc) => {
+                          try {
+                            // Confirm deletion
+                            const confirmed = window.confirm(
+                              `Are you sure you want to delete "${doc.type}"?`
+                            );
+                            if (!confirmed) return;
+
+                            await deleteDocument(doc.id); // Call backend
+
+                            // Success toast
+                            Toast.fire({
+                              icon: "success",
+                              title: `Document "${doc.type}" deleted successfully!`,
+                            });
+
+                            // Reload the table
+                            loadDocuments(page);
+                          } catch (error) {
+                            // Error toast
+                            const message =
+                              error.response?.data?.message ||
+                              error.message ||
+                              "Failed to delete document";
+                            Toast.fire({
+                              icon: "error",
+                              title: message,
+                            });
+                            console.error("Delete failed:", error);
+                          }
+                        }}
                       />
                     </td>
                   </tr>
@@ -113,6 +151,60 @@ export default function DocumentTable() {
           page={page}
           pages={pagination.pages || 1}
           onPageChange={loadDocuments}
+        />
+        <DocumentModal
+          isOpen={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setSelectedDoc(null);
+          }}
+          document={selectedDoc}
+          mode="edit"
+          onSubmit={async (data) => {
+            try {
+              if (!selectedDoc) return;
+
+              // Build payload dynamically for partial updates
+              const payload = {};
+              if (data.name && data.name !== selectedDoc.type) payload.type = data.name;
+              if (data.price && Number(data.price) !== Number(selectedDoc.price))
+                payload.price = Number(data.price);
+
+              if (Object.keys(payload).length === 0) {
+                Toast.fire({
+                  icon: "info",
+                  title: "No changes detected",
+                });
+                return;
+              }
+
+              // Call backend update
+              await updateDocument(selectedDoc.id, payload);
+
+              // Show success toast
+              Toast.fire({
+                icon: "success",
+                title: `Document "${selectedDoc.type}" updated successfully!`,
+              });
+
+              // Reload table
+              loadDocuments(page);
+
+              // Close modal
+              setModalOpen(false);
+              setSelectedDoc(null);
+            } catch (error) {
+              const message =
+                error.response?.data?.message ||
+                error.message ||
+                "Failed to update document";
+              Toast.fire({
+                icon: "error",
+                title: message,
+              });
+              console.error("Update failed:", error);
+            }
+          }}
         />
       </div>
     </div>

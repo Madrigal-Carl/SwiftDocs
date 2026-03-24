@@ -43,11 +43,11 @@ async function CreateDocument(data) {
   return sequelize.transaction(async (t) => {
     const { type, price = 0 } = data;
 
-    type = type.toLowerCase().trim();
+    const doctype = type.toLowerCase().trim();
 
     // 1️⃣ Check active document
     const existing = await documentRepository.FindDeletedDocumentByType(
-      type,
+      doctype,
       t,
     );
     if (existing && !existing.deleted_at) {

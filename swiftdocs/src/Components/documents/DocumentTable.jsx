@@ -8,6 +8,7 @@ import DocumentModal from "./DocumentModal";
 import {
   updateDocument,
   deleteDocument,
+  getDocumentById,
 } from "../../services/document_service";
 import { Toast } from "../../utils/swal";
 import Swal from "sweetalert2";
@@ -112,9 +113,26 @@ export default function DocumentTable() {
                     <td className="px-6 py-4">
                       <ActionDropdown
                         doc={doc}
-                        onEdit={(doc) => {
-                          setSelectedDoc(doc);
-                          setModalOpen(true);
+                        onEdit={async (doc) => {
+                          try {
+                            // Optional: you can show a loading state here if you want
+                            const fullDoc = await getDocumentById(doc.id);
+
+                            setSelectedDoc(fullDoc); // use fresh data from backend
+                            setModalOpen(true);
+                          } catch (error) {
+                            const message =
+                              error.response?.data?.message ||
+                              error.message ||
+                              "Failed to fetch document";
+
+                            Toast.fire({
+                              icon: "error",
+                              title: message,
+                            });
+
+                            console.error("Fetch document failed:", error);
+                          }
                         }}
                         onDelete={async (doc) => {
                           try {

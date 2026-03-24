@@ -41,3 +41,9 @@ export async function getDocumentAnalytics() {
   const res = await api.get("/documents/analytics");
   return res.data;
 }
+
+// ✅ fetch document by ID (NEW)
+export async function getDocumentById(id) {
+  const res = await api.get(`/documents/${id}`);
+  return res.data;
+}

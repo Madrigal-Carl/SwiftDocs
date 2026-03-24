@@ -3,7 +3,7 @@ import Input from "./Input";
 import { Mail, Lock, Eye, EyeClosed } from "lucide-react";
 import { login } from "../services/auth_service";
 import { useAuth } from "../stores/auth_store";
-import { Toast } from "../utils/swal"; // make sure this path is correct
+import { showToast } from "../utils/swal";
 
 function SignInForm() {
   const { setUser, reloadUser } = useAuth();
@@ -23,10 +23,7 @@ function SignInForm() {
 
     // Validation
     if (!form.email.trim() || !form.password.trim()) {
-      Toast.fire({
-        icon: "error",
-        title: "Email and password are required",
-      });
+      showToast("error", "Email and password are required");
       setLoading(false);
       return;
     }
@@ -53,10 +50,7 @@ function SignInForm() {
       }));
 
       // Show success toast
-      Toast.fire({
-        icon: "success",
-        title: res.message || "Login successful",
-      });
+      showToast("success", res.message || "Login successful");
 
       // RoleRouter or other redirects will handle navigation
     } catch (err) {
@@ -65,10 +59,7 @@ function SignInForm() {
       const errorMessage =
         err.response?.data?.message || err.message || "Login failed";
 
-      Toast.fire({
-        icon: "error",
-        title: errorMessage,
-      });
+      showToast("error", errorMessage);
     } finally {
       setLoading(false);
     }

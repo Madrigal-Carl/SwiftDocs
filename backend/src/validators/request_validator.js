@@ -57,9 +57,9 @@ const schema = Joi.object({
     "string.empty": "Program is required",
     "any.required": "Program is required",
   }),
-  school_last_attended: Joi.number().required().messages({
-    "number.base": "School last attended must be a valid ID",
-    "any.required": "School last attended is required",
+  school_last_attended: Joi.string().required().messages({
+    "string.empty": "School Last Attended is required",
+    "any.required": "School Last Attended is required",
   }),
   admission_date: Joi.string().required().messages({
     "string.empty": "Admission date is required",

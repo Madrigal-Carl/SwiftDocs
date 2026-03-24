@@ -29,3 +29,9 @@ export async function getAllDocuments(page = 1, filters = {}) {
   });
   return res.data;
 }
+
+// fetch document analytics
+export async function getDocumentAnalytics() {
+  const res = await api.get("/documents/analytics");
+  return res.data;
+}

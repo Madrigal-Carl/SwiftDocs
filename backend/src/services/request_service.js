@@ -35,10 +35,7 @@ async function RequestDocuments(data) {
     if (Array.isArray(data.documents) && data.documents.length) {
       await Promise.all(
         data.documents.map(async (doc) => {
-          const document = await documentRepository.FindByType(
-            doc.type.toLowerCase(),
-            t,
-          );
+          const document = await documentRepository.FindByType(doc.type, t);
 
           if (!document) {
             throw new Error(`Document type "${doc.type}" not found`);

@@ -8,24 +8,22 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import CustomTooltip from "./CustomTooltip";
-import { useRequestStore } from "../../stores/request_store";
+import { useDocumentStore } from "../../stores/document_store";
 
 export default function DocumentTypeTab() {
-  const { stats } = useRequestStore();
+  const { stats } = useDocumentStore();
 
   const capitalizeWords = (str) =>
     str.replace(/\b\w/g, (char) => char.toUpperCase());
 
-  const documentData = Object.entries(stats?.documentTypeCounts || {}).map(
-    ([type, count]) => ({
-      type: capitalizeWords(type),
-      count,
-    }),
-  );
+  // ✅ stats is already the object you want
+  const documentData = Object.entries(stats || {}).map(([type, count]) => ({
+    type: capitalizeWords(type),
+    count,
+  }));
 
-  const sortedData = [...documentData].sort((a, b) => b.count - a.count);
-
-  const chartHeight = sortedData.length * 40;
+  // ❌ REMOVE sorting (already sorted from backend)
+  const chartHeight = documentData.length * 40;
 
   return (
     <div className="bg-white border border-(--border-light) rounded-xl shadow-sm p-6">
@@ -37,7 +35,7 @@ export default function DocumentTypeTab() {
         <div style={{ height: chartHeight }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={sortedData}
+              data={documentData} // ✅ use directly
               layout="vertical"
               margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
             >

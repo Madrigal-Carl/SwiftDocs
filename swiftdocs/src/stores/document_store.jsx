@@ -1,11 +1,16 @@
 import { create } from "zustand";
-import { getAllDocuments } from "../services/document_service";
+import {
+  getAllDocuments,
+  getDocumentAnalytics,
+} from "../services/document_service";
 
 export const useDocumentStore = create((set, get) => ({
   documents: [],
   pagination: {},
+  stats: {},
   page: 1,
   loading: false,
+  analyticsLoading: false,
   filters: {},
 
   loadDocuments: async (page = 1, filters = null) => {
@@ -31,8 +36,26 @@ export const useDocumentStore = create((set, get) => ({
     }
   },
 
+  loadAnalytics: async () => {
+    try {
+      set({ analyticsLoading: true });
+
+      const stats = await getDocumentAnalytics();
+
+      set({ stats });
+    } catch (err) {
+      console.error("Failed to load document analytics:", err);
+    } finally {
+      set({ analyticsLoading: false });
+    }
+  },
+
   reloadDocuments: () => {
     const { page, filters } = get();
     get().loadDocuments(page, filters);
+  },
+
+  reloadAnalytics: () => {
+    get().loadAnalytics();
   },
 }));

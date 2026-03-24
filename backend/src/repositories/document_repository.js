@@ -1,4 +1,28 @@
-const { Document } = require("../database/models");
+const { Document, Sequelize } = require("../database/models");
+const { Op } = Sequelize;
+
+function GetAllDocuments(page = 1, limit = 10, filters = {}) {
+  let { search = "" } = filters;
+
+  search = search.trim().toLowerCase();
+
+  const where = {};
+
+  if (search !== "") {
+    where[Op.or] = [
+      Sequelize.where(Sequelize.fn("LOWER", Sequelize.col("type")), {
+        [Op.like]: `%${search}%`,
+      }),
+    ];
+  }
+
+  return Document.paginate({
+    page,
+    paginate: limit,
+    order: [["created_at", "DESC"]],
+    where,
+  });
+}
 
 function CreateDocument(data, transaction) {
   return Document.create(data, { transaction });
@@ -8,9 +32,11 @@ function FindDocumentById(id, transaction, options = {}) {
   return Document.findByPk(id, { transaction, ...options });
 }
 
-function FindByType(type, transaction) {
+function FindDeletedDocumentByType(type, transaction) {
   return Document.findOne({
     where: { type },
+    paranoid: false,
+    order: [["deleted_at", "DESC"]],
     transaction,
   });
 }
@@ -19,33 +45,15 @@ function UpdateDocument(document, data, transaction) {
   return document.update(data, { transaction });
 }
 
-function DeleteDocument(document, transaction) {
+function SoftDeleteDocument(document, transaction) {
   return document.destroy({ transaction });
 }
 
-function FindDeletedByType(type = null, transaction) {
-  const whereClause = type ? { type } : {}; // null means any
-  return Document.findOne({
-    where: whereClause,
-    paranoid: false, // include deleted rows
-    order: [["deleted_at", "DESC"]],
-    transaction,
-  });
-}
-
-function FindAllDocuments(transaction, includeDeleted = false) {
-  return Document.findAll({
-    transaction,
-    paranoid: !includeDeleted, // if true, include soft-deleted
-    order: [["id", "ASC"]],
-  });
-}
 module.exports = {
   CreateDocument,
+  GetAllDocuments,
   FindDocumentById,
-  FindByType,
+  FindDeletedDocumentByType,
   UpdateDocument,
-  DeleteDocument,
-  FindDeletedByType,
-  FindAllDocuments,
+  SoftDeleteDocument,
 };

@@ -3,32 +3,51 @@ const router = express.Router();
 const documentController = require("../controllers/document_controller");
 const requireAuth = require("../middlewares/auth");
 const requireRole = require("../middlewares/role");
+const {
+  validateCreateDocument,
+  validateUpdateDocument,
+} = require("../validators/document_validator");
+
+// fetch all documents
+router.get(
+  "/",
+  requireAuth,
+  requireRole("rmo"),
+  documentController.GetAllDocuments,
+);
+
+// fetch document by id
+router.get(
+  "/:id",
+  requireAuth,
+  requireRole("rmo"),
+  documentController.GetDocumentById,
+);
 
 // create document
 router.post(
   "/",
   requireAuth,
-  requireRole("admin"),
-  documentController.CreateDocument
+  requireRole("rmo"),
+  validateCreateDocument,
+  documentController.CreateDocument,
 );
 
 // update document
 router.patch(
   "/:id",
   requireAuth,
-  requireRole("admin"),
-  documentController.UpdateDocument
+  requireRole("rmo"),
+  validateUpdateDocument,
+  documentController.UpdateDocument,
 );
 
 // soft delete document
 router.delete(
   "/:id",
   requireAuth,
-  requireRole("admin"),
-  documentController.DeleteDocument
+  requireRole("rmo"),
+  documentController.DeleteDocument,
 );
-
-// get all documents
-router.get("/", documentController.GetAllDocuments);
 
 module.exports = router;

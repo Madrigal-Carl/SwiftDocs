@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import socket from "../sockets/socket";
 
 import { getAllAccounts, getUserStats } from "../services/account_service";
 
@@ -54,20 +53,5 @@ export const useAccountStore = create((set, get) => ({
   // reload analytics
   reloadAnalytics: () => {
     get().loadAnalytics();
-  },
-
-  // socket listener
-  initSocket: () => {
-    if (!socket.connected) {
-      socket.connect();
-    }
-
-    socket.off("accountsUpdated");
-
-    socket.on("accountsUpdated", () => {
-      console.log("Accounts updated via socket...");
-      get().reloadAccounts();
-      get().reloadAnalytics();
-    });
   },
 }));

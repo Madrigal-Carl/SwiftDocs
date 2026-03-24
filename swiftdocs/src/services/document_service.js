@@ -19,9 +19,13 @@ export async function deleteDocument(id) {
 }
 
 // fetch all documents
-export async function getAllDocuments(includeDeleted = false) {
+export async function getAllDocuments(page = 1, filters = {}) {
   const res = await api.get("/documents", {
-    params: { includeDeleted }, // adds ?includeDeleted=true if needed
+    params: {
+      page,
+      limit: 10,
+      search: filters.search || "",
+    },
   });
   return res.data;
 }

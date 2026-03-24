@@ -2,6 +2,7 @@ import DashboardContent from "../pages/dashboard/Content";
 import RequestsContent from "../pages/requests/Content";
 import ReportsContent from "../pages/reports/Content";
 import UsersContent from "../pages/users/Content";
+import DocumentContent from "../pages/document/Content";
 import ProcessContent from "../pages/process/Content";
 import PaymentContent from "../pages/payment/Content";
 import PageLayout from "./PageLayout";
@@ -44,6 +45,13 @@ export default function MainContent({ selectedTab, onChangeTab }) {
           </PageLayout>
         );
 
+      case "Document":
+        return (
+          <PageLayout title="Document Management">
+            <DocumentContent />
+          </PageLayout>
+        );
+
       case "User Management":
         return (
           <PageLayout title="User Management">
@@ -53,9 +61,6 @@ export default function MainContent({ selectedTab, onChangeTab }) {
 
       case "Settings":
         return <div>⚙️ Settings Content</div>;
-
-      default:
-        return <div>Welcome</div>;
     }
   };
 

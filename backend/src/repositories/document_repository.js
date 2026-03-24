@@ -1,10 +1,26 @@
-const { Document } = require("../database/models");
+const { Document, Sequelize } = require("../database/models");
+const { Op } = Sequelize;
 
-function GetAllDocuments(page = 1, limit = 10) {
+function GetAllDocuments(page = 1, limit = 10, filters = {}) {
+  let { search = "" } = filters;
+
+  search = search.trim().toLowerCase();
+
+  const where = {};
+
+  if (search !== "") {
+    where[Op.or] = [
+      Sequelize.where(Sequelize.fn("LOWER", Sequelize.col("type")), {
+        [Op.like]: `%${search}%`,
+      }),
+    ];
+  }
+
   return Document.paginate({
     page,
     paginate: limit,
     order: [["created_at", "DESC"]],
+    where,
   });
 }
 

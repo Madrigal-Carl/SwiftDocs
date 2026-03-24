@@ -3,7 +3,11 @@ const documentService = require("../services/document_service");
 async function GetAllDocuments(req, res) {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
-  const documents = await documentService.GetAllDocuments(page, limit);
+  const search = req.query.search || "";
+
+  const documents = await documentService.GetAllDocuments(page, limit, {
+    search,
+  });
 
   res.json(documents);
 }

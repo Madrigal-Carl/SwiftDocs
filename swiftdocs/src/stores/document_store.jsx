@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import socket from "../sockets/socket";
 
 import { getAllDocuments } from "../services/document_service";
 
@@ -10,17 +9,13 @@ export const useDocumentStore = create((set, get) => ({
   loading: false,
 
   // load documents
-  loadDocuments: async (page = 1) => {
+  loadDocuments: async (page = 1, filters = {}) => {
     try {
       set({ loading: true });
 
-      const data = await getAllDocuments(page);
+      const data = await getAllDocuments(page, { search: filters.search });
 
-      set({
-        documents: data.data,
-        pagination: data.pagination,
-        page,
-      });
+      set({ documents: data.data, pagination: data.pagination, page });
     } catch (err) {
       console.error("Failed to load documents:", err);
     } finally {

@@ -1,10 +1,11 @@
 const sequelize = require("../database/models").sequelize;
 const documentRepository = require("../repositories/document_repository");
 
-async function GetAllDocuments(page = 1, limit = 10) {
+async function GetAllDocuments(page = 1, limit = 10, filters = {}) {
   const { docs, pages, total } = await documentRepository.GetAllDocuments(
     page,
     limit,
+    filters,
   );
 
   const result = docs.map((doc) => ({

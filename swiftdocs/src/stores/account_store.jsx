@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import socket from "../sockets/socket";
 
 import { getAllAccounts, getUserStats } from "../services/account_service";
 

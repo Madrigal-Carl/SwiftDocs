@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Search } from "lucide-react";
 import { useDocumentStore } from "../../stores/document_store";
 import Pagination from "../Pagination";
@@ -10,6 +10,20 @@ export default function DocumentTable() {
 
   const { documents, loading, pagination, loadDocuments, page } =
     useDocumentStore();
+
+  const prevSearch = useRef("");
+
+  // Debounced search effect
+  useEffect(() => {
+    if (searchQuery === prevSearch.current) return;
+
+    const delay = setTimeout(() => {
+      loadDocuments(1, { search: searchQuery || undefined });
+      prevSearch.current = searchQuery;
+    }, 500);
+
+    return () => clearTimeout(delay);
+  }, [searchQuery, loadDocuments]);
 
   return (
     <div className="flex flex-col gap-4 flex-1 mx-auto w-full">

@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import socket from "../sockets/socket";
 
 import {
   fetchAllRequests,

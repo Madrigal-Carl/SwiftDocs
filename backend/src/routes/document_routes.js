@@ -8,6 +8,14 @@ const {
   validateUpdateDocument,
 } = require("../validators/document_validator");
 
+// fetch document analytics
+router.get(
+  "/analytics",
+  requireAuth,
+  requireRole("admin"),
+  documentController.GetDocumentAnalytics,
+);
+
 // fetch all documents
 router.get(
   "/",

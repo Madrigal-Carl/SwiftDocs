@@ -45,10 +45,17 @@ async function DeleteDocument(req, res) {
   res.json(result);
 }
 
+async function GetDocumentAnalytics(req, res) {
+  const analytics = await documentService.ComputeDocumentAnalytics();
+
+  res.json(analytics);
+}
+
 module.exports = {
   GetAllDocuments,
   GetDocumentById,
   CreateDocument,
   UpdateDocument,
   DeleteDocument,
+  GetDocumentAnalytics,
 };

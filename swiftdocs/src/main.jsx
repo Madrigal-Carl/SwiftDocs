@@ -22,6 +22,7 @@ function RoleRouter() {
   const loadAccounts = useAccountStore((s) => s.loadAccounts);
   const loadAnalytics = useAccountStore((s) => s.loadAnalytics);
   const loadDocuments = useDocumentStore((s) => s.loadDocuments);
+  const loadDocAnalytics = useDocumentStore((s) => s.loadAnalytics);
 
   const initialized = useRef(false);
 
@@ -35,6 +36,7 @@ function RoleRouter() {
       if (user.role === "admin") {
         loadAccounts(1);
         loadAnalytics();
+        loadDocAnalytics();
       }
 
       if (user.role === "rmo") {

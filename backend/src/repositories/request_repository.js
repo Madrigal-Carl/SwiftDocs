@@ -106,6 +106,21 @@ async function FetchAllRequestsWithStudent(page = 1, limit = 10, filters = {}) {
   });
 }
 
+async function GetAllRequestStatuses() {
+  return Request.findAll({
+    attributes: ["status", "request_date"],
+    include: [
+      {
+        association: "requested_documents",
+        include: ["document"],
+      },
+      {
+        association: "additional_documents",
+      },
+    ],
+  });
+}
+
 module.exports = {
   CreateRequest,
   FindRequestById,

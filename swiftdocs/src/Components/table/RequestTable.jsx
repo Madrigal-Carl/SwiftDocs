@@ -13,18 +13,27 @@ import { updateRmoRequestStatus } from "../../services/rmo_service.js";
 import { updateCashierRequestStatus } from "../../services/cashier_service";
 
 export default function RequestTable() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState(undefined);
   const { user } = useAuth();
+  const { requests, loading, pagination, loadRequests, page, filters } =
+    useRequestStore();
+
+  const [searchQuery, setSearchQuery] = useState(filters.search || "");
+  const [statusFilter, setStatusFilter] = useState(filters.status || undefined);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState(null);
   const [selectedRequest, setSelectedRequest] = useState(null);
 
-  const { requests, loading, pagination, loadRequests, page } =
-    useRequestStore();
-
   const prevFilters = useRef({ search: "", status: undefined });
+
+  useEffect(() => {
+    setSearchQuery(filters.search || "");
+    setStatusFilter(filters.status);
+    prevFilters.current = {
+      search: filters.search || "",
+      status: filters.status,
+    };
+  }, []);
 
   useEffect(() => {
     // Only reload if either search or status actually changed

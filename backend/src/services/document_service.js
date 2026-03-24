@@ -1,5 +1,6 @@
 const sequelize = require("../database/models").sequelize;
 const documentRepository = require("../repositories/document_repository");
+const requestRepository = require("../repositories/request_repository");
 
 async function GetAllDocuments(page = 1, limit = 10, filters = {}) {
   const { docs, pages, total } = await documentRepository.GetAllDocuments(
@@ -114,10 +115,46 @@ async function DeleteDocument(id) {
   });
 }
 
+async function ComputeDocumentAnalytics() {
+  const requests = await requestRepository.GetAllRequestStatuses();
+
+  const documentTypeCounts = {};
+
+  requests.forEach((req) => {
+    const status = req.status;
+
+    const isValid = status === "paid" || status === "released";
+    if (!isValid) return;
+
+    // Requested documents
+    (req.requested_documents || []).forEach((rd) => {
+      const type = rd.document?.type || "Unknown";
+      const qty = rd.quantity || 0;
+
+      documentTypeCounts[type] = (documentTypeCounts[type] || 0) + qty;
+    });
+
+    // Additional documents → Others
+    (req.additional_documents || []).forEach((ad) => {
+      const qty = ad.quantity || 0;
+
+      documentTypeCounts["Others"] = (documentTypeCounts["Others"] || 0) + qty;
+    });
+  });
+
+  // ✅ Sort descending
+  const sorted = Object.fromEntries(
+    Object.entries(documentTypeCounts).sort((a, b) => b[1] - a[1]),
+  );
+
+  return sorted;
+}
+
 module.exports = {
   GetAllDocuments,
   GetDocumentById,
   CreateDocument,
   UpdateDocument,
   DeleteDocument,
+  ComputeDocumentAnalytics,
 };

@@ -3,7 +3,6 @@ function computeStats(requests) {
 
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
-
   const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
 
   const statuses = ["pending", "paid", "invoiced", "released", "rejected"];
@@ -48,7 +47,6 @@ function computeStats(requests) {
 
   const monthlyCounts = {};
   const monthlyRevenue = {};
-  const documentTypeCounts = {};
 
   // =========================
   // LOOP
@@ -88,10 +86,7 @@ function computeStats(requests) {
     // MONTH KEY
     // =========================
 
-    const monthKey = `${date.getFullYear()}-${String(
-      date.getMonth() + 1,
-    ).padStart(2, "0")}`;
-
+    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
     monthlyCounts[monthKey] = (monthlyCounts[monthKey] || 0) + 1;
 
     // =========================
@@ -99,7 +94,6 @@ function computeStats(requests) {
     // =========================
 
     const isRevenueStatus = status === "paid" || status === "released";
-
     const totalPrice =
       req.total_price ??
       (typeof req.getGrandTotal === "function" ? req.getGrandTotal() : 0);
@@ -131,30 +125,6 @@ function computeStats(requests) {
       if (isCurrent) completedCurrent++;
       if (isPrev) completedPrev++;
     }
-
-    // =========================
-    // DOCUMENT TYPE COUNT
-    // =========================
-
-    if (isRevenueStatus) {
-      const summary =
-        typeof req.getDocumentSummary === "function"
-          ? req.getDocumentSummary()
-          : [];
-
-      summary.forEach((doc) => {
-        let type;
-
-        if (doc.category === "additional") {
-          type = "Others";
-        } else {
-          type = doc.type || "Unknown";
-        }
-
-        documentTypeCounts[type] =
-          (documentTypeCounts[type] || 0) + (doc.quantity || 0);
-      });
-    }
   });
 
   // =========================
@@ -184,7 +154,6 @@ function computeStats(requests) {
 
   statuses.forEach((status) => {
     const trend = calcTrend(perStatusCurrent[status], perStatusPrev[status]);
-
     monthlyTrend[status] = {
       value: `${Math.abs(trend).toFixed(0)}%`,
       trendUp: trend >= 0,
@@ -211,7 +180,6 @@ function computeStats(requests) {
 
   const avgCurrent = avg(processingDaysCurrent);
   const avgPrev = avg(processingDaysPrev);
-
   const processingTrend = calcTrend(avgCurrent, avgPrev);
 
   const avgProcessingTime = {
@@ -228,9 +196,7 @@ function computeStats(requests) {
 
   const rateCurrent =
     totalCurrent === 0 ? 0 : (completedCurrent / totalCurrent) * 100;
-
   const ratePrev = totalPrev === 0 ? 0 : (completedPrev / totalPrev) * 100;
-
   const completionTrend = calcTrend(rateCurrent, ratePrev);
 
   const completionRate = {
@@ -264,25 +230,15 @@ function computeStats(requests) {
     .sort(([a], [b]) => new Date(a) - new Date(b))
     .map(([key, value]) => {
       const [, month] = key.split("-");
-      return {
-        month: monthNames[parseInt(month) - 1],
-        requests: value,
-      };
+      return { month: monthNames[parseInt(month) - 1], requests: value };
     });
 
   const monthlyRevenueFormatted = Object.entries(monthlyRevenue)
     .sort(([a], [b]) => new Date(a) - new Date(b))
     .map(([key, value]) => {
       const [, month] = key.split("-");
-      return {
-        month: monthNames[parseInt(month) - 1],
-        revenue: value,
-      };
+      return { month: monthNames[parseInt(month) - 1], revenue: value };
     });
-
-  // =========================
-  // TOTAL REQUESTS (CURRENT YEAR ONLY)
-  // =========================
 
   const totalRequests = Object.values(monthlyCounts).reduce((a, b) => a + b, 0);
 
@@ -294,15 +250,11 @@ function computeStats(requests) {
     totalRequests,
     countByStatus,
     monthlyTrend,
-
     revenue,
     avgProcessingTime,
     completionRate,
-
     monthlyRequests,
     monthlyRevenue: monthlyRevenueFormatted,
-
-    documentTypeCounts,
   };
 }
 

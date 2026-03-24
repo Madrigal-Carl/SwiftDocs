@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Search, Filter, ChevronDown } from "lucide-react";
 import { useAccountStore } from "../../stores/account_store";
 import Pagination from "../Pagination";
@@ -8,11 +8,46 @@ import StatusBadge from "../StatusBadge";
 import RoleBadge from "./RoleBadge";
 
 export default function UserTable() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All Statuses");
-
-  const { accounts, loading, pagination, loadAccounts, page } =
+  const { accounts, loading, pagination, loadAccounts, page, filters } =
     useAccountStore();
+
+  const [searchQuery, setSearchQuery] = useState(filters.search || "");
+  const [statusFilter, setStatusFilter] = useState(filters.status || "");
+
+  const prevFilters = useRef({ search: "", status: "" });
+
+  useEffect(() => {
+    setSearchQuery(filters.search || "");
+    setStatusFilter(filters.status || "");
+
+    prevFilters.current = {
+      search: filters.search || "",
+      status: filters.status || "",
+    };
+  }, []);
+
+  useEffect(() => {
+    if (
+      searchQuery === prevFilters.current.search &&
+      statusFilter === prevFilters.current.status
+    ) {
+      return; // ✅ no change → no reload
+    }
+
+    const delay = setTimeout(() => {
+      loadAccounts(1, {
+        search: searchQuery || "",
+        status: statusFilter || "",
+      });
+
+      prevFilters.current = {
+        search: searchQuery,
+        status: statusFilter,
+      };
+    }, 500);
+
+    return () => clearTimeout(delay);
+  }, [searchQuery, statusFilter]);
 
   return (
     <div className="flex flex-col gap-4 flex-1 mx-auto w-full">
@@ -35,9 +70,9 @@ export default function UserTable() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="appearance-none pl-9 pr-10 py-2 rounded-lg border border-(--border-light) bg-white focus:outline-none focus:ring-2 focus:ring-(--primary-300) text-sm cursor-pointer"
           >
-            <option>All Statuses</option>
-            <option>Active</option>
-            <option>Inactive</option>
+            <option value="">All Statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
           </select>
           <Filter className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
           <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
@@ -130,7 +165,12 @@ export default function UserTable() {
         <Pagination
           page={page}
           pages={pagination.pages || 1}
-          onPageChange={loadAccounts}
+          onPageChange={(newPage) =>
+            loadAccounts(newPage, {
+              search: searchQuery,
+              status: statusFilter,
+            })
+          }
         />
       </div>
     </div>

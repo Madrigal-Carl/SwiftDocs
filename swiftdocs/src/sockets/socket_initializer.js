@@ -18,6 +18,7 @@ export function initSockets() {
   socket.on("requestsUpdated", () => {
     console.log("Requests updated via socket");
     useRequestStore.getState().reloadRequests();
+    useRequestStore.getState().reloadAnalytics();
   });
 
   // ACCOUNTS
@@ -33,6 +34,7 @@ export function initSockets() {
   socket.on("documentsUpdated", () => {
     console.log("Documents updated via socket");
     useDocumentStore.getState().reloadDocuments();
+    useDocumentStore.getState().reloadAnalytics();
   });
 
   initialized = true;

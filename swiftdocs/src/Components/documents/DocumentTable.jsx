@@ -5,18 +5,26 @@ import Pagination from "../Pagination";
 import TableLoader from "../TableLoader";
 import ActionDropdown from "./ActionDropdown";
 import DocumentModal from "./DocumentModal";
-import { updateDocument, deleteDocument } from "../../services/document_service";
+import {
+  updateDocument,
+  deleteDocument,
+} from "../../services/document_service";
 import { Toast } from "../../utils/swal";
 
 export default function DocumentTable() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const { documents, loading, pagination, loadDocuments, page, filters } =
+    useDocumentStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState(null);
 
-  const { documents, loading, pagination, loadDocuments, page } =
-    useDocumentStore();
+  const [searchQuery, setSearchQuery] = useState(filters.search || "");
 
-  const prevSearch = useRef("");
+  const prevSearch = useRef(filters.search || "");
+
+  useEffect(() => {
+    setSearchQuery(filters.search || "");
+    prevSearch.current = filters.search || "";
+  }, []);
 
   // Debounced search effect
   useEffect(() => {
@@ -111,7 +119,7 @@ export default function DocumentTable() {
                           try {
                             // Confirm deletion
                             const confirmed = window.confirm(
-                              `Are you sure you want to delete "${doc.type}"?`
+                              `Are you sure you want to delete "${doc.type}"?`,
                             );
                             if (!confirmed) return;
 
@@ -166,8 +174,12 @@ export default function DocumentTable() {
 
               // Build payload dynamically for partial updates
               const payload = {};
-              if (data.name && data.name !== selectedDoc.type) payload.type = data.name;
-              if (data.price && Number(data.price) !== Number(selectedDoc.price))
+              if (data.name && data.name !== selectedDoc.type)
+                payload.type = data.name;
+              if (
+                data.price &&
+                Number(data.price) !== Number(selectedDoc.price)
+              )
                 payload.price = Number(data.price);
 
               if (Object.keys(payload).length === 0) {

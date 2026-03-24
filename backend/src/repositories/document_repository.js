@@ -24,6 +24,15 @@ function GetAllDocuments(page = 1, limit = 10, filters = {}) {
   });
 }
 
+function FindByType(type, transaction) {
+  return Document.findOne({
+    where: {
+      type: type.toLowerCase().trim(),
+    },
+    transaction,
+  });
+}
+
 function CreateDocument(data, transaction) {
   return Document.create(data, { transaction });
 }
@@ -49,6 +58,10 @@ function SoftDeleteDocument(document, transaction) {
   return document.destroy({ transaction });
 }
 
+async function GetAllDocumentsNoPagination() {
+  return Document.findAll({ order: [["created_at", "DESC"]] });
+}
+
 module.exports = {
   CreateDocument,
   GetAllDocuments,
@@ -56,4 +69,6 @@ module.exports = {
   FindDeletedDocumentByType,
   UpdateDocument,
   SoftDeleteDocument,
+  FindByType,
+  GetAllDocumentsNoPagination,
 };

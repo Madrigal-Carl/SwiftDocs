@@ -7,20 +7,25 @@ export const useAccountStore = create((set, get) => ({
   pagination: {},
   stats: {},
   page: 1,
+  filters: {},
   loading: false,
   analyticsLoading: false,
 
   // load accounts (with pagination)
-  loadAccounts: async (page = 1) => {
+
+  loadAccounts: async (page = 1, filters = null) => {
     try {
       set({ loading: true });
 
-      const data = await getAllAccounts(page);
+      const currentFilters = filters ?? get().filters;
+
+      const data = await getAllAccounts(page, currentFilters);
 
       set({
         accounts: data.data,
         pagination: data.pagination,
         page,
+        filters: currentFilters,
       });
     } catch (err) {
       console.error("Failed to load accounts:", err);
@@ -46,8 +51,8 @@ export const useAccountStore = create((set, get) => ({
 
   // reload current page
   reloadAccounts: () => {
-    const { page } = get();
-    get().loadAccounts(page);
+    const { page, filters } = get();
+    get().loadAccounts(page, filters);
   },
 
   // reload analytics

@@ -1,9 +1,10 @@
 const accountRepository = require("../repositories/account_repository");
 
-async function getAllAccounts(page = 1, limit = 5) {
+async function getAllAccounts(page = 1, limit = 5, filters = {}) {
   const { docs, pages, total } = await accountRepository.fetchAllAccounts(
     page,
     limit,
+    filters,
   );
 
   const result = docs.map((account) => ({

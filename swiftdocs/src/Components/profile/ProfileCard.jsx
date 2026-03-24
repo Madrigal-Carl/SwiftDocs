@@ -1,16 +1,15 @@
-import { useProfileStore } from "../../stores/profile_store";
+import { useAuth } from "../../stores/auth_store";
 import { Shield, Calendar, Check } from "lucide-react";
 
-export default function ProfileCard() {
-  const { profile } = useProfileStore();
+export default function userCard() {
+  const { user } = useAuth();
 
-  // derive initials for avatar
-  const initials =
-    `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}`.toUpperCase();
+  if (!user) return null;
 
-  // format created date
-  const createdAt = profile.createdAt
-    ? new Date(profile.createdAt).toLocaleDateString(undefined, {
+  const initials = user.initials;
+
+  const createdAt = user.createdAt
+    ? new Date(user.createdAt).toLocaleDateString(undefined, {
         year: "numeric",
         month: "long",
         day: "numeric",
@@ -28,13 +27,13 @@ export default function ProfileCard() {
         </div>
         <div className="mt-14 text-center">
           <h3 className="text-xl font-bold text-(--text-dark)">
-            {`${profile.firstName} ${profile.lastName}`}
+            {`${user.firstName} ${user.lastName}`}
           </h3>
-          <p className="text-gray-500 text-sm mt-1">{profile.email}</p>
+          <p className="text-gray-500 text-sm mt-1">{user.email}</p>
           <div className="mt-3">
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-(--primary-100) text-(--primary-700) border border-(--primary-200) capitalize">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-(--primary-100) text-(--primary-700) border border-(--primary-200)  uppercase">
               <Shield className="w-3 h-3 mr-1" />
-              {profile.role}
+              {user.role}
             </span>
           </div>
         </div>
@@ -53,7 +52,7 @@ export default function ProfileCard() {
               <span>Status</span>
             </div>
             <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700 capitalize">
-              {profile.status}
+              {user.status}
             </span>
           </div>
         </div>

@@ -1,9 +1,10 @@
 const { Document } = require("../database/models");
 
-function GetAllDocuments(options = {}) {
-  return Document.findAll({
+function GetAllDocuments(page = 1, limit = 10) {
+  return Document.paginate({
+    page,
+    paginate: limit,
     order: [["created_at", "DESC"]],
-    ...options,
   });
 }
 

@@ -3,7 +3,7 @@ import SectionHeader from "../../layouts/SectionHeader";
 import DocumentTable from "../../components/documents/DocumentTable";
 import DocumentModal from "../../components/documents/DocumentModal";
 import { createDocument } from "../../services/document_service";
-import { Toast } from "../../utils/swal";
+import { showToast } from "../../utils/swal";
 
 export default function Content() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,10 +20,7 @@ export default function Content() {
       await createDocument(payload);
 
       // ✅ Show success toast
-      Toast.fire({
-        icon: "success",
-        title: "Document created successfully!",
-      });
+      showToast("success", "Document created successfully!");
     } catch (error) {
       console.error("Failed to create document:", error);
 
@@ -33,10 +30,7 @@ export default function Content() {
         error.message ||
         "Failed to create document";
 
-      Toast.fire({
-        icon: "error",
-        title: message,
-      });
+      showToast("error", message);
     } finally {
       setIsModalOpen(false); // close modal
     }

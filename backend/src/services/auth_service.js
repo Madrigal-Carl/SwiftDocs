@@ -44,7 +44,9 @@ async function register(data, res) {
   const existing = await accountRepository.findByEmail(normalizedEmail);
 
   if (existing) {
-    throw new Error("Email already registered");
+    const error = new Error("Email already registered");
+    error.statusCode = 400;
+    throw error;
   }
 
   let plainPassword;
@@ -81,19 +83,23 @@ async function login({ email, password, remember_me }, res) {
   const account = await accountRepository.findByEmail(normalizedEmail);
 
   if (!account) {
-    return res.status(400).json({ message: "Invalid Email" });
+    const error = new Error("Invalid Email");
+    error.statusCode = 400;
+    throw error;
   }
 
   if (account.status !== "active") {
-    return res
-      .status(403)
-      .json({ message: "Account has been deactivated by the admin" });
+    const error = new Error("Account has been deactivated by the admin");
+    error.statusCode = 403;
+    throw error;
   }
 
   const isMatch = await bcrypt.compare(password, account.password);
 
   if (!isMatch) {
-    return res.status(400).json({ message: "Invalid Password" });
+    const error = new Error("Invalid Password");
+    error.statusCode = 400;
+    throw error;
   }
 
   const updatedAccount = await accountRepository.updateRememberMe(

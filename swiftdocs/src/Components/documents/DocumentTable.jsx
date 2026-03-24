@@ -10,7 +10,7 @@ import {
   deleteDocument,
   getDocumentById,
 } from "../../services/document_service";
-import { Toast } from "../../utils/swal";
+import { showToast } from "../../utils/swal";
 import Swal from "sweetalert2";
 
 export default function DocumentTable() {
@@ -126,10 +126,7 @@ export default function DocumentTable() {
                               error.message ||
                               "Failed to fetch document";
 
-                            Toast.fire({
-                              icon: "error",
-                              title: message,
-                            });
+                            showToast("error", message);
 
                             console.error("Fetch document failed:", error);
                           }
@@ -168,10 +165,7 @@ export default function DocumentTable() {
                               error.response?.data?.message ||
                               error.message ||
                               "Failed to delete document";
-                            Toast.fire({
-                              icon: "error",
-                              title: message,
-                            });
+                            showToast("error", message);
                             console.error("Delete failed:", error);
                           }
                         }}
@@ -212,10 +206,7 @@ export default function DocumentTable() {
                 payload.price = Number(data.price);
 
               if (Object.keys(payload).length === 0) {
-                Toast.fire({
-                  icon: "info",
-                  title: "No changes detected",
-                });
+                showToast("info", "No changes detected");
                 return;
               }
 
@@ -223,10 +214,10 @@ export default function DocumentTable() {
               await updateDocument(selectedDoc.id, payload);
 
               // Show success toast
-              Toast.fire({
-                icon: "success",
-                title: `Document "${selectedDoc.type.toUpperCase()}" updated successfully!`,
-              });
+              showToast(
+                "success",
+                `Document "${selectedDoc.type.toUpperCase()}" updated successfully!`,
+              );
 
               // Reload table
               loadDocuments(page);
@@ -239,10 +230,7 @@ export default function DocumentTable() {
                 error.response?.data?.message ||
                 error.message ||
                 "Failed to update document";
-              Toast.fire({
-                icon: "error",
-                title: message,
-              });
+              showToast("error", message);
               console.error("Update failed:", error);
             }
           }}

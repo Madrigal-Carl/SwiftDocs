@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../stores/auth_store";
-import { ChevronDown } from "lucide-react";
 import logo from "../assets/white_outline_logo.png";
 
 export default function Sidebar({ menuItems = [], selectedTab, onSelectTab }) {

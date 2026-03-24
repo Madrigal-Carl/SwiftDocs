@@ -4,7 +4,13 @@ async function getAllAccounts(req, res) {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 5;
 
-  const accounts = await accountService.getAllAccounts(page, limit);
+  const search = req.query.search || "";
+  const status = req.query.status || "";
+
+  const accounts = await accountService.getAllAccounts(page, limit, {
+    search,
+    status,
+  });
 
   res.json(accounts);
 }

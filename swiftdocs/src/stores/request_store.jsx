@@ -17,6 +17,7 @@ export const useRequestStore = create((set, get) => ({
   pagination: {},
   stats: {},
   page: 1,
+  filters: {},
   loading: false,
   analyticsLoading: false,
   role: null,
@@ -27,6 +28,7 @@ export const useRequestStore = create((set, get) => ({
       requests: [],
       pagination: {},
       page: 1,
+      filters: {},
     });
 
     if (role) {
@@ -35,7 +37,7 @@ export const useRequestStore = create((set, get) => ({
     }
   },
 
-  loadRequests: async (page = 1, filters = {}) => {
+  loadRequests: async (page = 1, filters = null) => {
     try {
       const { role } = get();
       if (!role) return;
@@ -48,12 +50,15 @@ export const useRequestStore = create((set, get) => ({
 
       set({ loading: true });
 
-      const data = await fetcher(page, 10, filters);
+      const currentFilters = filters ?? get().filters;
+
+      const data = await fetcher(page, 10, currentFilters);
 
       set({
         requests: data.data,
         pagination: data.pagination,
         page,
+        filters: currentFilters,
       });
     } catch (err) {
       console.error("Failed to load requests:", err);
@@ -77,8 +82,8 @@ export const useRequestStore = create((set, get) => ({
   },
 
   reloadRequests: () => {
-    const { page } = get();
-    get().loadRequests(page);
+    const { page, filters } = get();
+    get().loadRequests(page, filters);
   },
 
   reloadAnalytics: () => {

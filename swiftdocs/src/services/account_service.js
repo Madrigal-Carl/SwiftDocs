@@ -1,10 +1,16 @@
 import api from "../api/api";
 
 // get all accounts (with pagination)
-export async function getAllAccounts(page = 1, limit = 5) {
+export async function getAllAccounts(page = 1, filters = {}) {
   const res = await api.get("/accounts", {
-    params: { page, limit },
+    params: {
+      page,
+      limit: 5,
+      search: filters.search || "",
+      status: filters.status || "",
+    },
   });
+
   return res.data;
 }
 

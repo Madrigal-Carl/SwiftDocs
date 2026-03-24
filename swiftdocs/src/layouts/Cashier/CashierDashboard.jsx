@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Sidebar from "../Sidebar";
 import MainContent from "../MainContent";
-import { LayoutDashboard, CreditCard, Settings } from "lucide-react";
+import { LayoutDashboard, CreditCard, UserCog } from "lucide-react";
 
 export default function CashierDashboard() {
   const [selectedTab, setSelectedTab] = useState("Dashboard");
@@ -9,7 +9,7 @@ export default function CashierDashboard() {
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard" },
     { icon: CreditCard, label: "Payment Verification" },
-    { icon: Settings, label: "Settings" },
+    { icon: UserCog, label: "Profile" },
   ];
 
   return (

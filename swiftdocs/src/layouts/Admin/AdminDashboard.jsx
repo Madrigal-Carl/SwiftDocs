@@ -6,7 +6,7 @@ import {
   FileText,
   BarChart3,
   Users,
-  Settings,
+  UserCog,
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -17,7 +17,7 @@ export default function AdminDashboard() {
     { icon: FileText, label: "Document Requests" },
     { icon: BarChart3, label: "Reports" },
     { icon: Users, label: "User Management" },
-    { icon: Settings, label: "Settings" },
+    { icon: UserCog, label: "Profile" },
   ];
 
   return (

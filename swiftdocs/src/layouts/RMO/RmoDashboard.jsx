@@ -5,7 +5,7 @@ import {
   LayoutDashboard,
   FileCheck,
   FilePlusCorner,
-  Settings,
+  UserCog,
 } from "lucide-react";
 
 export default function RmoDashboard() {
@@ -15,7 +15,7 @@ export default function RmoDashboard() {
     { icon: LayoutDashboard, label: "Dashboard" },
     { icon: FileCheck, label: "Document Processing" },
     { icon: FilePlusCorner, label: "Document" },
-    { icon: Settings, label: "Settings" },
+    { icon: UserCog, label: "Profile" },
   ];
 
   return (

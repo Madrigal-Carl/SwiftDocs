@@ -13,7 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { createRequest } from "../services/request_service";
-import { getAllDocuments } from "../services/document_service";
+import { getAllDocumentsNoPagination } from "../services/document_service";
 import { Toast } from "../utils/swal";
 
 function RequestModal({ isOpen, onClose }) {
@@ -59,7 +59,7 @@ function RequestModal({ isOpen, onClose }) {
     // Fetch documents from backend
     const fetchDocuments = async () => {
       try {
-        const docs = await getAllDocuments(); // your API call
+        const docs = await getAllDocumentsNoPagination();
         const formattedDocs = docs.map((doc) => ({
           ...doc,
           name: doc.type,

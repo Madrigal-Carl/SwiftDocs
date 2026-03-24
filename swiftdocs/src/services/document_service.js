@@ -30,6 +30,12 @@ export async function getAllDocuments(page = 1, filters = {}) {
   return res.data;
 }
 
+// fetch all documents (no pagination)
+export async function getAllDocumentsNoPagination() {
+  const res = await api.get("/documents/all");
+  return res.data;
+}
+
 // fetch document analytics
 export async function getDocumentAnalytics() {
   const res = await api.get("/documents/analytics");

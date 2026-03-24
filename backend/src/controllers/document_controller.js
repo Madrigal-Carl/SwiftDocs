@@ -51,6 +51,11 @@ async function GetDocumentAnalytics(req, res) {
   res.json(analytics);
 }
 
+async function GetAllDocumentsNoPagination(req, res) {
+  const documents = await documentService.GetAllDocumentsNoPagination();
+  res.json(documents);
+}
+
 module.exports = {
   GetAllDocuments,
   GetDocumentById,
@@ -58,4 +63,5 @@ module.exports = {
   UpdateDocument,
   DeleteDocument,
   GetDocumentAnalytics,
+  GetAllDocumentsNoPagination,
 };

@@ -150,6 +150,16 @@ async function ComputeDocumentAnalytics() {
   return sorted;
 }
 
+async function GetAllDocumentsNoPagination() {
+  const docs = await documentRepository.GetAllDocumentsNoPagination();
+
+  return docs.map((doc) => ({
+    id: doc.id,
+    type: doc.type,
+    price: doc.price,
+  }));
+}
+
 module.exports = {
   GetAllDocuments,
   GetDocumentById,
@@ -157,4 +167,5 @@ module.exports = {
   UpdateDocument,
   DeleteDocument,
   ComputeDocumentAnalytics,
+  GetAllDocumentsNoPagination,
 };

@@ -65,7 +65,7 @@ export default function Pagination({ page = 1, pages = 1, onPageChange }) {
           ) : (
             <button
               key={`page-${pageNumber}-${idx}`}
-              onClick={() => onPageChange(pageNumber)}
+              onClick={() => page !== pageNumber && onPageChange(pageNumber)}
               className={`relative inline-flex items-center px-4 py-2 text-sm font-medium border-t border-b border-white transition-colors ${
                 page === pageNumber
                   ? "bg-(--primary-500) text-white shadow-md"

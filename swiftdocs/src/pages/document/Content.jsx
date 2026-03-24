@@ -1,4 +1,5 @@
 import SectionHeader from "../../layouts/SectionHeader";
+import DocumentTable from "../../components/documents/DocumentTable";
 
 export default function Content() {
   return (
@@ -9,6 +10,8 @@ export default function Content() {
         actionLabel="New Document"
         onAction={() => console.log("clicked")}
       />
+
+      <DocumentTable />
     </div>
   );
 }

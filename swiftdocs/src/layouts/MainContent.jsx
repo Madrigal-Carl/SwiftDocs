@@ -2,6 +2,7 @@ import DashboardContent from "../pages/dashboard/Content";
 import RequestsContent from "../pages/requests/Content";
 import ReportsContent from "../pages/reports/Content";
 import UsersContent from "../pages/users/Content";
+import ProfileContent from "../pages/profile/Content";
 import DocumentContent from "../pages/document/Content";
 import ProcessContent from "../pages/process/Content";
 import PaymentContent from "../pages/payment/Content";
@@ -59,8 +60,12 @@ export default function MainContent({ selectedTab, onChangeTab }) {
           </PageLayout>
         );
 
-      case "Settings":
-        return <div>⚙️ Settings Content</div>;
+      case "Profile":
+        return (
+          <PageLayout title="Profile Settings">
+            <ProfileContent />
+          </PageLayout>
+        );
     }
   };
 

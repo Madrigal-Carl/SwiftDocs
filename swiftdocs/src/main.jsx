@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "./stores/auth_store";
 import { useRequestStore } from "./stores/request_store";
 import { useAccountStore } from "./stores/account_store";
 import { useDocumentStore } from "./stores/document_store";
+import { useProfileStore } from "./stores/profile_store";
 import { initSockets } from "./sockets/socket_initializer";
 
 import PublicRoutes from "./routes/public_routes";
@@ -18,6 +19,7 @@ import Loader from "./components/Loader";
 
 function RoleRouter() {
   const { user, loading } = useAuth();
+  const loadProfile = useProfileStore((s) => s.loadProfile);
   const setRole = useRequestStore((state) => state.setRole);
   const loadAccounts = useAccountStore((s) => s.loadAccounts);
   const loadAnalytics = useAccountStore((s) => s.loadAnalytics);
@@ -25,6 +27,12 @@ function RoleRouter() {
   const loadDocAnalytics = useDocumentStore((s) => s.loadAnalytics);
 
   const initialized = useRef(false);
+
+  useEffect(() => {
+    if (user?.id) {
+      loadProfile(user.id);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (user?.role && !initialized.current) {

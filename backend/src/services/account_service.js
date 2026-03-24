@@ -35,8 +35,12 @@ async function getAccountById(id) {
   return {
     id: account.id,
     full_name: account.getFullName(),
+    first_name: account.first_name,
+    middle_name: account.middle_name,
+    last_name: account.last_name,
     email: account.email,
     role: account.role,
+    status: account.status,
     created_at: account.createdAt,
     updated_at: account.updatedAt,
   };

@@ -84,6 +84,12 @@ async function login({ email, password, remember_me }, res) {
     return res.status(400).json({ message: "Invalid Email" });
   }
 
+  if (account.status !== "active") {
+    return res
+      .status(403)
+      .json({ message: "Account has been deactivated by the admin" });
+  }
+
   const isMatch = await bcrypt.compare(password, account.password);
 
   if (!isMatch) {

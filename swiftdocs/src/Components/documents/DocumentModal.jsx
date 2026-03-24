@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, FileText } from "lucide-react";
 
 export default function DocumentModal({
@@ -8,9 +8,26 @@ export default function DocumentModal({
     document,
     mode = "create", // create | edit
 }) {
-    const [name, setName] = useState(document?.name || "");
-    const [price, setPrice] = useState(document?.price || "");
+    const [name, setName] = useState("");
+    const [price, setPrice] = useState("");
     const [submitting, setSubmitting] = useState(false);
+
+    const isEdit = mode === "edit";
+
+    // ✅ Sync document data into form (FIX)
+    useEffect(() => {
+        if (isOpen && isEdit && document) {
+            setName(document.type || "");   // map type → name
+            setPrice(document.price ?? "");
+        }
+    }, [document, isEdit, isOpen]);
+
+    // ✅ Reset form when closing
+    const handleClose = () => {
+        setName("");
+        setPrice("");
+        onClose();
+    };
 
     if (!isOpen) return null;
 
@@ -22,14 +39,13 @@ export default function DocumentModal({
                 await onSubmit({ name, price });
             }
 
+            // reset after submit
             setName("");
             setPrice("");
         } finally {
             setSubmitting(false);
         }
     };
-
-    const isEdit = mode === "edit";
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fade-in">
@@ -41,7 +57,7 @@ export default function DocumentModal({
                         {isEdit ? "Edit Document" : "Add Document"}
                     </h2>
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="p-2 rounded-lg hover:bg-(--bg-light)"
                     >
                         <X size={18} />
@@ -86,12 +102,11 @@ export default function DocumentModal({
                             value={price}
                             onChange={(e) => {
                                 const value = e.target.value;
-                                // Ensure non-negative numbers only
                                 setPrice(value < 0 ? "0" : value);
                             }}
                             placeholder="Enter price..."
-                            className="w-full mt-2 p-3 text-sm border border-(--border-light) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-500) 
-                                    appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&-moz-appearance:textfield]"
+                            className="w-full mt-2 p-3 text-sm border border-(--border-light) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-500)
+              appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&-moz-appearance:textfield]"
                         />
                     </div>
 
@@ -100,7 +115,7 @@ export default function DocumentModal({
                 {/* Actions */}
                 <div className="flex justify-end gap-3">
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         disabled={submitting}
                         className="px-4 py-2 text-sm rounded-lg border border-(--border-light) hover:bg-(--bg-light) disabled:opacity-50"
                     >

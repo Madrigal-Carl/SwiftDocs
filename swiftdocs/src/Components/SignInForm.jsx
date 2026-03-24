@@ -98,9 +98,9 @@ function SignInForm() {
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? (
-                <EyeClosed className="text-gray-400 w-5 h-5 mt-2" />
-              ) : (
                 <Eye className="text-gray-400 w-5 h-5 mt-2" />
+              ) : (
+                <EyeClosed className="text-gray-400 w-5 h-5 mt-2" />
               )}
             </button>
           }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EyeOff, Eye } from "lucide-react";
+import { Eye, EyeClosed } from "lucide-react";
 
 export default function FormInput({
   label,
@@ -39,9 +39,9 @@ export default function FormInput({
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
           >
             {showPassword ? (
-              <EyeOff className="w-5 h-5" />
-            ) : (
               <Eye className="w-5 h-5" />
+            ) : (
+              <EyeClosed className="w-5 h-5" />
             )}
           </button>
         )}

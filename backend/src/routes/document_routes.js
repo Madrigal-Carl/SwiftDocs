@@ -16,6 +16,14 @@ router.get(
   documentController.GetDocumentAnalytics,
 );
 
+// fetch all documents without pagination
+router.get(
+  "/all",
+  requireAuth,
+  requireRole("rmo"),
+  documentController.GetAllDocumentsNoPagination,
+);
+
 // fetch all documents
 router.get(
   "/",

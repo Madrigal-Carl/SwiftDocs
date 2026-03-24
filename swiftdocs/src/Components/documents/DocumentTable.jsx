@@ -10,6 +10,7 @@ import {
   deleteDocument,
 } from "../../services/document_service";
 import { Toast } from "../../utils/swal";
+import Swal from "sweetalert2";
 
 export default function DocumentTable() {
   const { documents, loading, pagination, loadDocuments, page, filters } =
@@ -118,17 +119,27 @@ export default function DocumentTable() {
                         onDelete={async (doc) => {
                           try {
                             // Confirm deletion
-                            const confirmed = window.confirm(
-                              `Are you sure you want to delete "${doc.type}"?`,
-                            );
-                            if (!confirmed) return;
+                            const result = await Swal.fire({
+                              title: "Delete Document?",
+                              text: `Are you sure you want to delete "${doc.type.toUpperCase()}"?`,
+                              icon: "warning",
+                              showCancelButton: true,
+                              confirmButtonText: "Yes, delete it",
+                              confirmButtonColor: "#ef4444",
+                              cancelButtonColor: "#64748b",
+                              showLoaderOnConfirm: true,
+                              preConfirm: async () => {
+                                await deleteDocument(doc.id);
+                              },
+                              allowOutsideClick: () => !Swal.isLoading(),
+                            });
 
-                            await deleteDocument(doc.id); // Call backend
+                            if (!result.isConfirmed) return;
 
                             // Success toast
                             Toast.fire({
                               icon: "success",
-                              title: `Document "${doc.type}" deleted successfully!`,
+                              title: `Document "${doc.type.toUpperCase()}" deleted successfully!`,
                             });
 
                             // Reload the table
@@ -196,7 +207,7 @@ export default function DocumentTable() {
               // Show success toast
               Toast.fire({
                 icon: "success",
-                title: `Document "${selectedDoc.type}" updated successfully!`,
+                title: `Document "${selectedDoc.type.toUpperCase()}" updated successfully!`,
               });
 
               // Reload table

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../stores/auth_store";
 import { Bell, ChevronDown, User, Settings, LogOut } from "lucide-react";
+import Swal from "sweetalert2";
 
 export default function Header({ name }) {
   const { user, logout } = useAuth();
@@ -72,10 +73,26 @@ export default function Header({ name }) {
               <div className="border-t border-(--border-light)" />
 
               <button
-                onClick={(e) => {
+                onClick={async (e) => {
                   e.stopPropagation();
                   setOpen(false);
-                  logout();
+
+                  const result = await Swal.fire({
+                    title: "Log out?",
+                    text: `Are you sure you want to log out of your account?`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Yes, log out",
+                    confirmButtonColor: "#ef4444",
+                    cancelButtonColor: "#64748b",
+                    showLoaderOnConfirm: true,
+                    preConfirm: async () => {
+                      await logout();
+                    },
+                    allowOutsideClick: () => !Swal.isLoading(),
+                  });
+
+                  if (!result.isConfirmed) return;
                 }}
                 className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
               >

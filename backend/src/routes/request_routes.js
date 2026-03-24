@@ -1,6 +1,7 @@
 const requireRole = require("../middlewares/role");
 const requireAuth = require("../middlewares/auth");
 const requireGuest = require("../middlewares/guest");
+const allowGuestOrRMO = require("../middlewares/allow_guest_or_rmo");
 const express = require("express");
 const router = express.Router();
 const requestController = require("../controllers/request_controller");
@@ -9,7 +10,7 @@ const { validateCreateRequest } = require("../validators/request_validator");
 // Request documents
 router.post(
   "/",
-  requireGuest,
+  allowGuestOrRMO,
   validateCreateRequest,
   requestController.CreateRequest,
 );

@@ -19,6 +19,7 @@ export const useRequestStore = create((set, get) => ({
   stats: {},
   page: 1,
   loading: false,
+  analyticsLoading: false,
   role: null,
 
   setRole: (role) => {
@@ -83,18 +84,5 @@ export const useRequestStore = create((set, get) => ({
 
   reloadAnalytics: () => {
     get().loadAnalytics();
-  },
-
-  initSocket: () => {
-    if (!socket.connected) {
-      socket.connect();
-    }
-
-    socket.off("requestsUpdated");
-
-    socket.on("requestsUpdated", () => {
-      get().reloadRequests();
-      get().reloadAnalytics();
-    });
   },
 }));

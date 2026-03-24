@@ -55,19 +55,4 @@ export const useAccountStore = create((set, get) => ({
   reloadAnalytics: () => {
     get().loadAnalytics();
   },
-
-  // socket listener
-  initSocket: () => {
-    if (!socket.connected) {
-      socket.connect();
-    }
-
-    socket.off("accountsUpdated");
-
-    socket.on("accountsUpdated", () => {
-      console.log("Accounts updated via socket...");
-      get().reloadAccounts();
-      get().reloadAnalytics();
-    });
-  },
 }));

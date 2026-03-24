@@ -1,7 +1,11 @@
 const documentService = require("../services/document_service");
 
 async function GetAllDocuments(req, res) {
+  const io = req.app.get("io");
   const documents = await documentService.GetAllDocuments();
+
+  io.emit("documentsUpdated");
+
   res.json(documents);
 }
 

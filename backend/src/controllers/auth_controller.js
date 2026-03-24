@@ -21,12 +21,19 @@ async function logout(req, res) {
 }
 
 async function me(req, res) {
+  const user = req.user;
+
   res.json({
     user: {
-      id: req.user.id,
-      email: req.user.email,
-      role: req.user.role,
-      fullname: req.user.getFullName(),
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      firstName: user.first_name,
+      middleName: user.middle_name,
+      lastName: user.last_name,
+      fullname: user.getFullName(),
+      status: user.status,
+      createdAt: user.createdAt,
     },
   });
 }

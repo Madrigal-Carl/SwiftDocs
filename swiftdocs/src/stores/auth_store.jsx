@@ -3,6 +3,15 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { getCurrentUser } from "../services/auth_service";
 import { logout as logoutService } from "../services/auth_service";
 
+export const authRef = {
+  _user: null,
+  getUser: () => authRef._user,
+  reloadUser: async () => {},
+  setUser: (u) => {
+    authRef._user = u;
+  },
+};
+
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -38,16 +47,23 @@ export function AuthProvider({ children }) {
       const data = await getCurrentUser();
       const userData = data.user;
 
-      setUser({
+      const enrichedUser = {
         ...userData,
         initials: getInitials(userData?.fullname),
-      });
+      };
+
+      setUser(enrichedUser);
+      authRef.setUser(enrichedUser);
+      authRef.getUser = () => enrichedUser;
     } catch (err) {
       setUser(null);
+      authRef.getUser = () => null;
     } finally {
       setLoading(false);
     }
   };
+
+  authRef.reloadUser = loadUser;
 
   useEffect(() => {
     loadUser();

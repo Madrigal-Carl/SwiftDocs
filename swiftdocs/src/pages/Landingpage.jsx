@@ -438,7 +438,9 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Complete academic record with official seal.
               </p>
-              <span className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span 
+              onClick={openModal}
+              className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -452,7 +454,9 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Certified true copy of your diploma.
               </p>
-              <span className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span 
+              onClick={openModal}
+              className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -468,7 +472,9 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Proof of current or past enrollment.
               </p>
-              <span className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span 
+              onClick={openModal}
+              className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -484,7 +490,9 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Certification of conduct and standing.
               </p>
-              <span className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span 
+              onClick={openModal}
+              className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>

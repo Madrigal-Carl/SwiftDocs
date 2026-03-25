@@ -72,7 +72,7 @@ export default function ActionDropdown({
         </button>
       )}
 
-      {approve && (
+      {approve && status !== "pending" && (
         <button
           onClick={() => {
             onApprove?.();

@@ -8,6 +8,7 @@ export default function ActionDropdown({
   reference,
   status,
   role,
+  other,
   onApprove,
   onReject,
 }) {
@@ -72,18 +73,19 @@ export default function ActionDropdown({
         </button>
       )}
 
-      {approve && status !== "pending" && (
-        <button
-          onClick={() => {
-            onApprove?.();
-            setIsOpen(false);
-          }}
-          className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--primary-50) flex items-center gap-2"
-        >
-          <Check className="w-4 h-4 text-green-600" />
-          Approve
-        </button>
-      )}
+      {approve &&
+        (status !== "pending" || (status === "pending" && !other)) && (
+          <button
+            onClick={() => {
+              onApprove?.();
+              setIsOpen(false);
+            }}
+            className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--primary-50) flex items-center gap-2"
+          >
+            <Check className="w-4 h-4 text-green-600" />
+            Approve
+          </button>
+        )}
 
       {reject && (
         <button

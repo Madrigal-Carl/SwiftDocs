@@ -170,6 +170,7 @@ export default function RequestTable() {
                           reference={req.reference_number}
                           status={req.status}
                           role={user.role}
+                          other={req.other}
                           onApprove={() => {
                             setSelectedRequest({
                               ...req,

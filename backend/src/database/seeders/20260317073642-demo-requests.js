@@ -93,11 +93,14 @@ module.exports = {
       const additionalCount = faker.number.int({ min: 0, max: 2 });
 
       for (let j = 0; j < additionalCount; j++) {
+        const unitPrice =
+          status === "pending" ? 0 : faker.number.int({ min: 50, max: 500 });
+
         await Additional_Document.create({
           request_id: request.id,
           type: faker.commerce.productName(),
           quantity: faker.number.int({ min: 1, max: 3 }),
-          unit_price: faker.number.int({ min: 50, max: 1000 }),
+          unit_price: unitPrice,
         });
       }
 

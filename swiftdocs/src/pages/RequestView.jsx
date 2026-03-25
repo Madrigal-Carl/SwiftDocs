@@ -18,7 +18,10 @@ import PaymentInformationCard from "../components/view/PaymentInformationCard.js
 import { useAuth } from "../stores/auth_store.jsx";
 import RequestActionModal from "../components/RequestActionModal.jsx";
 import { getRequestPermissions } from "../utils/requestPermissions.js";
-import { updateRmoRequestStatus } from "../services/rmo_service.js";
+import {
+  updateRmoRequestStatus,
+  updateRmoAdditionalDocumentPrices,
+} from "../services/rmo_service.js";
 import { showToast } from "../utils/swal.js";
 import { getNextStatus } from "../utils/requestStatus.js";
 import { updateCashierRequestStatus } from "../services/cashier_service";
@@ -560,18 +563,37 @@ export default function RequestView() {
             return;
           }
 
-          if (user.role === "rmo" && nextStatus === "invoiced") {
-            const hasInvalid = additionalDocsState.some(
-              (doc) => !doc.unit_price || doc.unit_price <= 0,
-            );
-
-            if (hasInvalid) {
-              showToast("error", "All additional documents must have a price");
-              return;
-            }
-          }
-
           try {
+            if (user.role === "rmo") {
+              const hasInvalid = additionalDocsState.some(
+                (doc) => !doc.unit_price || doc.unit_price <= 0,
+              );
+
+              if (nextStatus === "invoiced" && hasInvalid) {
+                showToast(
+                  "error",
+                  "All additional documents must have a price",
+                );
+                return;
+              }
+
+              const formattedAdditionalDocs = additionalDocsState.map(
+                (doc) => ({
+                  id: doc.id,
+                  unit_price: doc.unit_price,
+                }),
+              );
+
+              if (formattedAdditionalDocs.length > 0) {
+                await updateRmoAdditionalDocumentPrices(
+                  request.id,
+                  formattedAdditionalDocs,
+                );
+              }
+
+              await updateRmoRequestStatus(request.id, nextStatus, remarks);
+            }
+
             if (user.role === "cashier") {
               const formData = new FormData();
               formData.append("status", nextStatus);
@@ -582,27 +604,13 @@ export default function RequestView() {
               });
 
               await updateCashierRequestStatus(request.id, formData);
-            } else {
-              const formattedAdditionalDocs = additionalDocsState.map(
-                (doc) => ({
-                  id: doc.id,
-                  unit_price: doc.unit_price,
-                }),
-              );
-
-              await updateRmoRequestStatus(
-                request.id,
-                nextStatus,
-                remarks,
-                nextStatus === "invoiced" ? formattedAdditionalDocs : [],
-              );
             }
 
             showToast("success", `Request ${nextStatus} successfully!`);
             setModalOpen(false);
             navigate(-1);
           } catch (err) {
-            showToast("error", err.message || err.message);
+            showToast("error", err.message);
           }
         }}
       />

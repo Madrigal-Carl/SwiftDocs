@@ -26,7 +26,7 @@ import {
   Twitter,
 } from "lucide-react";
 import RequestModal from "../components/RequestModal";
-import { fetchRequestByReference } from "../services/request_service";
+import { requestEmailStatus } from "../services/request_service";
 import Swal from "sweetalert2";
 
 function Landingpage() {
@@ -55,7 +55,7 @@ function Landingpage() {
         },
       });
 
-      await fetchRequestByReference(referenceNumber.trim());
+      await requestEmailStatus(referenceNumber.trim());
 
       Swal.close();
 

@@ -61,10 +61,6 @@ export default function ActionDropdown({ user, onClose }) {
         Edit User
       </button>
       <button className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--bg-light) flex items-center gap-2 cursor-pointer transition-colors">
-        <Shield className="w-4 h-4 text-gray-500" />
-        Change Role
-      </button>
-      <button className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--bg-light) flex items-center gap-2 cursor-pointer transition-colors">
         {user.status === "active" ? (
           <>
             <Ban className="w-4 h-4 text-red-500" />

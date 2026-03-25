@@ -163,7 +163,10 @@ export default function ActionDropdown({ user, onClose, onSuccess }) {
         )}
       </button>
       <button
-        onClick={(e) => { e.stopPropagation(); handleResetPassword(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleResetPassword();
+        }}
         className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--bg-light) flex items-center gap-2 cursor-pointer transition-colors"
       >
         <KeyRound className="w-4 h-4 text-gray-500" />

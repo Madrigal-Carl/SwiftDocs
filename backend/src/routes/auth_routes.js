@@ -16,7 +16,7 @@ router.post(
   "/register",
   // requireGuest,
   requireAuth,
-  requireRole("admin", "rmo", "cashier"),
+  requireRole("admin"),
   validateRegister,
   authController.register,
 );

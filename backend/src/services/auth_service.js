@@ -37,7 +37,7 @@ function setAuthCookies(res, payload, rememberMe) {
 }
 
 async function register(data, res) {
-  const { first_name, middle_name, last_name, email, role, remember_me } = data;
+  const { first_name, middle_name, last_name, email, role } = data;
 
   const normalizedEmail = email.toLowerCase();
 
@@ -65,7 +65,6 @@ async function register(data, res) {
     email: normalizedEmail,
     password: hashedPassword,
     role,
-    remember_me,
   });
 
   const safeAccount = account.toJSON();

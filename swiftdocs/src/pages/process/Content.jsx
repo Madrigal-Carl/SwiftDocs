@@ -4,7 +4,7 @@ import { useState } from "react";
 import RequestTable from "../../components/table/RequestTable";
 import SectionHeader from "../../layouts/SectionHeader";
 import RequestView from "../../pages/RequestView";
-import RequestModal from "../../Components/RequestModal";
+import RequestModal from "../../components/RequestModal";
 
 export default function Content() {
   const { reference_number } = useParams();
@@ -19,12 +19,11 @@ export default function Content() {
             title="Document Processing"
             description="Process approved document requests and manage releases"
             actionLabel="New Request"
-            onAction={() => setIsModalOpen(true)} // ✅ OPEN MODAL
+            onAction={() => setIsModalOpen(true)}
           />
 
           <RequestTable />
 
-          {/* ✅ ALWAYS render modal, control via isOpen */}
           <RequestModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}

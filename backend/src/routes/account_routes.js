@@ -3,7 +3,8 @@ const router = express.Router();
 const accountController = require("../controllers/account_controller");
 const requireAuth = require("../middlewares/auth");
 const requireRole = require("../middlewares/role");
-const { validateUpdateAccount } = require("../validators/account_validator");
+const allowSelfOrAdmin = require("../middlewares/allow_self_or_admin");
+const { validateUpdateAccount, validateChangePassword } = require("../validators/account_validator");
 
 // Get all accounts
 router.get(
@@ -21,6 +22,14 @@ router.get(
   accountController.getUserStats,
 );
 
+// Change password for logged-in user
+router.patch(
+  "/change-password",
+  requireAuth,
+  validateChangePassword,
+  accountController.changePassword
+);
+
 // Get specific account by ID
 router.get(
   "/:id",
@@ -33,9 +42,10 @@ router.get(
 router.patch(
   "/:id",
   requireAuth,
-  requireRole("admin"),
+  allowSelfOrAdmin,
   validateUpdateAccount,
   accountController.updateAccount,
 );
+
 
 module.exports = router;

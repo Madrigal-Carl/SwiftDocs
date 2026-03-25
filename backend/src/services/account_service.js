@@ -1,4 +1,5 @@
 const accountRepository = require("../repositories/account_repository");
+const bcrypt = require("bcrypt");
 
 async function getAllAccounts(page = 1, limit = 5, filters = {}) {
   const { docs, pages, total } = await accountRepository.fetchAllAccounts(
@@ -50,7 +51,38 @@ async function updateAccount(id, data) {
   const account = await accountRepository.findById(id);
   if (!account) return null;
 
-  Object.assign(account, data);
+  // 🔒 whitelist fields
+  const allowedFields = [
+    "first_name",
+    "middle_name",
+    "last_name",
+    "email",
+  ];
+
+  allowedFields.forEach((field) => {
+    if (data[field] !== undefined) {
+      account[field] = data[field];
+    }
+  });
+
+  // 🔐 Handle password change
+  if (data.newPassword) {
+    if (!data.currentPassword) {
+      throw new Error("Current password is required");
+    }
+
+    const isMatch = await bcrypt.compare(
+      data.currentPassword,
+      account.password,
+    );
+
+    if (!isMatch) {
+      throw new Error("Current password is incorrect");
+    }
+
+    account.password = await bcrypt.hash(data.newPassword, 10);
+  }
+
   await account.save();
 
   return {
@@ -81,9 +113,38 @@ async function getUserStats() {
   return stats;
 }
 
+async function changePassword(userId, currentPassword, newPassword) {
+  const account = await accountRepository.findById(userId);
+  if (!account) return null;
+
+  // 🔒 require current password
+  if (!currentPassword) {
+    throw new Error("Current password is required");
+  }
+
+  // 🔍 verify current password
+  const isMatch = await bcrypt.compare(currentPassword, account.password);
+
+  if (!isMatch) {
+    throw new Error("Current password is incorrect");
+  }
+
+  // 🔐 hash new password
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  account.password = hashedPassword;
+
+  await account.save();
+
+  return {
+    message: "Password changed successfully",
+  };
+}
+
 module.exports = {
   getAllAccounts,
   getAccountById,
   updateAccount,
   getUserStats,
+  changePassword,
 };

@@ -31,3 +31,9 @@ export async function getUserStats() {
   const res = await api.get("/accounts/analytics");
   return res.data;
 }
+
+// change password (logged-in user)
+export async function changePassword(data) {
+  const res = await api.patch("/accounts/change-password", data);
+  return res.data;
+}

@@ -31,7 +31,9 @@ async function updateAccount(req, res) {
 
   const account = await accountService.updateAccount(id, data);
 
-  if (!account) return res.status(404).json({ message: "Account not found" });
+  if (!account) {
+    return res.status(404).json({ message: "Account not found" });
+  }
 
   io.emit("accountsUpdated", { id: account.id });
 
@@ -43,9 +45,33 @@ async function getUserStats(req, res) {
   res.json(stats);
 }
 
+async function changePassword(req, res) {
+  try {
+    const userId = req.user.id;
+    const { currentPassword, newPassword } = req.body;
+
+    const result = await accountService.changePassword(
+      userId,
+      currentPassword,
+      newPassword
+    );
+
+    if (!result) {
+      return res.status(404).json({ message: "Account not found" });
+    }
+
+    res.json(result);
+  } catch (err) {
+    return res.status(400).json({
+      message: err.message || "Failed to change password",
+    });
+  }
+}
+
 module.exports = {
   getAllAccounts,
   getAccount,
   updateAccount,
   getUserStats,
+  changePassword,
 };

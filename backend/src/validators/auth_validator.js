@@ -23,10 +23,6 @@ const registerSchema = Joi.object({
     "any.only": "Role must be admin, cashier, or rmo",
     "any.required": "Role is required",
   }),
-  remember_me: Joi.boolean().required().messages({
-    "boolean.base": "Remember me must be true or false",
-    "any.required": "Remember me is required",
-  }),
 });
 const loginSchema = Joi.object({
   email: Joi.string().email().required().messages({

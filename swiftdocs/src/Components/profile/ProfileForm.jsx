@@ -82,10 +82,13 @@ export default function ProfileForm() {
 
       if (isChangingPassword) {
         // validate password fields
-        if (!passwords.currentPassword) throw new Error("Current password is required");
+        if (!passwords.currentPassword)
+          throw new Error("Current password is required");
         if (!passwords.newPassword) throw new Error("New password is required");
-        if (!passwords.confirmPassword) throw new Error("Confirm password is required");
-        if (passwords.newPassword !== passwords.confirmPassword) throw new Error("Passwords do not match");
+        if (!passwords.confirmPassword)
+          throw new Error("Confirm password is required");
+        if (passwords.newPassword !== passwords.confirmPassword)
+          throw new Error("Passwords do not match");
 
         // call change password endpoint
         await changePassword({
@@ -102,7 +105,7 @@ export default function ProfileForm() {
         "success",
         isChangingPassword
           ? "Profile & password updated successfully"
-          : "Profile updated successfully"
+          : "Profile updated successfully",
       );
 
       // Reset password fields
@@ -113,7 +116,8 @@ export default function ProfileForm() {
       });
     } catch (err) {
       console.error(err);
-      const message = err.response?.data?.message || err.message || "Failed to update";
+      const message =
+        err.response?.data?.message || err.message || "Failed to update";
       showToast("error", message);
     } finally {
       setIsSaving(false);
@@ -161,16 +165,19 @@ export default function ProfileForm() {
               label="First Name"
               value={form.firstName}
               onChange={handleChange("firstName")}
+              placeholder="Enter first name"
             />
             <FormInput
               label="Middle Name"
               value={form.middleName}
               onChange={handleChange("middleName")}
+              placeholder="Enter middle name"
             />
             <FormInput
               label="Last Name"
               value={form.lastName}
               onChange={handleChange("lastName")}
+              placeholder="Enter last name"
             />
           </div>
 
@@ -180,6 +187,7 @@ export default function ProfileForm() {
               type="email"
               value={form.email}
               onChange={handleChange("email")}
+              placeholder="Enter email address"
               icon={Mail}
             />
 
@@ -187,10 +195,10 @@ export default function ProfileForm() {
               <label className="text-sm font-medium text-gray-700 block">
                 Role
               </label>
-              <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-50 border text-gray-500 text-sm uppercase">
+              <div className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-gray-50 border border-gray-200 text-gray-500 text-sm cursor-not-allowed uppercase">
                 <Shield className="w-4 h-4" />
                 {user?.role}
-                <span className="ml-auto text-xs bg-gray-200 px-2 py-0.5 rounded">
+                <span className="ml-auto text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded">
                   Read-only
                 </span>
               </div>
@@ -199,7 +207,7 @@ export default function ProfileForm() {
         </div>
 
         {/* Password (UI ONLY) */}
-        <div className="space-y-4 pt-6 border-t">
+        <div className="space-y-4 pt-6 border-t border-(--border-light)">
           <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
             Change Password
           </h4>
@@ -210,6 +218,7 @@ export default function ProfileForm() {
               type="password"
               value={passwords.currentPassword}
               onChange={handleChange("currentPassword")}
+              placeholder="Enter current password"
               icon={Lock}
             />
 
@@ -220,6 +229,7 @@ export default function ProfileForm() {
               type="password"
               value={passwords.newPassword}
               onChange={handleChange("newPassword")}
+              placeholder="Enter new password"
               icon={Lock}
             />
 
@@ -228,21 +238,23 @@ export default function ProfileForm() {
               type="password"
               value={passwords.confirmPassword}
               onChange={handleChange("confirmPassword")}
+              placeholder="Confirm new password"
               icon={Lock}
             />
           </div>
 
           <p className="text-xs text-gray-500">
-            This section will be handled in a separate endpoint.
+            Password must be at least 8 characters long and include a mix of
+            letters, numbers, and symbols.
           </p>
         </div>
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 pt-6 border-t">
+        <div className="flex items-center justify-end gap-3 pt-6 border-t border-(--border-light)">
           <button
             type="button"
             onClick={handleCancel}
-            className="px-6 py-2.5 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
+            className="px-6 py-2.5 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 border border-transparent hover:border-gray-200 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
           >
             Cancel
           </button>
@@ -250,7 +262,7 @@ export default function ProfileForm() {
           <button
             type="submit"
             disabled={isSaving}
-            className="px-6 py-2.5 rounded-lg text-white bg-(--primary-600) disabled:opacity-70 flex items-center gap-2"
+            className="px-6 py-2.5 rounded-lg text-sm font-medium text-white bg-(--primary-600) hover:bg-(--primary-700) shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-(--primary-300) disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {isSaving ? (
               <>

@@ -37,7 +37,7 @@ function setAuthCookies(res, payload, rememberMe) {
 }
 
 async function register(data, res) {
-  const { first_name, middle_name, last_name, email, role, remember_me } = data;
+  const { first_name, middle_name, last_name, email, role } = data;
 
   const normalizedEmail = email.toLowerCase();
 
@@ -49,13 +49,7 @@ async function register(data, res) {
     throw error;
   }
 
-  let plainPassword;
-  if (role === "cashier") {
-    plainPassword = "CashierPassword123";
-  } else {
-    plainPassword = "RmoPassword123";
-  }
-
+  let plainPassword = "SwiftDocs123";
   const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
   const account = await accountRepository.create({
@@ -65,7 +59,6 @@ async function register(data, res) {
     email: normalizedEmail,
     password: hashedPassword,
     role,
-    remember_me,
   });
 
   const safeAccount = account.toJSON();

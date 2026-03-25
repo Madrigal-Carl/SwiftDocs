@@ -31,15 +31,13 @@ export function AuthProvider({ children }) {
     }
   };
 
-  const getInitials = (fullname) => {
-    if (!fullname) return "U";
-    return fullname
-      .replace(",", " ")
-      .split(" ")
-      .filter(Boolean)
-      .map((word) => word[0].toUpperCase())
-      .join("")
-      .slice(0, 3);
+  const getInitials = (firstName, lastName) => {
+    const first = firstName?.[0] || "";
+    const last = lastName?.[0] || "";
+
+    const initials = (first + last).toUpperCase();
+
+    return initials || "U";
   };
 
   const loadUser = async () => {
@@ -49,7 +47,7 @@ export function AuthProvider({ children }) {
 
       const enrichedUser = {
         ...userData,
-        initials: getInitials(userData?.fullname),
+        initials: getInitials(userData?.firstName, userData?.lastName),
       };
 
       setUser(enrichedUser);

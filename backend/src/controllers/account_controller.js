@@ -29,7 +29,7 @@ async function updateAccount(req, res) {
   const id = req.params.id;
   const data = req.body;
 
-  const account = await accountService.updateAccount(id, data);
+  const account = await accountService.updateAccount(id, data, req.user);
 
   if (!account) {
     return res.status(404).json({ message: "Account not found" });
@@ -53,7 +53,7 @@ async function changePassword(req, res) {
     const result = await accountService.changePassword(
       userId,
       currentPassword,
-      newPassword
+      newPassword,
     );
 
     if (!result) {

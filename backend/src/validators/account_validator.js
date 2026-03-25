@@ -22,6 +22,15 @@ const updateAccountSchema = Joi.object({
   role: Joi.string().valid("cashier", "rmo").messages({
     "any.only": "Role must be either cashier, or rmo",
   }),
+  status: Joi.string().valid("active", "inactive").messages({
+    "any.only": "Status must be either active or inactive",
+  }),
+  newPassword: Joi.string().min(6).messages({
+    "string.min": "New password must be at least 6 characters long",
+  }),
+  currentPassword: Joi.string().messages({
+    "string.base": "Current password must be a string",
+  }),
   remember_me: Joi.boolean().messages({
     "boolean.base": "Remember me must be true or false",
   }),
@@ -58,10 +67,13 @@ const changePasswordSchema = Joi.object({
     "string.min": "New password must be at least 8 characters",
   }),
 
-  confirmPassword: Joi.string().valid(Joi.ref("newPassword")).required().messages({
-    "any.only": "Passwords do not match",
-    "string.empty": "Confirm password is required",
-  }),
+  confirmPassword: Joi.string()
+    .valid(Joi.ref("newPassword"))
+    .required()
+    .messages({
+      "any.only": "Passwords do not match",
+      "string.empty": "Confirm password is required",
+    }),
 });
 function validateChangePassword(req, res, next) {
   const { error, value } = changePasswordSchema.validate(req.body, {

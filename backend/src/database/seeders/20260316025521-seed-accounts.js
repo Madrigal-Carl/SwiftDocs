@@ -14,7 +14,7 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
      */
-    const password = await bcrypt.hash("Pass@123", 10);
+    const password = await bcrypt.hash("SwiftDocs123", 10);
 
     await queryInterface.bulkInsert("accounts", [
       {

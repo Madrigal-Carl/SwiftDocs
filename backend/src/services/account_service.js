@@ -47,7 +47,7 @@ async function getAccountById(id) {
   };
 }
 
-async function updateAccount(id, data) {
+async function updateAccount(id, data, user) {
   const account = await accountRepository.findById(id);
   if (!account) return null;
 
@@ -57,6 +57,8 @@ async function updateAccount(id, data) {
     "middle_name",
     "last_name",
     "email",
+    "role",
+    "status",
   ];
 
   allowedFields.forEach((field) => {
@@ -67,19 +69,19 @@ async function updateAccount(id, data) {
 
   // 🔐 Handle password change
   if (data.newPassword) {
-    if (!data.currentPassword) {
+    const isSelf = Number(id) === Number(user.id);
+    if (isSelf && !data.currentPassword) {
       throw new Error("Current password is required");
     }
-
-    const isMatch = await bcrypt.compare(
-      data.currentPassword,
-      account.password,
-    );
-
-    if (!isMatch) {
-      throw new Error("Current password is incorrect");
+    if (isSelf) {
+      const isMatch = await bcrypt.compare(
+        data.currentPassword,
+        account.password,
+      );
+      if (!isMatch) {
+        throw new Error("Current password is incorrect");
+      }
     }
-
     account.password = await bcrypt.hash(data.newPassword, 10);
   }
 

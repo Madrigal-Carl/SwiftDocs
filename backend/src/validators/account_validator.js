@@ -46,5 +46,36 @@ function validateUpdateAccount(req, res, next) {
   req.body = value;
   next();
 }
+const changePasswordSchema = Joi.object({
+  currentPassword: Joi.string().required().messages({
+    "string.base": "Current password must be a string",
+    "string.empty": "Current password is required",
+  }),
 
-module.exports = { validateUpdateAccount };
+  newPassword: Joi.string().min(8).required().messages({
+    "string.base": "New password must be a string",
+    "string.empty": "New password is required",
+    "string.min": "New password must be at least 8 characters",
+  }),
+
+  confirmPassword: Joi.string().valid(Joi.ref("newPassword")).required().messages({
+    "any.only": "Passwords do not match",
+    "string.empty": "Confirm password is required",
+  }),
+});
+function validateChangePassword(req, res, next) {
+  const { error, value } = changePasswordSchema.validate(req.body, {
+    abortEarly: true,
+    stripUnknown: true,
+  });
+
+  if (error) {
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+  }
+
+  req.body = value;
+  next();
+}
+module.exports = { validateUpdateAccount, validateChangePassword };

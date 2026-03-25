@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import Swal from "sweetalert2";
 import {
   MoreHorizontal,
   Pencil,
@@ -77,23 +78,59 @@ export default function ActionDropdown({ user, onClose, onSuccess }) {
 
   const handleToggleStatus = async () => {
     const newStatus = user.status === "active" ? "inactive" : "active";
-    try {
-      await updateAccount(user.id, { status: newStatus });
-      if (onSuccess) onSuccess();
-      setIsOpen(false);
-    } catch (error) {
-      console.error("Failed to update status:", error);
-    }
+    const actionText = newStatus === "active" ? "activate" : "deactivate";
+
+    const result = await Swal.fire({
+      title: `${actionText.charAt(0).toUpperCase() + actionText.slice(1)} user?`,
+      text: `Are you sure you want to ${actionText} ${user.fullname || user.email}?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: `Yes, ${actionText}`,
+      confirmButtonColor: "#10B981",
+      cancelButtonColor: "#64748b",
+      showLoaderOnConfirm: true,
+      preConfirm: async () => {
+        try {
+          await updateAccount(user.id, { status: newStatus });
+        } catch (error) {
+          Swal.showValidationMessage(`Request failed: ${error.message}`);
+          throw error;
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    });
+
+    if (!result.isConfirmed) return;
+
+    if (onSuccess) onSuccess();
+    setIsOpen(false);
   };
 
   const handleResetPassword = async () => {
-    try {
-      await updateAccount(user.id, { newPassword: "SwiftDocs123" });
-      if (onSuccess) onSuccess();
-      setIsOpen(false);
-    } catch (error) {
-      console.error("Failed to reset password:", error);
-    }
+    const result = await Swal.fire({
+      title: "Reset password?",
+      text: `This will reset ${user.fullname || user.email}'s password to SwiftDocs123. Continue?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, reset",
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#64748b",
+      showLoaderOnConfirm: true,
+      preConfirm: async () => {
+        try {
+          await updateAccount(user.id, { newPassword: "SwiftDocs123" });
+        } catch (error) {
+          Swal.showValidationMessage(`Request failed: ${error.message}`);
+          throw error;
+        }
+      },
+      allowOutsideClick: () => !Swal.isLoading(),
+    });
+
+    if (!result.isConfirmed) return;
+
+    if (onSuccess) onSuccess();
+    setIsOpen(false);
   };
 
   const dropdown = isOpen ? (

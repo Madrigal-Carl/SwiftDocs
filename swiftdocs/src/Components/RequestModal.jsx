@@ -206,7 +206,7 @@ function RequestModal({ isOpen, onClose }) {
         lrn: academicInfo.studentNumber,
         education_level: academicInfo.entryLevel?.toLowerCase(),
 
-        school_last_attended: 1,
+        school_last_attended: academicInfo.lastSchool,
         admission_date: academicInfo.admissionDate,
 
         completion_status: academicInfo.completion?.toLowerCase(),

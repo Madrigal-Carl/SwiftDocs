@@ -3,6 +3,7 @@ const router = express.Router();
 const documentController = require("../controllers/document_controller");
 const requireAuth = require("../middlewares/auth");
 const requireRole = require("../middlewares/role");
+const allowGuestOrRMO = require("../middlewares/allow_guest_or_rmo");
 const {
   validateCreateDocument,
   validateUpdateDocument,
@@ -19,8 +20,7 @@ router.get(
 // fetch all documents without pagination
 router.get(
   "/all",
-  requireAuth,
-  requireRole("rmo"),
+  allowGuestOrRMO,
   documentController.GetAllDocumentsNoPagination,
 );
 

@@ -1,4 +1,4 @@
-import AuthCard from "../Components/AuthCard";
+import AuthCard from "../components/AuthCard";
 import { useNavigate } from "react-router-dom";
 import { Activity, FileInput, ShieldCheck } from "lucide-react";
 import logo from "../assets/white_outline_logo.png";

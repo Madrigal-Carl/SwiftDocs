@@ -17,9 +17,11 @@ import { getAllDocumentsNoPagination } from "../services/document_service";
 import { showToast } from "../utils/swal";
 
 function RequestModal({ isOpen, onClose }) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [agreed, setAgreed] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+  const [additionals, setAdditionals] = useState([]);
   const [availableDocuments, setAvailableDocuments] = useState([]);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [purpose, setPurpose] = useState("");
@@ -117,14 +119,23 @@ function RequestModal({ isOpen, onClose }) {
   const addCustomDocument = () => {
     const name = searchInput.trim();
     if (!name) return;
+
+    // Create new document
     const newDoc = {
       id: Date.now(),
-      name,
+      name: capitalizeWords(name),
       defaultQuantity: 1,
       quantity: 1,
+      isCustom: true,
     };
+
+    // Add to available documents
     setAvailableDocuments((prev) => [...prev, newDoc]);
+
+    // Add to selected documents
     setSelectedDocuments((prev) => [...prev, { ...newDoc, quantity: 1 }]);
+
+    // Clear search input so filteredDocuments includes the new doc
     setSearchInput("");
   };
 
@@ -189,8 +200,25 @@ function RequestModal({ isOpen, onClose }) {
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting) return; // prevent double click
+    setIsSubmitting(true);    // ✅ show loading immediately
+
     try {
       const cleanPhoneNumber = studentInfo.mobile.replace(/\D/g, "");
+
+      const mergedAdditionals = [
+        ...additionals,
+        ...selectedDocuments.filter((doc) => doc.isCustom),
+      ].reduce((acc, doc) => {
+        const type = (doc.type || doc.name).toLowerCase();
+        const existing = acc.find((d) => d.type === type);
+        if (existing) {
+          existing.quantity += doc.quantity;
+        } else {
+          acc.push({ type, quantity: doc.quantity });
+        }
+        return acc;
+      }, []);
 
       const payload = {
         first_name: studentInfo.firstName,
@@ -198,55 +226,44 @@ function RequestModal({ isOpen, onClose }) {
         last_name: studentInfo.surname,
         birth_date: studentInfo.birthdate,
         sex: studentInfo.gender?.toLowerCase(),
-
         email: studentInfo.email,
         address: studentInfo.address,
         phone_number: cleanPhoneNumber,
-
         lrn: academicInfo.studentNumber,
         education_level: academicInfo.entryLevel?.toLowerCase(),
-
         school_last_attended: academicInfo.lastSchool,
         admission_date: academicInfo.admissionDate,
-
         completion_status: academicInfo.completion?.toLowerCase(),
         attendance_period: academicInfo.attendanceYears,
-
         program:
           academicInfo.entryLevel === "College"
             ? academicInfo.course
             : academicInfo.track,
-
         notes: academicInfo.academicNotes,
-
-        purpose: purpose,
-
-        documents: selectedDocuments.map((doc) => ({
-          type: doc.name.toLowerCase(),
-          quantity: doc.quantity,
-        })),
-
-        additionals: [],
+        purpose,
+        documents: selectedDocuments
+          .filter((doc) => !doc.isCustom)
+          .map((doc) => ({ type: doc.name.toLowerCase(), quantity: doc.quantity })),
+        additionals: mergedAdditionals,
       };
 
       await createRequest(payload);
 
       setFormSubmitted(true);
-
       showToast("success", "Request submitted successfully!");
 
       setTimeout(() => {
         onClose();
+        setIsSubmitting(false); // reset after close
       }, 500);
+
     } catch (err) {
       console.error("Submit failed:", err);
-
-      const errorMessage =
-        err.response?.data?.message ||
-        err.message ||
-        "Failed to submit request";
-
-      showToast("error", errorMessage);
+      showToast(
+        "error",
+        err.response?.data?.message || err.message || "Failed to submit request"
+      );
+      setIsSubmitting(false); // ✅ reset so user can retry
     }
   };
 
@@ -648,11 +665,7 @@ function RequestModal({ isOpen, onClose }) {
                                 </div>
                               </td>
                               <td className="px-4 py-3 font-medium text-gray-700">
-                                ₱
-                                {(selected
-                                  ? doc.price * quantity
-                                  : 0
-                                ).toLocaleString()}
+                                ₱{(selected ? (doc.price || 0) * quantity : 0).toLocaleString()}
                               </td>
                             </tr>
                           );
@@ -1146,13 +1159,14 @@ function RequestModal({ isOpen, onClose }) {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-6 py-3 rounded-lg text-white font-medium hover:shadow-md transition-all duration-300"
+                  disabled={isSubmitting}
+                  className="px-6 py-3 rounded-lg text-white font-medium hover:shadow-md transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{
                     background:
                       "linear-gradient(to right, var(--primary-500), var(--primary-600))",
                   }}
                 >
-                  Submit Request
+                  {isSubmitting ? "Submitting..." : "Submit Request"}
                 </button>
               </div>
             </div>

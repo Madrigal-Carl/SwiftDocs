@@ -385,17 +385,23 @@ export default function RequestView() {
                         </p>
 
                         {isRmoPending ? (
-                          <input
-                            type="number"
-                            value={doc.price}
-                            onChange={(e) =>
-                              handlePriceChange(index, e.target.value)
-                            }
-                            className="w-24 px-2 py-1 text-sm border border-(--border-light) rounded-lg text-right"
-                          />
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="number"
+                              value={doc.price}
+                              onChange={(e) =>
+                                handlePriceChange(index, e.target.value)
+                              }
+                              className="w-24 px-2 py-1 text-sm border border-(--border-light) rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-(--primary-300) focus:border-(--primary-500) transition-all duration-200"
+                            />
+
+                            <p className="text-sm text-gray-500">
+                              × {doc.quantity}
+                            </p>
+                          </div>
                         ) : (
                           <p className="text-sm text-gray-500">
-                            ₱{doc.price.toFixed(2)}
+                            ₱{doc.price.toFixed(2)} × {doc.quantity}
                           </p>
                         )}
                       </div>

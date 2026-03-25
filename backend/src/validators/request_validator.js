@@ -92,35 +92,16 @@ const schema = Joi.object({
           "number.base": "Document quantity must be a number",
           "number.min": "Document quantity must be at least 1",
         }),
-      })
+      }),
     )
-    .default([]), // can be empty if only custom docs are requested
-  additionals: Joi.array()
-    .items(
-      Joi.object({
-        type: Joi.string().required().messages({
-          "string.empty": "Additional document type is required",
-          "any.required": "Additional document type is required",
-        }),
-        quantity: Joi.number().min(1).default(1).messages({
-          "number.base": "Additional document quantity must be a number",
-          "number.min": "Additional document quantity must be at least 1",
-        }),
-      })
-    )
-    .default([]),
-})
-  // custom validation: ensure at least one document or additional exists
-  .custom((value, helpers) => {
-    const totalDocs =
-      (value.documents?.length || 0) + (value.additionals?.length || 0);
-    if (totalDocs === 0) {
-      return helpers.error("any.custom", {
-        message: "At least one document is required",
-      });
-    }
-    return value;
-  });
+    .min(1)
+    .required()
+    .messages({
+      "array.base": "Documents must be an array",
+      "array.min": "At least one document is required",
+      "any.required": "Documents are required",
+    }),
+});
 
 function validateCreateRequest(req, res, next) {
   const { error, value } = schema.validate(req.body, {

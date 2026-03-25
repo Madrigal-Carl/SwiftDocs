@@ -1,21 +1,21 @@
 import api from "../api/api";
 
-export async function updateRmoRequestStatus(
+export async function updateRmoAdditionalDocumentPrices(
   id,
-  status,
-  note,
-  additional_documents = [],
+  additional_documents,
 ) {
-  const payload = {
+  const res = await api.patch(`/rmo/requests/${id}/additional-documents`, {
+    additional_documents,
+  });
+
+  return res.data;
+}
+
+export async function updateRmoRequestStatus(id, status, note) {
+  const res = await api.patch(`/rmo/requests/${id}/status`, {
     status,
     note,
-  };
-
-  if (additional_documents.length > 0) {
-    payload.additional_documents = additional_documents;
-  }
-
-  const res = await api.patch(`/rmo/requests/${id}/status`, payload);
+  });
 
   return res.data;
 }

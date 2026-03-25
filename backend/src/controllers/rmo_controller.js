@@ -16,6 +16,17 @@ async function UpdateRequestStatus(req, res) {
   res.json(request);
 }
 
+async function UpdateAdditionalDocumentPrices(req, res) {
+  const request = await rmoService.UpdateAdditionalDocumentPrices(
+    Number(req.params.id),
+    req.body.additional_documents,
+    req.user,
+  );
+
+  res.json(request);
+}
+
 module.exports = {
   UpdateRequestStatus,
+  UpdateAdditionalDocumentPrices,
 };

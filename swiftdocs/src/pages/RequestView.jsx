@@ -560,12 +560,12 @@ export default function RequestView() {
             return;
           }
 
-          if (user.role === "rmo" && nextStatus === "invoiced") {
+          if (user.role === "rmo") {
             const hasInvalid = additionalDocsState.some(
               (doc) => !doc.unit_price || doc.unit_price <= 0,
             );
 
-            if (hasInvalid) {
+            if (nextStatus === "invoiced" && hasInvalid) {
               showToast("error", "All additional documents must have a price");
               return;
             }
@@ -594,7 +594,7 @@ export default function RequestView() {
                 request.id,
                 nextStatus,
                 remarks,
-                nextStatus === "invoiced" ? formattedAdditionalDocs : [],
+                formattedAdditionalDocs,
               );
             }
 

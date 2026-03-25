@@ -11,7 +11,7 @@ export async function updateRmoRequestStatus(
     note,
   };
 
-  if (status === "invoiced" && additional_documents.length > 0) {
+  if (additional_documents.length > 0) {
     payload.additional_documents = additional_documents;
   }
 

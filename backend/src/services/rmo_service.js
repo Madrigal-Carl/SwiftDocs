@@ -35,33 +35,8 @@ async function UpdateRequestStatus(
     throw new Error("Request not found");
   }
 
-  if (status === "invoiced") {
-    if (!request.isPending()) {
-      throw new Error("Only pending requests can be invoiced");
-    }
-
-    if (additionalDocs && additionalDocs.length > 0) {
-      const hasZeroPrice = request.additional_documents.some(
-        (doc) => doc.unit_price <= 0,
-      );
-
-      if (hasZeroPrice) {
-        throw new Error("All additional documents must have a price");
-      }
-
-      for (const doc of additionalDocs) {
-        const additional = request.additional_documents.find(
-          (ad) => ad.id === doc.id,
-        );
-
-        if (!additional) {
-          throw new Error(`Additional document ${doc.id} not found`);
-        }
-
-        additional.unit_price = doc.unit_price;
-        await additional.save();
-      }
-    }
+  if (status === "invoiced" && !request.isPending()) {
+    throw new Error("Only pending requests can be invoiced");
   }
 
   const previousStatus = request.status;
@@ -103,6 +78,44 @@ async function UpdateRequestStatus(
   };
 }
 
+async function UpdateAdditionalDocumentPrices(
+  requestId,
+  additionalDocs,
+  account,
+) {
+  const request = await requestRepository.FindRequestById(requestId, null, {
+    include: [
+      {
+        association: "additional_documents",
+      },
+    ],
+  });
+
+  if (!request) {
+    throw new Error("Request not found");
+  }
+
+  if (!request.isPending()) {
+    throw new Error("Prices can only be updated while request is pending");
+  }
+
+  for (const doc of additionalDocs) {
+    const additional = request.additional_documents.find(
+      (ad) => ad.id === doc.id,
+    );
+
+    if (!additional) {
+      throw new Error(`Additional document ${doc.id} not found`);
+    }
+
+    additional.unit_price = doc.unit_price;
+    await additional.save();
+  }
+
+  return request;
+}
+
 module.exports = {
   UpdateRequestStatus,
+  UpdateAdditionalDocumentPrices,
 };

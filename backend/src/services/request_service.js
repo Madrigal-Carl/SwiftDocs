@@ -37,33 +37,29 @@ async function RequestDocuments(data) {
         data.documents.map(async (doc) => {
           const document = await documentRepository.FindByType(doc.type, t);
 
-          if (!document) {
-            throw new Error(`Document type "${doc.type}" not found`);
+          if (document) {
+            return requestedDocumentRepository.CreateRequestedDocument(
+              {
+                request_id: request.id,
+                document_id: document.id,
+                quantity: doc.quantity || 1,
+              },
+              t,
+            );
           }
 
-          return requestedDocumentRepository.CreateRequestedDocument(
+          // If a document type is not found in the documents table,
+          // save it as an additional document instead.
+          return additionalDocumentRepository.CreateAdditionalDocument(
             {
               request_id: request.id,
-              document_id: document.id,
+              type: doc.type,
               quantity: doc.quantity || 1,
             },
             t,
           );
         }),
       );
-    }
-
-    if (Array.isArray(data.additionals) && data.additionals.length) {
-      for (const add of data.additionals) {
-        await additionalDocumentRepository.CreateAdditionalDocument(
-          {
-            request_id: request.id,
-            type: add.type,
-            quantity: add.quantity || 1,
-          },
-          t,
-        );
-      }
     }
 
     return requestRepository.FindRequestById(request.id, t, {
@@ -149,17 +145,9 @@ async function GetRequestWithStudent(requestId) {
 
     let full_name = null;
 
-    if (account) {
-      const middleInitial = account.middle_name
-        ? ` ${account.middle_name.charAt(0).toUpperCase()}.`
-        : "";
-
-      full_name = `${account.last_name}, ${account.first_name}${middleInitial}`;
-    }
-
     return {
       ...log.toJSON(),
-      account_full_name: full_name,
+      account_full_name: account ? account.getFullName() : null,
     };
   });
 

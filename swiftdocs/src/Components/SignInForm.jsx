@@ -38,17 +38,6 @@ function SignInForm() {
       // Reload user info from backend
       await reloadUser();
 
-      // Add initials
-      setUser((prev) => ({
-        ...prev,
-        initials: prev?.fullname
-          ?.split(" ")
-          .filter(Boolean)
-          .map((w) => w[0].toUpperCase())
-          .join("")
-          .slice(0, 3),
-      }));
-
       // Show success toast
       showToast("success", res.message || "Login successful");
 

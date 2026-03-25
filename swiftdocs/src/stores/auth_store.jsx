@@ -32,12 +32,9 @@ export function AuthProvider({ children }) {
   };
 
   const getInitials = (firstName, lastName) => {
-    const first = firstName?.[0] || "";
-    const last = lastName?.[0] || "";
+    if (!firstName || !lastName) return "";
 
-    const initials = (first + last).toUpperCase();
-
-    return initials || "U";
+    return `${firstName[0]}${lastName[0]}`.toUpperCase();
   };
 
   const loadUser = async () => {
@@ -47,7 +44,7 @@ export function AuthProvider({ children }) {
 
       const enrichedUser = {
         ...userData,
-        initials: getInitials(userData?.firstName, userData?.lastName),
+        initials: getInitials(userData.firstName, userData.lastName),
       };
 
       setUser(enrichedUser);

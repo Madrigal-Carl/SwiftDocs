@@ -25,6 +25,12 @@ const updateAccountSchema = Joi.object({
   status: Joi.string().valid("active", "inactive").messages({
     "any.only": "Status must be either active or inactive",
   }),
+  newPassword: Joi.string().min(6).messages({
+    "string.min": "New password must be at least 6 characters long",
+  }),
+  currentPassword: Joi.string().messages({
+    "string.base": "Current password must be a string",
+  }),
   remember_me: Joi.boolean().messages({
     "boolean.base": "Remember me must be true or false",
   }),

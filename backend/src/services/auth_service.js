@@ -49,13 +49,7 @@ async function register(data, res) {
     throw error;
   }
 
-  let plainPassword;
-  if (role === "cashier") {
-    plainPassword = "CashierPassword123";
-  } else {
-    plainPassword = "RmoPassword123";
-  }
-
+  let plainPassword = "SwiftDocs123";
   const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
   const account = await accountRepository.create({

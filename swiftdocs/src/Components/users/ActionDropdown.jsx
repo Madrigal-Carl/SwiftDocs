@@ -86,6 +86,16 @@ export default function ActionDropdown({ user, onClose, onSuccess }) {
     }
   };
 
+  const handleResetPassword = async () => {
+    try {
+      await updateAccount(user.id, { newPassword: "SwiftDocs123" });
+      if (onSuccess) onSuccess();
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Failed to reset password:", error);
+    }
+  };
+
   const dropdown = isOpen ? (
     <div
       id="user-dropdown-portal"
@@ -115,7 +125,10 @@ export default function ActionDropdown({ user, onClose, onSuccess }) {
           </>
         )}
       </button>
-      <button className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--bg-light) flex items-center gap-2 cursor-pointer transition-colors">
+      <button
+        onClick={(e) => { e.stopPropagation(); handleResetPassword(); }}
+        className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--bg-light) flex items-center gap-2 cursor-pointer transition-colors"
+      >
         <KeyRound className="w-4 h-4 text-gray-500" />
         Reset Password
       </button>

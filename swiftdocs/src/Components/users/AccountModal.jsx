@@ -1,13 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronDown, Shield, X, User, Mail } from "lucide-react";
 
-export default function AccountModal({ isOpen, onClose, onSubmit }) {
+export default function AccountModal({
+  isOpen,
+  onClose,
+  onSubmit,
+  isEdit = false,
+  initialData = null,
+}) {
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("rmo");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isEdit && initialData) {
+      setFirstName(initialData.firstName || initialData.first_name || "");
+      setMiddleName(initialData.middleName || initialData.middle_name || "");
+      setLastName(initialData.lastName || initialData.last_name || "");
+      setEmail(initialData.email || "");
+      setRole(initialData.role || "rmo");
+    } else if (!isEdit) {
+      setFirstName("");
+      setMiddleName("");
+      setLastName("");
+      setEmail("");
+      setRole("rmo");
+    }
+  }, [isEdit, initialData]);
 
   const handleClose = () => {
     setFirstName("");
@@ -48,7 +70,7 @@ export default function AccountModal({ isOpen, onClose, onSubmit }) {
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-semibold text-(--text-dark)">
-            Create Account
+            {isEdit ? "Edit Account" : "Create Account"}
           </h2>
           <button
             onClick={handleClose}
@@ -186,7 +208,11 @@ export default function AccountModal({ isOpen, onClose, onSubmit }) {
               bg-(--primary-600) hover:bg-(--primary-700)
             `}
           >
-            {submitting ? "Processing..." : "Create Account"}
+            {submitting
+              ? "Processing..."
+              : isEdit
+                ? "Update Account"
+                : "Create Account"}
           </button>
         </div>
       </div>

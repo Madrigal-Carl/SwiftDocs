@@ -8,10 +8,14 @@ import {
   KeyRound,
   Ban,
 } from "lucide-react";
+import AccountModal from "./AccountModal";
+import { getAccountById, updateAccount } from "../../services/account_service";
 
-export default function ActionDropdown({ user, onClose }) {
+export default function ActionDropdown({ user, onClose, onSuccess }) {
   const [isOpen, setIsOpen] = useState(false);
   const [coords, setCoords] = useState({ top: 0, left: 0 });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
   const buttonRef = useRef(null);
 
   useEffect(() => {
@@ -50,13 +54,37 @@ export default function ActionDropdown({ user, onClose }) {
     setIsOpen(!isOpen);
   };
 
+  const handleEdit = async () => {
+    try {
+      const data = await getAccountById(user.id);
+      setEditingUser(data.user || data);
+      setIsModalOpen(true);
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+    }
+  };
+
+  const handleUpdate = async (data) => {
+    try {
+      await updateAccount(user.id, data);
+      setIsModalOpen(false);
+      if (onSuccess) onSuccess();
+    } catch (error) {
+      console.error("Failed to update user:", error);
+    }
+  };
+
   const dropdown = isOpen ? (
     <div
       id="user-dropdown-portal"
       className="absolute w-40 bg-white rounded-lg shadow-lg border border-(--border-light) py-1 z-50"
       style={{ top: coords.top, left: coords.left }}
     >
-      <button className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--bg-light) flex items-center gap-2 cursor-pointer transition-colors">
+      <button
+        onClick={handleEdit}
+        className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--bg-light) flex items-center gap-2 cursor-pointer transition-colors"
+      >
         <Pencil className="w-4 h-4 text-gray-500" />
         Edit User
       </button>
@@ -91,6 +119,14 @@ export default function ActionDropdown({ user, onClose }) {
       </button>
 
       {createPortal(dropdown, document.body)}
+
+      <AccountModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        isEdit={true}
+        initialData={editingUser}
+        onSubmit={handleUpdate}
+      />
     </>
   );
 }

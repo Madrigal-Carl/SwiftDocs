@@ -57,6 +57,7 @@ async function updateAccount(id, data) {
     "middle_name",
     "last_name",
     "email",
+    "role",
   ];
 
   allowedFields.forEach((field) => {

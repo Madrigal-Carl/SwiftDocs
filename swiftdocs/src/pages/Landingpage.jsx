@@ -141,10 +141,13 @@ function Landingpage() {
                   Request Now
                   <ArrowRight className="w-5 h-5" />
                 </button>
-                <button className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-full font-semibold text-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2">
+                <a
+                  href="#how-it-works"
+                  className="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-full font-semibold text-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2"
+                >
                   <PlayCircle className="w-5 h-5 text-(--primary-600)" />
                   See How It Works
-                </button>
+                </a>
               </div>
 
               <div className="mt-10 flex items-center justify-center lg:justify-start gap-6 text-slate-500 text-sm font-medium">
@@ -438,9 +441,10 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Complete academic record with official seal.
               </p>
-              <span 
-              onClick={openModal}
-              className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span
+                onClick={openModal}
+                className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all"
+              >
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -454,9 +458,10 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Certified true copy of your diploma.
               </p>
-              <span 
-              onClick={openModal}
-              className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span
+                onClick={openModal}
+                className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all"
+              >
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -472,9 +477,10 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Proof of current or past enrollment.
               </p>
-              <span 
-              onClick={openModal}
-              className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span
+                onClick={openModal}
+                className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all"
+              >
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -490,9 +496,10 @@ function Landingpage() {
               <p className="text-sm text-slate-500 mb-4">
                 Certification of conduct and standing.
               </p>
-              <span 
-              onClick={openModal}
-              className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+              <span
+                onClick={openModal}
+                className="text-(--primary-600) text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all"
+              >
                 Request
                 <ArrowRight className="w-4 h-4" />
               </span>

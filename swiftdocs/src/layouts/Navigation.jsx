@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import RequestModal from "../components/RequestModal";
 import logo from "../assets/colored_logo.png";
 
-function Navigation() {
+function Navigation({ openRequestModal }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const navigate = useNavigate();
+
   return (
     <nav
       className="fixed w-full z-50 glass-nav transition-all duration-300"
@@ -60,7 +62,10 @@ function Navigation() {
             >
               Log in
             </button>
-            <button className="bg-(--primary-600) hover:bg-(--primary-700) text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-lg hover:shadow-[0_10px_25px_rgba(59,130,246,0.45)] transform hover:-translate-y-0.5">
+            <button
+              onClick={openRequestModal}
+              className="bg-(--primary-600) hover:bg-(--primary-700) text-white px-6 py-2.5 rounded-full font-medium transition-all shadow-lg hover:shadow-[0_10px_25px_rgba(59,130,246,0.45)] transform hover:-translate-y-0.5"
+            >
               Get Started
             </button>
           </div>

@@ -23,6 +23,7 @@ function RequestModal({ isOpen, onClose }) {
   const [availableDocuments, setAvailableDocuments] = useState([]);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [purpose, setPurpose] = useState("");
+  const [errors, setErrors] = useState({});
   const [studentInfo, setStudentInfo] = useState({
     firstName: "",
     surname: "",
@@ -145,13 +146,41 @@ function RequestModal({ isOpen, onClose }) {
     );
   };
 
-  const validateStep1 = () => agreed;
-  const validateStep2 = () => selectedDocuments.length > 0;
-  const validateStep3 = () => {
-    const { firstName, surname, email, mobile, address } = studentInfo;
-    return [firstName, surname, email, mobile, address].every(Boolean);
+  const validateStep1 = () => {
+    const newErrors = {};
+    if (!agreed) newErrors.agreed = true;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
+
+  const validateStep2 = () => {
+    const newErrors = {};
+
+    if (selectedDocuments.length === 0) newErrors.documents = true;
+    if (!purpose.trim()) newErrors.purpose = true; // ✅ ADD THIS
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateStep3 = () => {
+    const newErrors = {};
+    const { firstName, surname, email, mobile, address, birthdate } = studentInfo;
+
+    if (!firstName) newErrors.firstName = true;
+    if (!surname) newErrors.surname = true;
+    if (!email) newErrors.email = true;
+    if (!mobile) newErrors.mobile = true;
+    if (!address) newErrors.address = true;
+    if (!birthdate) newErrors.birthdate = true; // ✅ mark birthdate as required
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const validateStep4 = () => {
+    const newErrors = {};
     const {
       studentNumber,
       entryLevel,
@@ -160,20 +189,35 @@ function RequestModal({ isOpen, onClose }) {
       completion,
       graduationDate,
       attendanceYears,
+      lastSchool,
+      admissionDate, // ✅ include admissionDate
     } = academicInfo;
-    const requiredFields = [studentNumber, entryLevel, completion];
-    if (entryLevel === "College") requiredFields.push(course);
-    if (entryLevel === "Senior High") requiredFields.push(track);
-    if (completion === "Graduate") requiredFields.push(graduationDate);
-    if (completion === "Undergraduate") requiredFields.push(attendanceYears);
-    return requiredFields.every(Boolean);
+
+    if (!studentNumber) newErrors.studentNumber = true;
+    if (!lastSchool) newErrors.lastSchool = true;
+    if (!completion) newErrors.completion = true;
+    if (!admissionDate) newErrors.admissionDate = true; // ✅ mark error
+
+    if (entryLevel === "College" && !course) newErrors.course = true;
+    if (entryLevel === "Senior High" && !track) newErrors.track = true;
+    if (completion === "Graduate" && !graduationDate) newErrors.graduationDate = true;
+    if (completion === "Undergraduate" && !attendanceYears) newErrors.attendanceYears = true;
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const goToStep = (step) => {
-    if (step === 2 && !validateStep1()) return;
-    if (step === 3 && !validateStep2()) return;
-    if (step === 4 && !validateStep3()) return;
-    if (step === 5 && !validateStep4()) return;
+    let valid = true;
+
+    if (step === 2) valid = validateStep1();
+    if (step === 3) valid = validateStep2();
+    if (step === 4) valid = validateStep3();
+    if (step === 5) valid = validateStep4();
+
+    if (!valid) return;
+
+    setErrors({});
     setCurrentStep(step);
   };
 
@@ -506,7 +550,9 @@ function RequestModal({ isOpen, onClose }) {
                   onChange={(e) => setPurpose(e.target.value)}
                   rows="2"
                   placeholder="Enter purpose (e.g., employment, scholarship, transfer, etc.)"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
+                  className={`w-full px-4 py-3 border rounded-lg input-focus focus:outline-none 
+                  ${errors.purpose ? "border-red-500" : "border-gray-300"}
+                `}
                 />
               </div>
               <div className="flex flex-wrap gap-2 mb-4 p-3 bg-gray-50 rounded-lg min-h-15">
@@ -542,7 +588,10 @@ function RequestModal({ isOpen, onClose }) {
                   Add Document
                 </button>
               </div>
-              <div className="border border-gray-200 rounded-xl overflow-hidden">
+              <div
+                className={`border rounded-xl overflow-hidden ${errors.documents ? "border-red-500" : "border-gray-200"
+                  }`}
+              >
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead className="bg-gray-50">
@@ -708,7 +757,8 @@ function RequestModal({ isOpen, onClose }) {
                       }
                       type={type}
                       placeholder={placeholder}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
+                      className={`w-full px-4 py-3 border rounded-lg input-focus focus:outline-none ${errors[field] ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                   </div>
                 ))}
@@ -745,12 +795,10 @@ function RequestModal({ isOpen, onClose }) {
                     type="date"
                     value={studentInfo.birthdate}
                     onChange={(e) =>
-                      setStudentInfo((prev) => ({
-                        ...prev,
-                        birthdate: e.target.value,
-                      }))
+                      setStudentInfo((prev) => ({ ...prev, birthdate: e.target.value }))
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
+                    className={`w-full px-4 py-3 border rounded-lg ${errors.birthdate ? "border-red-500" : "border-gray-300"
+                      } focus:outline-none`}
                   />
                 </div>
                 <div>
@@ -766,7 +814,8 @@ function RequestModal({ isOpen, onClose }) {
                         email: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
+                    className={`w-full px-4 py-3 border rounded-lg ${errors.email ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder="student@example.com"
                   />
                 </div>
@@ -783,7 +832,8 @@ function RequestModal({ isOpen, onClose }) {
                         mobile: e.target.value,
                       }))
                     }
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
+                    className={`w-full px-4 py-3 border rounded-lg ${errors.mobile ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder="+63 912 345 6789"
                   />
                 </div>
@@ -800,7 +850,8 @@ function RequestModal({ isOpen, onClose }) {
                       }))
                     }
                     rows="3"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
+                    className={`w-full px-4 py-3 border rounded-lg ${errors.address ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder="Enter complete address including street, city, province, zip code"
                   ></textarea>
                 </div>
@@ -843,7 +894,7 @@ function RequestModal({ isOpen, onClose }) {
                     "Admission Date (Term & School Year)",
                     "admissionDate",
                     "text",
-                    "e.g., 1st Semester 2020-2021",
+                    "2020-2021",
                   ],
                   [
                     "Name of School Last Attended",
@@ -936,7 +987,9 @@ function RequestModal({ isOpen, onClose }) {
                         }
                         type={type}
                         placeholder={placeholder}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus focus:outline-none focus:border-(--primary-400)"
+                        className={`w-full px-4 py-3 border rounded-lg input-focus focus:outline-none 
+                        ${errors[field] ? "border-red-500" : "border-gray-300"}
+                      `}
                       />
                     </div>
                   );

@@ -843,7 +843,7 @@ function RequestModal({ isOpen, onClose }) {
                     "Admission Date (Term & School Year)",
                     "admissionDate",
                     "text",
-                    "e.g., 1st Semester 2020-2021",
+                    "e.g., T2 2020-2021",
                   ],
                   [
                     "Name of School Last Attended",

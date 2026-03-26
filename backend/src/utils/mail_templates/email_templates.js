@@ -1,3 +1,26 @@
+function pendingTemplate(data) {
+  const fullName = data.student.getFullName();
+
+  return {
+    subject: "Document Request is Under Review",
+    html: `
+      <p>Dear ${fullName},</p>
+
+      <p>Your document request with reference number 
+      <strong>${data.reference_number}</strong> is currently <strong>under review</strong>.</p>
+
+      <p>Our team is carefully checking your request details and submitted requirements. 
+      You will be notified once the review process is complete.</p>
+
+      <p>If additional information or documents are needed, we will contact you.</p>
+
+      <p>Thank you for your patience.</p>
+
+      <p>Sincerely,<br>Registrar Office</p>
+    `,
+  };
+}
+
 function invoicedTemplate(data) {
   const fullName = data.student.getFullName();
   const documents = data.getDocumentSummary();
@@ -113,4 +136,5 @@ module.exports = {
   rejected: rejectedTemplate,
   released: releasedTemplate,
   paid: paidTemplate,
+  pending: pendingTemplate,
 };

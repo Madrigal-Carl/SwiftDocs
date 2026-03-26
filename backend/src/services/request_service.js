@@ -9,7 +9,7 @@ const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
 
 async function RequestDocuments(data) {
-  return sequelize.transaction(async (t) => {
+  const result = await sequelize.transaction(async (t) => {
     const student = await studentRepository.CreateStudent(data, t);
 
     const educationData = {
@@ -48,8 +48,6 @@ async function RequestDocuments(data) {
             );
           }
 
-          // If a document type is not found in the documents table,
-          // save it as an additional document instead.
           return additionalDocumentRepository.CreateAdditionalDocument(
             {
               request_id: request.id,
@@ -62,7 +60,7 @@ async function RequestDocuments(data) {
       );
     }
 
-    return requestRepository.FindRequestById(request.id, t, {
+    return await requestRepository.FindRequestById(request.id, t, {
       include: [
         {
           association: "student",
@@ -78,6 +76,18 @@ async function RequestDocuments(data) {
       ],
     });
   });
+
+  try {
+    await mailService.SendMail({
+      to: result.student.email,
+      status: "pending",
+      data: result,
+    });
+  } catch (err) {
+    console.error("Failed to send pending email:", err.message);
+  }
+
+  return result;
 }
 
 async function SendRequestEmail(referenceNumber) {

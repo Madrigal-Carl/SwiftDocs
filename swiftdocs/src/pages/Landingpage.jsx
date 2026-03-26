@@ -107,7 +107,7 @@ function Landingpage() {
 
   return (
     <div className="font-sans text-slate-800 antialiased overflow-x-hidden">
-      <Nav />
+      <Nav openRequestModal={openModal} />
       <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden hero-gradient">
         <div className="blob bg-(--primary-300) w-96 h-96 rounded-full top-0 left-0 mix-blend-multiply"></div>
         <div className="blob bg-purple-300 w-96 h-96 rounded-full top-0 right-0 mix-blend-multiply animation-delay-2000"></div>

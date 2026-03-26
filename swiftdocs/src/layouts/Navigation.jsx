@@ -45,7 +45,7 @@ function Navigation({ openRequestModal }) {
               href="#track-request"
               className="text-slate-600 hover:text-(--primary-600) font-medium transition-colors"
             >
-              Track Request
+              Track
             </a>
             <a
               href="#faq"

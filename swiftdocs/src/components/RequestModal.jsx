@@ -49,7 +49,7 @@ function RequestModal({ isOpen, onClose }) {
     academicNotes: "",
   });
 
-  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const capitalizeWords = (str) =>
     str.replace(/\b\w/g, (char) => char.toUpperCase());
@@ -166,7 +166,8 @@ function RequestModal({ isOpen, onClose }) {
 
   const validateStep3 = () => {
     const newErrors = {};
-    const { firstName, surname, email, mobile, address, birthdate, gender } = studentInfo;
+    const { firstName, surname, email, mobile, address, birthdate, gender } =
+      studentInfo;
 
     if (!firstName) newErrors.firstName = true;
     if (!surname) newErrors.surname = true;
@@ -204,8 +205,10 @@ function RequestModal({ isOpen, onClose }) {
 
     if (entryLevel === "College" && !course) newErrors.course = true;
     if (entryLevel === "Senior High" && !track) newErrors.track = true;
-    if (completion === "Graduate" && !graduationDate) newErrors.graduationDate = true;
-    if (completion === "Undergraduate" && !attendanceYears) newErrors.attendanceYears = true;
+    if (completion === "Graduate" && !graduationDate)
+      newErrors.graduationDate = true;
+    if (completion === "Undergraduate" && !attendanceYears)
+      newErrors.attendanceYears = true;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -237,6 +240,7 @@ function RequestModal({ isOpen, onClose }) {
   };
 
   const handleSubmit = async () => {
+    setSubmitting(true);
     try {
       const cleanPhoneNumber = studentInfo.mobile.replace(/\D/g, "");
 
@@ -252,7 +256,9 @@ function RequestModal({ isOpen, onClose }) {
         phone_number: cleanPhoneNumber,
 
         lrn: academicInfo.studentNumber,
-        education_level: academicInfo.entryLevel?.toLowerCase(),
+        education_level: academicInfo.entryLevel
+          ? academicInfo.entryLevel.toLowerCase().replace(" ", "_")
+          : "",
 
         school_last_attended: academicInfo.lastSchool,
         admission_date: academicInfo.admissionDate,
@@ -279,13 +285,8 @@ function RequestModal({ isOpen, onClose }) {
 
       await createRequest(payload);
 
-      setFormSubmitted(true);
-
       showToast("success", "Request submitted successfully!");
-
-      setTimeout(() => {
-        onClose();
-      }, 500);
+      onClose();
     } catch (err) {
       console.error("Submit failed:", err);
 
@@ -295,6 +296,8 @@ function RequestModal({ isOpen, onClose }) {
         "Failed to submit request";
 
       showToast("error", errorMessage);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -327,7 +330,6 @@ function RequestModal({ isOpen, onClose }) {
       attendanceYears: "",
       academicNotes: "",
     });
-    setFormSubmitted(false);
   };
 
   if (!isOpen) return null;
@@ -593,8 +595,9 @@ function RequestModal({ isOpen, onClose }) {
                 </button>
               </div>
               <div
-                className={`border rounded-xl overflow-hidden ${errors.documents ? "border-red-500" : "border-gray-200"
-                  }`}
+                className={`border rounded-xl overflow-hidden ${
+                  errors.documents ? "border-red-500" : "border-gray-200"
+                }`}
               >
                 <div className="overflow-x-auto">
                   <table className="w-full">
@@ -761,8 +764,9 @@ function RequestModal({ isOpen, onClose }) {
                       }
                       type={type}
                       placeholder={placeholder}
-                      className={`w-full px-4 py-3 border rounded-lg input-focus focus:outline-none ${errors[field] ? "border-red-500" : "border-gray-300"
-                        }`}
+                      className={`w-full px-4 py-3 border rounded-lg input-focus focus:outline-none ${
+                        errors[field] ? "border-red-500" : "border-gray-300"
+                      }`}
                     />
                   </div>
                 ))}
@@ -772,8 +776,9 @@ function RequestModal({ isOpen, onClose }) {
                   </label>
                   {/* Error ring applied here on the container */}
                   <div
-                    className={`flex space-x-4 p-2 rounded transition ${errors.gender ? "ring-1 ring-red-500" : ""
-                      }`}
+                    className={`flex space-x-4 p-2 rounded transition ${
+                      errors.gender ? "ring-1 ring-red-500" : ""
+                    }`}
                   >
                     {["Male", "Female"].map((gender) => (
                       <label
@@ -786,7 +791,10 @@ function RequestModal({ isOpen, onClose }) {
                           value={gender}
                           checked={studentInfo.gender === gender}
                           onChange={(e) =>
-                            setStudentInfo((prev) => ({ ...prev, gender: e.target.value }))
+                            setStudentInfo((prev) => ({
+                              ...prev,
+                              gender: e.target.value,
+                            }))
                           }
                           className="accent-(--primary-600) w-5 h-5"
                         />
@@ -803,10 +811,14 @@ function RequestModal({ isOpen, onClose }) {
                     type="date"
                     value={studentInfo.birthdate}
                     onChange={(e) =>
-                      setStudentInfo((prev) => ({ ...prev, birthdate: e.target.value }))
+                      setStudentInfo((prev) => ({
+                        ...prev,
+                        birthdate: e.target.value,
+                      }))
                     }
-                    className={`w-full px-4 py-3 border rounded-lg ${errors.birthdate ? "border-red-500" : "border-gray-300"
-                      } focus:outline-none`}
+                    className={`w-full px-4 py-3 border rounded-lg ${
+                      errors.birthdate ? "border-red-500" : "border-gray-300"
+                    } focus:outline-none`}
                   />
                 </div>
                 <div>
@@ -822,8 +834,9 @@ function RequestModal({ isOpen, onClose }) {
                         email: e.target.value,
                       }))
                     }
-                    className={`w-full px-4 py-3 border rounded-lg ${errors.email ? "border-red-500" : "border-gray-300"
-                      }`}
+                    className={`w-full px-4 py-3 border rounded-lg ${
+                      errors.email ? "border-red-500" : "border-gray-300"
+                    }`}
                     placeholder="student@example.com"
                   />
                 </div>
@@ -840,8 +853,9 @@ function RequestModal({ isOpen, onClose }) {
                         mobile: e.target.value,
                       }))
                     }
-                    className={`w-full px-4 py-3 border rounded-lg ${errors.mobile ? "border-red-500" : "border-gray-300"
-                      }`}
+                    className={`w-full px-4 py-3 border rounded-lg ${
+                      errors.mobile ? "border-red-500" : "border-gray-300"
+                    }`}
                     placeholder="+63 912 345 6789"
                   />
                 </div>
@@ -858,8 +872,9 @@ function RequestModal({ isOpen, onClose }) {
                       }))
                     }
                     rows="3"
-                    className={`w-full px-4 py-3 border rounded-lg ${errors.address ? "border-red-500" : "border-gray-300"
-                      }`}
+                    className={`w-full px-4 py-3 border rounded-lg ${
+                      errors.address ? "border-red-500" : "border-gray-300"
+                    }`}
                     placeholder="Enter complete address including street, city, province, zip code"
                   ></textarea>
                 </div>
@@ -939,11 +954,15 @@ function RequestModal({ isOpen, onClose }) {
 
                         {/* Container with ring applied */}
                         <div
-                          className={`flex space-x-4 p-2 rounded transition ${errors.entryLevel ? "ring-1 ring-red-500" : "ring-0"
-                            }`}
+                          className={`flex space-x-4 p-2 rounded transition ${
+                            errors.entryLevel ? "ring-1 ring-red-500" : "ring-0"
+                          }`}
                         >
                           {["Senior High", "College"].map((value) => (
-                            <label key={value} className="flex items-center gap-2 cursor-pointer">
+                            <label
+                              key={value}
+                              className="flex items-center gap-2 cursor-pointer"
+                            >
                               <input
                                 type="radio"
                                 name="entryLevel"
@@ -1013,8 +1032,9 @@ function RequestModal({ isOpen, onClose }) {
                   </label>
                   {/* Apply error ring here on the container instead of individual labels */}
                   <div
-                    className={`flex space-x-4 p-2 rounded transition ${errors.completion ? "ring-1 ring-red-500" : ""
-                      }`}
+                    className={`flex space-x-4 p-2 rounded transition ${
+                      errors.completion ? "ring-1 ring-red-500" : ""
+                    }`}
                   >
                     {["Graduate", "Undergraduate"].map((value) => (
                       <label
@@ -1219,22 +1239,19 @@ function RequestModal({ isOpen, onClose }) {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-6 py-3 rounded-lg text-white font-medium hover:shadow-md transition-all duration-300"
+                  disabled={submitting}
+                  className={`px-6 py-3 rounded-lg text-white font-medium hover:shadow-md transition-all duration-300
+    ${submitting ? "opacity-60 cursor-not-allowed" : ""}
+  `}
                   style={{
                     background:
                       "linear-gradient(to right, var(--primary-500), var(--primary-600))",
                   }}
                 >
-                  Submit Request
+                  {submitting ? "Processing..." : "Submit Request"}
                 </button>
               </div>
             </div>
-
-            {formSubmitted && (
-              <div className="mt-4 rounded-lg bg-green-50 border border-green-200 p-3 text-green-700 text-sm">
-                Request submitted successfully. Closing shortly...
-              </div>
-            )}
           </div>
         </div>
       </div>

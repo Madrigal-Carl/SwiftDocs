@@ -166,7 +166,7 @@ function RequestModal({ isOpen, onClose }) {
 
   const validateStep3 = () => {
     const newErrors = {};
-    const { firstName, surname, email, mobile, address, birthdate } = studentInfo;
+    const { firstName, surname, email, mobile, address, birthdate, gender } = studentInfo;
 
     if (!firstName) newErrors.firstName = true;
     if (!surname) newErrors.surname = true;
@@ -174,6 +174,7 @@ function RequestModal({ isOpen, onClose }) {
     if (!mobile) newErrors.mobile = true;
     if (!address) newErrors.address = true;
     if (!birthdate) newErrors.birthdate = true; // ✅ mark birthdate as required
+    if (!gender) newErrors.gender = true; // ✅ mark gender as required
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -184,19 +185,22 @@ function RequestModal({ isOpen, onClose }) {
     const {
       studentNumber,
       entryLevel,
+      completion,
       course,
       track,
-      completion,
       graduationDate,
       attendanceYears,
       lastSchool,
-      admissionDate, // ✅ include admissionDate
+      admissionDate,
     } = academicInfo;
 
     if (!studentNumber) newErrors.studentNumber = true;
     if (!lastSchool) newErrors.lastSchool = true;
     if (!completion) newErrors.completion = true;
-    if (!admissionDate) newErrors.admissionDate = true; // ✅ mark error
+    if (!admissionDate) newErrors.admissionDate = true;
+
+    // ✅ Add this line to catch empty entryLevel
+    if (!entryLevel) newErrors.entryLevel = true;
 
     if (entryLevel === "College" && !course) newErrors.course = true;
     if (entryLevel === "Senior High" && !track) newErrors.track = true;
@@ -766,23 +770,27 @@ function RequestModal({ isOpen, onClose }) {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Gender
                   </label>
-                  <div className="flex space-x-4">
+                  {/* Error ring applied here on the container */}
+                  <div
+                    className={`flex space-x-4 p-2 rounded transition ${errors.gender ? "ring-1 ring-red-500" : ""
+                      }`}
+                  >
                     {["Male", "Female"].map((gender) => (
-                      <label key={gender} className="flex items-center">
+                      <label
+                        key={gender}
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
                         <input
                           type="radio"
                           name="gender"
                           value={gender}
                           checked={studentInfo.gender === gender}
                           onChange={(e) =>
-                            setStudentInfo((prev) => ({
-                              ...prev,
-                              gender: e.target.value,
-                            }))
+                            setStudentInfo((prev) => ({ ...prev, gender: e.target.value }))
                           }
-                          className="mr-2 text-(--primary-600) focus:ring-(--primary-500)"
+                          className="accent-(--primary-600) w-5 h-5"
                         />
-                        {gender}
+                        <span className="select-none">{gender}</span>
                       </label>
                     ))}
                   </div>
@@ -928,9 +936,14 @@ function RequestModal({ isOpen, onClose }) {
                         <label className="block text-sm font-medium text-gray-700 mb-2">
                           {label}
                         </label>
-                        <div className="space-y-2">
+
+                        {/* Container with ring applied */}
+                        <div
+                          className={`flex space-x-4 p-2 rounded transition ${errors.entryLevel ? "ring-1 ring-red-500" : "ring-0"
+                            }`}
+                        >
                           {["Senior High", "College"].map((value) => (
-                            <label key={value} className="flex items-center">
+                            <label key={value} className="flex items-center gap-2 cursor-pointer">
                               <input
                                 type="radio"
                                 name="entryLevel"
@@ -942,9 +955,9 @@ function RequestModal({ isOpen, onClose }) {
                                     entryLevel: e.target.value,
                                   }))
                                 }
-                                className="mr-2 text-(--primary-600) focus:ring-(--primary-500)"
+                                className="w-5 h-5 accent-(--primary-600) cursor-pointer"
                               />
-                              {value}
+                              <span className="select-none">{value}</span>
                             </label>
                           ))}
                         </div>
@@ -996,11 +1009,18 @@ function RequestModal({ isOpen, onClose }) {
                 })}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Course Completion
+                    Completion Status
                   </label>
-                  <div className="space-y-2">
+                  {/* Apply error ring here on the container instead of individual labels */}
+                  <div
+                    className={`flex space-x-4 p-2 rounded transition ${errors.completion ? "ring-1 ring-red-500" : ""
+                      }`}
+                  >
                     {["Graduate", "Undergraduate"].map((value) => (
-                      <label key={value} className="flex items-center">
+                      <label
+                        key={value}
+                        className="flex items-center gap-2 cursor-pointer"
+                      >
                         <input
                           type="radio"
                           name="completion"
@@ -1012,9 +1032,9 @@ function RequestModal({ isOpen, onClose }) {
                               completion: e.target.value,
                             }))
                           }
-                          className="mr-2 text-(--primary-600) focus:ring-(--primary-500)"
+                          className="w-5 h-5 accent-(--primary-600) cursor-pointer"
                         />
-                        {value}
+                        <span className="select-none">{value}</span>
                       </label>
                     ))}
                   </div>

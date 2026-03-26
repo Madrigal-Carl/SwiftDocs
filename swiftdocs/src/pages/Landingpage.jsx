@@ -370,10 +370,10 @@ function Landingpage() {
                     1
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold mb-2">Choose Document</h4>
+                    <h4 className="text-xl font-bold mb-2">Request Document</h4>
                     <p className="text-slate-400">
-                      Select the type of credential you need from our list of
-                      available documents.
+                      Select the type of document you wish to request and
+                      provide the necessary information.
                     </p>
                   </div>
                 </div>
@@ -382,25 +382,26 @@ function Landingpage() {
                     2
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold mb-2">Pay </h4>
+                    <h4 className="text-xl font-bold mb-2">
+                      Pay and Track Status
+                    </h4>
                     <p className="text-slate-400">
-                      Proceed to the cashier and present your reference number
-                      to pay for the requested document. Once the payment is
-                      confirmed by the cashier, your request will continue to
-                      the processing stage.
+                      Complete your payment through the email sent to you, and
+                      track the status of your requested documents using the
+                      provided reference number.
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4"></div>
                 <div className="flex gap-4">
                   <div className="shrink-0 w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-lg">
                     <Check className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold mb-2">Receive</h4>
+                    <h4 className="text-xl font-bold mb-2">
+                      Receive Documents
+                    </h4>
                     <p className="text-slate-400">
-                      Download digital copies instantly and receive physical
-                      copies via mail.
+                      Receive your documents either in person or via delivery.
                     </p>
                   </div>
                 </div>

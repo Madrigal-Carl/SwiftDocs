@@ -180,7 +180,6 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
     const totalPrice = req.getGrandTotal();
 
     const hasOther = (req.additional_documents || []).length > 0;
-    console.log(req.toJSON());
     return {
       id: student.id,
       full_name: student.getFullName(),

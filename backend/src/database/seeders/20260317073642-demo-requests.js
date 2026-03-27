@@ -69,6 +69,7 @@ module.exports = {
       const request = await Request.create({
         student_id: student.id,
         purpose: faker.lorem.sentence(),
+        delivery_method: faker.helpers.arrayElement(["pickup", "delivery"]),
         status,
         request_date: faker.date.recent(),
         notes: faker.lorem.sentence(),

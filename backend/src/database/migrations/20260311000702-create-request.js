@@ -28,6 +28,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      delivery_method: {
+        type: Sequelize.ENUM("delivery", "pickup"),
+        allowNull: false,
+      },
       request_date: {
         type: Sequelize.DATEONLY,
         allowNull: false,

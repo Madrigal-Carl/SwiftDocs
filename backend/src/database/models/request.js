@@ -165,6 +165,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      delivery_method: {
+        type: DataTypes.ENUM("delivery", "pickup"),
+        allowNull: false,
+      },
       request_date: {
         type: DataTypes.DATEONLY,
         allowNull: false,

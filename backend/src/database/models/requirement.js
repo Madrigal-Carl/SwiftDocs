@@ -1,14 +1,14 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Requirements extends Model {
+  class Requirement extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Receipt.belongsTo(models.Request, {
+      Requirement.belongsTo(models.Request, {
         foreignKey: "request_id",
         as: "request",
         onDelete: "CASCADE",
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
-  Requirements.init(
+  Requirement.init(
     {
       request_id: {
         type: DataTypes.INTEGER,
@@ -39,5 +39,5 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
     },
   );
-  return Requirements;
+  return Requirement;
 };

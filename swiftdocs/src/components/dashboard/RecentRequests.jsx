@@ -11,6 +11,26 @@ export default function RecentRequests({ onChangeTab }) {
 
   const targetTab = getTabByRole(user?.role);
 
+  const getProcessingTime = (createdAt) => {
+    if (!createdAt) return "-";
+
+    const now = new Date();
+    const created = new Date(createdAt);
+
+    if (isNaN(created)) return "-";
+
+    const diffMs = now - created;
+
+    const minutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (days > 0) return `${days} day${days > 1 ? "s" : ""}`;
+    if (hours > 0) return `${hours} hour${hours > 1 ? "s" : ""}`;
+    if (minutes > 0) return `${minutes} min`;
+    return "Just now";
+  };
+
   return (
     <div className="bg-white border border-(--border-light) rounded-xl shadow-sm overflow-hidden">
       {/* Header */}
@@ -40,7 +60,10 @@ export default function RecentRequests({ onChangeTab }) {
                 Documents
               </th>
               <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase">
-                Date
+                Date Requested
+              </th>
+              <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase">
+                Requested
               </th>
               <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase">
                 Status
@@ -85,7 +108,11 @@ export default function RecentRequests({ onChangeTab }) {
                     </td>
 
                     <td className="px-6 py-4 text-sm text-gray-600 text-center">
-                      {req.request_date}
+                      {new Date(req.request_date).toLocaleDateString()}
+                    </td>
+
+                    <td className="px-6 py-4 text-sm text-gray-600 text-center">
+                      {getProcessingTime(req.created_at)}
                     </td>
 
                     <td className="px-6 py-4 text-center capitalize">

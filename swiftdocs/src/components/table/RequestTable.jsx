@@ -57,6 +57,26 @@ export default function RequestTable() {
     return () => clearTimeout(delay);
   }, [searchQuery, statusFilter, loadRequests]);
 
+  const getProcessingTime = (createdAt) => {
+    if (!createdAt) return "-";
+
+    const now = new Date();
+    const created = new Date(createdAt); // ✅ direct parse
+
+    if (isNaN(created)) return "-";
+
+    const diffMs = now - created;
+
+    const minutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (days > 0) return `${days} day${days > 1 ? "s" : ""}`;
+    if (hours > 0) return `${hours} hour${hours > 1 ? "s" : ""}`;
+    if (minutes > 0) return `${minutes} min`;
+    return "Just now";
+  };
+
   return (
     <div className="flex flex-col gap-4 flex-1 mx-auto w-full">
       {/* Filters Bar */}
@@ -111,7 +131,7 @@ export default function RequestTable() {
               <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Reference Number
               </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-[25%]">
+              <th className="px-6 py-4 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider w-[15%]">
                 Student Name
               </th>
               <th className="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -119,6 +139,9 @@ export default function RequestTable() {
               </th>
               <th className="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Date Requested
+              </th>
+              <th className="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                Requested
               </th>
               <th className="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Status
@@ -129,10 +152,10 @@ export default function RequestTable() {
             </tr>
             <tbody className="divide-y divide-(--border-light)">
               {loading ? (
-                <TableLoader colSpan={6} />
+                <TableLoader colSpan={7} />
               ) : requests.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-6 text-gray-500">
+                  <td colSpan="7" className="text-center py-6 text-gray-500">
                     No requests found
                   </td>
                 </tr>
@@ -146,7 +169,7 @@ export default function RequestTable() {
                       <td className="px-6 py-4 text-sm font-medium text-(--primary-600) uppercase">
                         {req.reference_number}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap w-[25%]">
+                      <td className="px-6 py-4 whitespace-nowrap w-[15%]">
                         <div className="flex flex-col">
                           <span className="text-sm font-semibold text-(--text-dark)">
                             {item.full_name}
@@ -161,6 +184,9 @@ export default function RequestTable() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600 text-center">
                         {new Date(req.request_date).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600 text-center">
+                        {getProcessingTime(req.created_at)}
                       </td>
                       <td className="px-6 py-4 capitalize text-center">
                         <StatusBadge status={req.status} />

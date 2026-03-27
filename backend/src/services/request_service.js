@@ -180,7 +180,7 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
     const totalPrice = req.getGrandTotal();
 
     const hasOther = (req.additional_documents || []).length > 0;
-
+    console.log(req.toJSON());
     return {
       id: student.id,
       full_name: student.getFullName(),
@@ -193,6 +193,7 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
         total_documents: totalDocuments,
         total_price: totalPrice,
         other: hasOther,
+        created_at: req.createdAt.toISOString(),
       },
     };
   });

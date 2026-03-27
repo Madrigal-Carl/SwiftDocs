@@ -246,7 +246,7 @@ function Landingpage() {
                     <Clock className="w-5 h-5" />
                     <div>
                       <p className="text-xs text-(--primary-200) font-semibold uppercase">
-                        Processing Time
+                        Requested
                       </p>
                       <p className="text-lg font-bold">~2 Days</p>
                     </div>

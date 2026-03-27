@@ -16,7 +16,19 @@ export default function RequestActionModal({
 
   if (!isOpen || !request) return null;
 
-  // Determine full name safely
+  const getApproveLabel = () => {
+    switch (request.status) {
+      case "pending":
+        return "Approve Review";
+      case "invoiced":
+        return "Approve Payment";
+      case "paid":
+        return "Release Request";
+      default:
+        return "Approve Request";
+    }
+  };
+
   const fullName = request.student
     ? `${request.student.first_name} ${request.student.middle_name} ${request.student.last_name}${request.student.suffix ? `, ${request.student.suffix}` : ""}`
     : request.full_name || "Unknown";
@@ -40,7 +52,7 @@ export default function RequestActionModal({
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-semibold text-(--text-dark)">
-            {isReject ? "Reject Request" : "Approve Request"}
+            {isReject ? "Reject Request" : getApproveLabel()}
           </h2>
           <button
             onClick={onClose}
@@ -183,7 +195,7 @@ export default function RequestActionModal({
               ? "Processing..."
               : isReject
                 ? "Reject Request"
-                : "Approve Request"}
+                : getApproveLabel()}
           </button>
         </div>
       </div>

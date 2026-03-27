@@ -6,11 +6,13 @@ const express = require("express");
 const router = express.Router();
 const requestController = require("../controllers/request_controller");
 const { validateCreateRequest } = require("../validators/request_validator");
+const uploadRequirements = require("../middlewares/uploadRequirements");
 
 // Request documents
 router.post(
   "/",
   allowGuestOrRMO,
+  uploadRequirements.array("requirements", 5),
   validateCreateRequest,
   requestController.CreateRequest,
 );

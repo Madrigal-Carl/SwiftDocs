@@ -2,7 +2,8 @@ const requestService = require("../services/request_service");
 
 async function CreateRequest(req, res) {
   const io = req.app.get("io");
-  const request = await requestService.RequestDocuments(req.body);
+
+  const request = await requestService.RequestDocuments(req.body, req.files);
 
   io.emit("requestsUpdated");
 

@@ -23,6 +23,8 @@ function RequestModal({ isOpen, onClose }) {
   const [availableDocuments, setAvailableDocuments] = useState([]);
   const [selectedDocuments, setSelectedDocuments] = useState([]);
   const [purpose, setPurpose] = useState("");
+  const [deliveryMethod, setDeliveryMethod] = useState("");
+  const [attachments, setAttachments] = useState([]);
   const [errors, setErrors] = useState({});
   const [studentInfo, setStudentInfo] = useState({
     firstName: "",
@@ -158,7 +160,9 @@ function RequestModal({ isOpen, onClose }) {
     const newErrors = {};
 
     if (selectedDocuments.length === 0) newErrors.documents = true;
-    if (!purpose.trim()) newErrors.purpose = true; // ✅ ADD THIS
+    if (!purpose.trim()) newErrors.purpose = true;
+
+    if (!deliveryMethod) newErrors.deliveryMethod = true;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -274,7 +278,7 @@ function RequestModal({ isOpen, onClose }) {
         notes: academicInfo.academicNotes,
 
         purpose: purpose,
-
+        delivery_method: deliveryMethod,
         documents: selectedDocuments.map((doc) => ({
           type: doc.name.toLowerCase(),
           quantity: doc.quantity,
@@ -283,17 +287,28 @@ function RequestModal({ isOpen, onClose }) {
         additionals: [],
       };
 
-      await createRequest(payload);
+      const formData = new FormData();
+
+      Object.keys(payload).forEach((key) => {
+        if (key === "documents") {
+          formData.append("documents", JSON.stringify(payload.documents));
+        } else {
+          formData.append(key, payload[key] ?? "");
+        }
+      });
+
+      attachments.forEach((file) => {
+        formData.append("requirements", file);
+      });
+
+      await createRequest(formData);
 
       showToast("success", "Request submitted successfully!");
       onClose();
     } catch (err) {
       console.error("Submit failed:", err);
 
-      const errorMessage =
-        err.response?.data?.message ||
-        err.message ||
-        "Failed to submit request";
+      const errorMessage = err.message || "Failed to submit request";
 
       showToast("error", errorMessage);
     } finally {
@@ -560,6 +575,93 @@ function RequestModal({ isOpen, onClose }) {
                   ${errors.purpose ? "border-red-500" : "border-gray-300"}
                 `}
                 />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Delivery Method
+                </label>
+
+                <div
+                  className={`flex space-x-4 p-2 rounded transition ${
+                    errors.deliveryMethod ? "ring-1 ring-red-500" : ""
+                  }`}
+                >
+                  {["Pickup", "Delivery"].map((method) => (
+                    <label
+                      key={method}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        name="deliveryMethod"
+                        value={method.toLowerCase()}
+                        checked={deliveryMethod === method.toLowerCase()}
+                        onChange={(e) => setDeliveryMethod(e.target.value)}
+                        className="w-5 h-5 accent-(--primary-600)"
+                      />
+                      <span className="select-none">{method}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Supporting Documents (Optional)
+                </label>
+
+                <label
+                  className={`flex flex-col items-center justify-center w-full px-4 py-6 border-2 border-dashed rounded-lg cursor-pointer transition
+    ${errors.attachments ? "border-red-500" : "border-gray-300 hover:border-(--primary-400)"}
+  `}
+                >
+                  <span className="text-sm text-gray-600">
+                    Click to upload or drag files
+                  </span>
+                  <span className="text-xs text-gray-400 mt-1">
+                    JPG, JPEG, PNG, PDF (Max 5MB)
+                  </span>
+
+                  <input
+                    type="file"
+                    multiple
+                    accept=".jpg,.jpeg,.png,.pdf"
+                    onChange={(e) => setAttachments(Array.from(e.target.files))}
+                    className="hidden"
+                  />
+                </label>
+
+                <p className="text-xs text-gray-400 mt-1">
+                  JPG, JPEG, PNG only (Max 5MB each)
+                </p>
+
+                {/* File preview */}
+                {attachments.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {attachments.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center px-3 py-2 bg-(--primary-50) border border-(--primary-200) rounded-lg"
+                      >
+                        <span className="text-sm text-(--text-dark) truncate">
+                          {file.name}
+                        </span>
+
+                        <button
+                          onClick={() =>
+                            setAttachments((prev) =>
+                              prev.filter((_, i) => i !== index),
+                            )
+                          }
+                          className="text-(--primary-600) hover:text-(--primary-700)"
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="flex flex-wrap gap-2 mb-4 p-3 bg-gray-50 rounded-lg min-h-15">
                 {selectedDocuments.length === 0 ? (

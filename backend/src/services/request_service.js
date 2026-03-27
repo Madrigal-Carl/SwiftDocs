@@ -4,33 +4,39 @@ const educationRepository = require("../repositories/education_repository");
 const requestRepository = require("../repositories/request_repository");
 const requestedDocumentRepository = require("../repositories/requested_document_repository");
 const documentRepository = require("../repositories/document_repository");
+const requirementRepository = require("../repositories/requirement_repository");
 const additionalDocumentRepository = require("../repositories/additional_document_repository");
 const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
 
-async function RequestDocuments(data) {
+async function RequestDocuments(data, files = []) {
   const result = await sequelize.transaction(async (t) => {
     const student = await studentRepository.CreateStudent(data, t);
 
-    const educationData = {
-      student_id: student.id,
-      lrn: data.lrn,
-      education_level: data.education_level,
-      program: data.program,
-      school_last_attended: data.school_last_attended,
-      admission_date: data.admission_date,
-      completion_status: data.completion_status,
-      graduation_date: data.graduation_date || null,
-      attendance_period: data.attendance_period || null,
-    };
-    await educationRepository.CreateEducation(educationData, t);
+    await educationRepository.CreateEducation(
+      {
+        student_id: student.id,
+        lrn: data.lrn,
+        education_level: data.education_level,
+        program: data.program,
+        school_last_attended: data.school_last_attended,
+        admission_date: data.admission_date,
+        completion_status: data.completion_status,
+        graduation_date: data.graduation_date || null,
+        attendance_period: data.attendance_period || null,
+      },
+      t,
+    );
 
-    const requestData = {
-      student_id: student.id,
-      purpose: data.purpose,
-      notes: data.notes,
-    };
-    const request = await requestRepository.CreateRequest(requestData, t);
+    const request = await requestRepository.CreateRequest(
+      {
+        student_id: student.id,
+        purpose: data.purpose,
+        notes: data.notes,
+        delivery_method: data.delivery_method,
+      },
+      t,
+    );
 
     if (Array.isArray(data.documents) && data.documents.length) {
       await Promise.all(
@@ -60,6 +66,20 @@ async function RequestDocuments(data) {
       );
     }
 
+    if (files && files.length) {
+      await Promise.all(
+        files.map((file) => {
+          return requirementRepository.CreateRequirement(
+            {
+              request_id: request.id,
+              path: `uploads/requirements/${file.filename}`,
+            },
+            t,
+          );
+        }),
+      );
+    }
+
     return await requestRepository.FindRequestById(request.id, t, {
       include: [
         {
@@ -72,6 +92,9 @@ async function RequestDocuments(data) {
         },
         {
           association: "additional_documents",
+        },
+        {
+          association: "requirements",
         },
       ],
     });

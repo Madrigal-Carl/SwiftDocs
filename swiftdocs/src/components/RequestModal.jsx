@@ -268,6 +268,7 @@ function RequestModal({ isOpen, onClose }) {
         admission_date: academicInfo.admissionDate,
 
         completion_status: academicInfo.completion?.toLowerCase(),
+        graduation_date: academicInfo.graduationDate,
         attendance_period: academicInfo.attendanceYears,
 
         program:

@@ -1,9 +1,10 @@
 import { useState } from "react";
-import ContentHeader from "../../layouts/ContentHeader";
+import SectionHeader from "../../layouts/SectionHeader";
 import ReportStats from "../../components/reports/ReportStats";
 import RequestStatisticsTab from "../../components/reports/RequestStatisticsTab";
 import IncomeReportsTab from "../../components/reports/IncomeReportsTab";
 import DocumentTypeTab from "../../components/reports/DocumentTypeTab";
+import { Download } from "lucide-react";
 
 export default function Content() {
   const [activeTab, setActiveTab] = useState("requestStats");
@@ -16,9 +17,12 @@ export default function Content() {
 
   return (
     <div className="flex flex-col gap-6 p-6">
-      <ContentHeader
+      <SectionHeader
         title="Reports & Analytics"
         description="Track performance metrics and document request insights"
+        actionLabel="Export Report"
+        onAction={() => console.log("Export clicked")}
+        icon={Download}
       />
 
       <ReportStats />

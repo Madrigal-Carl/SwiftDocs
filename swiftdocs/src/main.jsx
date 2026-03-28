@@ -41,6 +41,7 @@ function RoleRouter() {
 
       if (user.role === "rmo") {
         loadDocuments(1);
+        loadDocAnalytics();
       }
 
       initialized.current = true;

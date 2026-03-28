@@ -4,6 +4,7 @@ import MainContent from "../MainContent";
 import {
   LayoutDashboard,
   FileCheck,
+  BarChart3,
   FilePlusCorner,
   UserCog,
 } from "lucide-react";
@@ -14,6 +15,7 @@ export default function RmoDashboard() {
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard" },
     { icon: FileCheck, label: "Document Processing" },
+    { icon: BarChart3, label: "Reports" },
     { icon: FilePlusCorner, label: "Document" },
     { icon: UserCog, label: "Profile" },
   ];

@@ -5,6 +5,7 @@ export default function SectionHeader({
   description,
   actionLabel,
   onAction,
+  icon: Icon = Plus,
 }) {
   return (
     <div className="flex items-center justify-between">
@@ -18,7 +19,7 @@ export default function SectionHeader({
           onClick={onAction}
           className=" flex flex-row items-center px-6 py-3 bg-(--primary-600) text-white font-medium rounded-lg shadow-sm hover:bg-(--primary-700) transition"
         >
-          <Plus className="w-4 h-4 mr-2" />
+          <Icon className="w-4 h-4 mr-2" />
 
           {actionLabel}
         </button>

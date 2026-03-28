@@ -583,6 +583,7 @@ export default function RequestView() {
               return sum + price * quantity;
             }, 0)}
             status={request.status}
+            deliveryMethod={request.delivery_method}
             proof={request.receipts?.map((r) => r.path) || []}
           />
 

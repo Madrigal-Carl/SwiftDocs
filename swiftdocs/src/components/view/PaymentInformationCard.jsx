@@ -1,7 +1,12 @@
 import { PhilippinePeso, Eye, Clock, Mail } from "lucide-react";
 import StatusBadge from "../StatusBadge";
 
-export default function PaymentInformationCard({ amount, status, proof = [] }) {
+export default function PaymentInformationCard({
+  amount,
+  status,
+  deliveryMethod,
+  proof = [],
+}) {
   const showProof = status === "paid" || status === "released";
   const proofs = Array.isArray(proof) ? proof : [proof];
 
@@ -18,6 +23,14 @@ export default function PaymentInformationCard({ amount, status, proof = [] }) {
       </div>
 
       <div className="divide-y divide-(--border-light)">
+        {/* Delivery Method */}
+        <div className="flex items-center justify-between py-3">
+          <span className="text-sm text-gray-600">Delivery Method</span>
+          <span className="text-sm font-medium text-(--text-dark) capitalize">
+            {deliveryMethod?.replace("_", " ")}
+          </span>
+        </div>
+
         {/* Amount */}
         <div className="flex items-center justify-between py-3">
           <span className="text-sm text-gray-600">Amount</span>

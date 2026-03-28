@@ -234,10 +234,10 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
   };
 }
 
-async function GetRequestAnalytics() {
+async function GetRequestAnalytics(timeframe = "year") {
   const requests = await requestRepository.GetAllRequestStatuses();
 
-  const stats = computeStats(requests);
+  const stats = computeStats(requests, timeframe);
 
   return stats;
 }

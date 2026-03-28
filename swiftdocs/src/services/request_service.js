@@ -40,7 +40,9 @@ export async function requestEmailStatus(referenceNumber) {
   }
 }
 
-export async function fetchRequestAnalytics() {
-  const res = await api.get("/request/analytics");
+export async function fetchRequestAnalytics(timeframe = "year") {
+  const res = await api.get("/request/analytics", {
+    params: { timeframe },
+  });
   return res.data;
 }

@@ -36,11 +36,11 @@ export const useDocumentStore = create((set, get) => ({
     }
   },
 
-  loadAnalytics: async () => {
+  loadAnalytics: async (timeframe = "year") => {
     try {
       set({ analyticsLoading: true });
 
-      const stats = await getDocumentAnalytics();
+      const stats = await getDocumentAnalytics(timeframe);
 
       set({ stats });
     } catch (err) {

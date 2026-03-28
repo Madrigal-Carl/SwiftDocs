@@ -115,34 +115,51 @@ async function DeleteDocument(id) {
   });
 }
 
-async function ComputeDocumentAnalytics() {
+async function ComputeDocumentAnalytics(timeframe = "year") {
   const requests = await requestRepository.GetAllRequestStatuses();
+
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth();
+
+  let startDate;
+  if (timeframe === "week") {
+    startDate = new Date(now);
+    startDate.setHours(0, 0, 0, 0);
+    startDate.setDate(startDate.getDate() - 6);
+  } else if (timeframe === "month") {
+    startDate = new Date(currentYear, currentMonth, 1);
+  } else {
+    startDate = new Date(currentYear, 0, 1);
+  }
+
+  const endDate = new Date(now);
+  endDate.setHours(23, 59, 59, 999);
 
   const documentTypeCounts = {};
 
   requests.forEach((req) => {
     const status = req.status;
+    const requestDate = req.request_date ? new Date(req.request_date) : null;
+
+    if (!requestDate || requestDate < startDate || requestDate > endDate)
+      return;
 
     const isValid = status === "paid" || status === "released";
     if (!isValid) return;
 
-    // Requested documents
     (req.requested_documents || []).forEach((rd) => {
       const type = rd.document?.type || "Unknown";
       const qty = rd.quantity || 0;
-
       documentTypeCounts[type] = (documentTypeCounts[type] || 0) + qty;
     });
 
-    // Additional documents → Others
     (req.additional_documents || []).forEach((ad) => {
       const qty = ad.quantity || 0;
-
       documentTypeCounts["Others"] = (documentTypeCounts["Others"] || 0) + qty;
     });
   });
 
-  // ✅ Sort descending
   const sorted = Object.fromEntries(
     Object.entries(documentTypeCounts).sort((a, b) => b[1] - a[1]),
   );

@@ -46,7 +46,8 @@ async function GetAllRequestsWithStudent(req, res) {
 }
 
 async function GetRequestAnalytics(req, res) {
-  const stats = await requestService.GetRequestAnalytics();
+  const timeframe = req.query.timeframe || "year";
+  const stats = await requestService.GetRequestAnalytics(timeframe);
 
   res.json(stats);
 }

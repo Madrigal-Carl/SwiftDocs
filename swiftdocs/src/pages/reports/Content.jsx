@@ -103,13 +103,26 @@ export default function Content() {
     const yAfterRequests = doc.lastAutoTable.finalY + 20;
 
     const revenueByMonth = reportStats?.monthlyRevenue || [];
-    autoTable(doc, {
-      startY: yAfterRequests,
-      head: [["Month", "Revenue (PHP)"]],
-      body: revenueByMonth.map((row) => [
+    const revenueTotal = revenueByMonth.reduce(
+      (acc, row) => acc + Number(row.revenue || 0),
+      0,
+    );
+
+    const revenueBody = [
+      ...revenueByMonth.map((row) => [
         row.month,
         `PHP ${Number(row.revenue || 0).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
       ]),
+      [
+        "Total",
+        `PHP ${Number(revenueTotal).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      ],
+    ];
+
+    autoTable(doc, {
+      startY: yAfterRequests,
+      head: [["Month", "Revenue (PHP)"]],
+      body: revenueBody,
       theme: "grid",
       headStyles: { fillColor: "#10b981", textColor: "#fff" },
     });

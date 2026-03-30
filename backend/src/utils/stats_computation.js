@@ -45,6 +45,7 @@ function computeStats(requests, timeframe = "year") {
 
   let revenueCurrent = 0;
   let revenuePrev = 0;
+  let revenuePeriod = 0;
 
   let processingDaysCurrent = [];
   let processingDaysPrev = [];
@@ -116,6 +117,7 @@ function computeStats(requests, timeframe = "year") {
       (typeof req.getGrandTotal === "function" ? req.getGrandTotal() : 0);
 
     if (isRevenueStatus && totalPrice) {
+      revenuePeriod += totalPrice;
       if (isCurrent) revenueCurrent += totalPrice;
       if (isPrev) revenuePrev += totalPrice;
 
@@ -205,7 +207,7 @@ function computeStats(requests, timeframe = "year") {
   const revenueTrend = calcTrend(revenueCurrent, revenuePrev);
 
   const revenue = {
-    total: revenueCurrent,
+    total: revenuePeriod,
     trend: {
       value: `${Math.abs(revenueTrend).toFixed(0)}%`,
       trendUp: revenueTrend >= 0,

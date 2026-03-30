@@ -46,7 +46,8 @@ async function DeleteDocument(req, res) {
 }
 
 async function GetDocumentAnalytics(req, res) {
-  const analytics = await documentService.ComputeDocumentAnalytics();
+  const timeframe = req.query.timeframe || "year";
+  const analytics = await documentService.ComputeDocumentAnalytics(timeframe);
 
   res.json(analytics);
 }

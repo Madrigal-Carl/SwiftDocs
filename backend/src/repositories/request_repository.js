@@ -108,8 +108,18 @@ async function FetchAllRequestsWithStudent(page = 1, limit = 10, filters = {}) {
 
 async function GetAllRequestStatuses() {
   return Request.findAll({
-    attributes: ["status", "request_date"],
+    attributes: [
+      "id",
+      "reference_number",
+      "status",
+      "request_date",
+      "request_completed",
+    ],
     include: [
+      {
+        association: "student",
+        attributes: ["first_name", "middle_name", "last_name"],
+      },
       {
         association: "requested_documents",
         include: ["document"],

@@ -16,7 +16,19 @@ export default function RequestActionModal({
 
   if (!isOpen || !request) return null;
 
-  // Determine full name safely
+  const getApproveLabel = () => {
+    switch (request.status) {
+      case "pending":
+        return "Approve Review";
+      case "invoiced":
+        return "Approve Payment";
+      case "paid":
+        return "Release Request";
+      default:
+        return "Approve Request";
+    }
+  };
+
   const fullName = request.student
     ? `${request.student.first_name} ${request.student.middle_name} ${request.student.last_name}${request.student.suffix ? `, ${request.student.suffix}` : ""}`
     : request.full_name || "Unknown";
@@ -40,7 +52,7 @@ export default function RequestActionModal({
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-semibold text-(--text-dark)">
-            {isReject ? "Reject Request" : "Approve Request"}
+            {isReject ? "Reject Request" : getApproveLabel()}
           </h2>
           <button
             onClick={onClose}
@@ -88,13 +100,53 @@ export default function RequestActionModal({
                 Upload Payment Proofs
               </label>
 
-              <input
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={(e) => setFiles(Array.from(e.target.files))}
-                className="w-full mt-2 text-sm"
-              />
+              <div className="mt-2">
+                <label className="flex flex-col items-center justify-center w-full p-4 border border-dashed border-(--border-light) rounded-lg cursor-pointer bg-(--bg-light) hover:bg-white transition">
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <FileText className="w-6 h-6 text-(--primary-500) mb-2" />
+
+                    <p className="text-sm font-medium text-(--text-dark)">
+                      Click to upload
+                    </p>
+
+                    <p className="text-xs text-gray-400">
+                      PNG, JPG (multiple allowed)
+                    </p>
+                  </div>
+
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(e) => setFiles(Array.from(e.target.files))}
+                    className="hidden"
+                  />
+                </label>
+
+                {/* Selected files */}
+                {files.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {files.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between px-3 py-2 text-xs rounded-lg bg-(--bg-light) border border-(--border-light)"
+                      >
+                        <span className="truncate">{file.name}</span>
+                        <button
+                          onClick={() =>
+                            setFiles((prev) =>
+                              prev.filter((_, i) => i !== index),
+                            )
+                          }
+                          className="text-red-500 hover:text-red-600"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               {files.length > 0 && (
                 <p className="text-xs text-gray-400 mt-1">
@@ -143,7 +195,7 @@ export default function RequestActionModal({
               ? "Processing..."
               : isReject
                 ? "Reject Request"
-                : "Approve Request"}
+                : getApproveLabel()}
           </button>
         </div>
       </div>

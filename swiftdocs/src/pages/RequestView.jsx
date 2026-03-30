@@ -9,6 +9,8 @@ import {
   FileText,
   BookOpen,
   Book,
+  File,
+  Download,
 } from "lucide-react";
 import StatusBadge from "../components/StatusBadge";
 import { fetchRequestByReference } from "../services/request_service.js";
@@ -74,6 +76,20 @@ export default function RequestView() {
   const permissions = getRequestPermissions(user?.role, request?.status);
   const canApprove = permissions.approve;
   const canReject = permissions.reject;
+
+  const getFileType = (path) => {
+    const ext = path.split(".").pop().toLowerCase();
+
+    if (ext === "pdf") return "pdf";
+    if (["jpg", "jpeg", "png"].includes(ext)) return "image";
+    return "other";
+  };
+
+  const getFileName = (path) => {
+    return path.split("/").pop();
+  };
+
+  const BASE_URL = import.meta.env.VITE_SERVER_URL;
 
   return (
     <div className="space-y-6">
@@ -487,6 +503,73 @@ export default function RequestView() {
 
         {/* Right Column - Smaller */}
         <div className="space-y-6">
+          {/* Uploaded Requirements Card */}
+          <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
+                <File className="w-4 h-4 text-(--primary-600)" />
+              </div>
+              <h3 className="font-semibold text-(--text-dark)">
+                Uploaded Requirements
+              </h3>
+            </div>
+
+            <div className="space-y-3">
+              {request.requirements.length === 0 && (
+                <p className="text-sm text-gray-500">
+                  No uploaded requirements.
+                </p>
+              )}
+
+              {request.requirements.map((file, index) => {
+                const fileUrl = `${BASE_URL}/${file.path}`;
+                const fileName = getFileName(file.path);
+                const ext = fileName.split(".").pop().toUpperCase();
+
+                const isImage = ["JPG", "JPEG", "PNG"].includes(ext);
+
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 border border-(--border-light) rounded-lg hover:bg-(--bg-light)/50 transition-colors group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0
+              ${isImage ? "bg-blue-50" : "bg-red-50"}`}
+                      >
+                        <span
+                          className={`text-xs font-bold
+                ${isImage ? "text-blue-600" : "text-red-600"}`}
+                        >
+                          {ext}
+                        </span>
+                      </div>
+
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-(--text-dark) truncate">
+                          {fileName}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Uploaded requirement
+                        </p>
+                      </div>
+                    </div>
+
+                    <a
+                      href={fileUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="p-2 rounded-lg hover:bg-(--primary-100) text-gray-400 hover:text-(--primary-600) transition-colors"
+                    >
+                      <Download className="w-4 h-4" />
+                    </a>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Payment Information Card */}
           <PaymentInformationCard
             amount={[
@@ -500,6 +583,7 @@ export default function RequestView() {
               return sum + price * quantity;
             }, 0)}
             status={request.status}
+            deliveryMethod={request.delivery_method}
             proof={request.receipts?.map((r) => r.path) || []}
           />
 

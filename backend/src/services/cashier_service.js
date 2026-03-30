@@ -61,7 +61,7 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
   const { docs, pages, total } = await Request.paginate({
     page,
     paginate: limit,
-    order: [["request_date", "DESC"]],
+    order: [["created_at", "DESC"]],
     where,
     include: [
       {
@@ -104,6 +104,7 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
         status: req.status,
         total_documents: totalDocuments,
         total_price: totalPrice,
+        created_at: req.createdAt.toISOString(),
       },
     };
   });

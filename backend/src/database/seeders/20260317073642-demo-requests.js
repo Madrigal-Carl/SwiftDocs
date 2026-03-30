@@ -66,11 +66,16 @@ module.exports = {
         "rejected",
       ]);
 
+      // Generate a random date from start of year to today
+      const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+      const today = new Date();
+
       const request = await Request.create({
         student_id: student.id,
         purpose: faker.lorem.sentence(),
+        delivery_method: faker.helpers.arrayElement(["pickup", "delivery"]),
         status,
-        request_date: faker.date.recent(),
+        request_date: faker.date.between({ from: startOfYear, to: today }),
         notes: faker.lorem.sentence(),
         request_completed: status === "released" ? new Date() : null,
       });

@@ -13,7 +13,7 @@ const {
 router.get(
   "/analytics",
   requireAuth,
-  requireRole("admin"),
+  requireRole("admin", "rmo"),
   documentController.GetDocumentAnalytics,
 );
 

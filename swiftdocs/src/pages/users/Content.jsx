@@ -12,7 +12,6 @@ export default function Content() {
   const handleCreateUser = async (data) => {
     try {
       const res = await register(data);
-      console.log("User created:", res);
       setIsModalOpen(false);
       showToast("success", "Account has been successfully created");
     } catch (err) {

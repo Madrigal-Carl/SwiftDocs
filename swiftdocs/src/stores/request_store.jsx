@@ -67,11 +67,11 @@ export const useRequestStore = create((set, get) => ({
     }
   },
 
-  loadAnalytics: async () => {
+  loadAnalytics: async (timeframe = "year") => {
     try {
       set({ analyticsLoading: true });
 
-      const stats = await fetchRequestAnalytics();
+      const stats = await fetchRequestAnalytics(timeframe);
 
       set({ stats });
     } catch (err) {

@@ -46,6 +46,13 @@ const schema = Joi.object({
     "string.empty": "Purpose is required",
     "any.required": "Purpose is required",
   }),
+  delivery_method: Joi.string()
+    .valid("delivery", "pickup")
+    .required()
+    .messages({
+      "any.only": "Delivery method must be delivery or pickup",
+      "any.required": "Delivery method is required",
+    }),
   education_level: Joi.string()
     .valid("college", "senior_high")
     .required()
@@ -104,6 +111,16 @@ const schema = Joi.object({
 });
 
 function validateCreateRequest(req, res, next) {
+  if (typeof req.body.documents === "string") {
+    try {
+      req.body.documents = JSON.parse(req.body.documents);
+    } catch (err) {
+      return res.status(400).json({
+        message: "Invalid documents format",
+      });
+    }
+  }
+
   const { error, value } = schema.validate(req.body, {
     abortEarly: true,
     stripUnknown: true,

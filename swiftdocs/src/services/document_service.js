@@ -37,8 +37,10 @@ export async function getAllDocumentsNoPagination() {
 }
 
 // fetch document analytics
-export async function getDocumentAnalytics() {
-  const res = await api.get("/documents/analytics");
+export async function getDocumentAnalytics(timeframe = "year") {
+  const res = await api.get("/documents/analytics", {
+    params: { timeframe },
+  });
   return res.data;
 }
 

@@ -4,33 +4,39 @@ const educationRepository = require("../repositories/education_repository");
 const requestRepository = require("../repositories/request_repository");
 const requestedDocumentRepository = require("../repositories/requested_document_repository");
 const documentRepository = require("../repositories/document_repository");
+const requirementRepository = require("../repositories/requirement_repository");
 const additionalDocumentRepository = require("../repositories/additional_document_repository");
 const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
 
-async function RequestDocuments(data) {
+async function RequestDocuments(data, files = []) {
   const result = await sequelize.transaction(async (t) => {
     const student = await studentRepository.CreateStudent(data, t);
 
-    const educationData = {
-      student_id: student.id,
-      lrn: data.lrn,
-      education_level: data.education_level,
-      program: data.program,
-      school_last_attended: data.school_last_attended,
-      admission_date: data.admission_date,
-      completion_status: data.completion_status,
-      graduation_date: data.graduation_date || null,
-      attendance_period: data.attendance_period || null,
-    };
-    await educationRepository.CreateEducation(educationData, t);
+    await educationRepository.CreateEducation(
+      {
+        student_id: student.id,
+        lrn: data.lrn,
+        education_level: data.education_level,
+        program: data.program,
+        school_last_attended: data.school_last_attended,
+        admission_date: data.admission_date,
+        completion_status: data.completion_status,
+        graduation_date: data.graduation_date || null,
+        attendance_period: data.attendance_period || null,
+      },
+      t,
+    );
 
-    const requestData = {
-      student_id: student.id,
-      purpose: data.purpose,
-      notes: data.notes,
-    };
-    const request = await requestRepository.CreateRequest(requestData, t);
+    const request = await requestRepository.CreateRequest(
+      {
+        student_id: student.id,
+        purpose: data.purpose,
+        notes: data.notes,
+        delivery_method: data.delivery_method,
+      },
+      t,
+    );
 
     if (Array.isArray(data.documents) && data.documents.length) {
       await Promise.all(
@@ -60,6 +66,20 @@ async function RequestDocuments(data) {
       );
     }
 
+    if (files && files.length) {
+      await Promise.all(
+        files.map((file) => {
+          return requirementRepository.CreateRequirement(
+            {
+              request_id: request.id,
+              path: `uploads/requirements/${file.filename}`,
+            },
+            t,
+          );
+        }),
+      );
+    }
+
     return await requestRepository.FindRequestById(request.id, t, {
       include: [
         {
@@ -72,6 +92,9 @@ async function RequestDocuments(data) {
         },
         {
           association: "additional_documents",
+        },
+        {
+          association: "requirements",
         },
       ],
     });
@@ -147,6 +170,9 @@ async function GetRequestWithStudent(requestId) {
       {
         association: "receipts",
       },
+      {
+        association: "requirements",
+      },
     ],
   });
 
@@ -180,7 +206,6 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
     const totalPrice = req.getGrandTotal();
 
     const hasOther = (req.additional_documents || []).length > 0;
-
     return {
       id: student.id,
       full_name: student.getFullName(),
@@ -193,6 +218,7 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
         total_documents: totalDocuments,
         total_price: totalPrice,
         other: hasOther,
+        created_at: req.createdAt.toISOString(),
       },
     };
   });
@@ -208,10 +234,10 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
   };
 }
 
-async function GetRequestAnalytics() {
+async function GetRequestAnalytics(timeframe = "year") {
   const requests = await requestRepository.GetAllRequestStatuses();
 
-  const stats = computeStats(requests);
+  const stats = computeStats(requests, timeframe);
 
   return stats;
 }
@@ -244,6 +270,9 @@ async function GetRequestByReferenceNumber(referenceNumber) {
         },
         {
           association: "receipts",
+        },
+        {
+          association: "requirements",
         },
       ],
     },

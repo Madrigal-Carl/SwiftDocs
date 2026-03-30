@@ -1,9 +1,23 @@
-function computeStats(requests) {
+function computeStats(requests, timeframe = "year") {
   const now = new Date();
 
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
   const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+
+  let startDate;
+  if (timeframe === "week") {
+    startDate = new Date(now);
+    startDate.setHours(0, 0, 0, 0);
+    startDate.setDate(startDate.getDate() - 6); // last 7 days inclusive of today
+  } else if (timeframe === "month") {
+    startDate = new Date(currentYear, currentMonth, 1);
+  } else {
+    startDate = new Date(currentYear, 0, 1);
+  }
+
+  const endDate = new Date(now);
+  endDate.setHours(23, 59, 59, 999);
 
   const statuses = ["pending", "paid", "invoiced", "released", "rejected"];
 
@@ -47,17 +61,20 @@ function computeStats(requests) {
 
   const monthlyCounts = {};
   const monthlyRevenue = {};
+  const monthlyPaidReleasedCounts = {};
 
   // =========================
   // LOOP
   // =========================
 
+  const paidReleasedRequests = [];
+
   requests.forEach((req) => {
     const status = req.status;
     const date = new Date(req.request_date);
 
-    // ❗ Ignore requests outside current year
-    if (date.getFullYear() !== currentYear) return;
+    if (isNaN(date)) return;
+    if (date < startDate || date > endDate) return;
 
     if (countByStatus[status] !== undefined) {
       countByStatus[status]++;
@@ -103,6 +120,27 @@ function computeStats(requests) {
       if (isPrev) revenuePrev += totalPrice;
 
       monthlyRevenue[monthKey] = (monthlyRevenue[monthKey] || 0) + totalPrice;
+    }
+
+    if (isRevenueStatus) {
+      monthlyPaidReleasedCounts[monthKey] =
+        (monthlyPaidReleasedCounts[monthKey] || 0) + 1;
+
+      paidReleasedRequests.push({
+        id: req.id,
+        reference_number: req.reference_number,
+        request_date: req.request_date,
+        status: req.status,
+        total_price:
+          req.total_price ??
+          (typeof req.getGrandTotal === "function" ? req.getGrandTotal() : 0),
+        student:
+          req.student && req.student.first_name
+            ? `${req.student.first_name} ${req.student.middle_name || ""} ${req.student.last_name}`
+                .replace(/\s+/g, " ")
+                .trim()
+            : "Unknown",
+      });
     }
 
     // =========================
@@ -226,18 +264,61 @@ function computeStats(requests) {
     "Dec",
   ];
 
+  const monthlyPaidReleasedFormatted = Object.entries(monthlyPaidReleasedCounts)
+    .sort(([a], [b]) => new Date(a) - new Date(b))
+    .map(([key, value]) => {
+      let label = key;
+
+      if (timeframe === "year") {
+        const [, month] = key.split("-");
+        label = monthNames[parseInt(month) - 1];
+      } else {
+        const dt = new Date(key);
+        label = dt.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      return { period: label, requests: value };
+    });
+
   const monthlyRequests = Object.entries(monthlyCounts)
     .sort(([a], [b]) => new Date(a) - new Date(b))
     .map(([key, value]) => {
-      const [, month] = key.split("-");
-      return { month: monthNames[parseInt(month) - 1], requests: value };
+      let label = key;
+
+      if (timeframe === "year") {
+        const [, month] = key.split("-");
+        label = monthNames[parseInt(month) - 1];
+      } else {
+        const dt = new Date(key);
+        label = dt.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      return { month: label, requests: value };
     });
 
   const monthlyRevenueFormatted = Object.entries(monthlyRevenue)
     .sort(([a], [b]) => new Date(a) - new Date(b))
     .map(([key, value]) => {
-      const [, month] = key.split("-");
-      return { month: monthNames[parseInt(month) - 1], revenue: value };
+      let label = key;
+
+      if (timeframe === "year") {
+        const [, month] = key.split("-");
+        label = monthNames[parseInt(month) - 1];
+      } else {
+        const dt = new Date(key);
+        label = dt.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      return { month: label, revenue: value };
     });
 
   const totalRequests = Object.values(monthlyCounts).reduce((a, b) => a + b, 0);
@@ -254,7 +335,9 @@ function computeStats(requests) {
     avgProcessingTime,
     completionRate,
     monthlyRequests,
+    monthlyPaidReleasedRequests: monthlyPaidReleasedFormatted,
     monthlyRevenue: monthlyRevenueFormatted,
+    paidReleasedRequests,
   };
 }
 

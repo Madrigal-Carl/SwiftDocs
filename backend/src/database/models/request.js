@@ -23,6 +23,12 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
+      Request.hasMany(models.Requirement, {
+        foreignKey: "request_id",
+        as: "requirements",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
       Request.hasMany(models.Requested_Document, {
         foreignKey: "request_id",
         as: "requested_documents",
@@ -163,6 +169,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       purpose: {
         type: DataTypes.STRING,
+        allowNull: false,
+      },
+      delivery_method: {
+        type: DataTypes.ENUM("delivery", "pickup"),
         allowNull: false,
       },
       request_date: {

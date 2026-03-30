@@ -176,6 +176,9 @@ async function GetRequestWithStudent(requestId) {
       {
         association: "or_number",
       },
+      {
+        association: "special_order",
+      },
     ],
   });
 
@@ -279,6 +282,9 @@ async function GetRequestByReferenceNumber(referenceNumber) {
         },
         {
           association: "or_number",
+        },
+        {
+          association: "special_order",
         },
       ],
     },

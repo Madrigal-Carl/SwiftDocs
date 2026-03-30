@@ -6,6 +6,8 @@ export default function PaymentInformationCard({
   status,
   deliveryMethod,
   proof = [],
+  referenceNumber,
+  setReferenceNumber,
 }) {
   const showProof = status === "paid" || status === "released";
   const proofs = Array.isArray(proof) ? proof : [proof];
@@ -45,26 +47,44 @@ export default function PaymentInformationCard({
           <StatusBadge status={status} />
         </div>
 
-        {/* Proof (multiple) */}
+        {/* Reference Number + Proof */}
         {showProof && proofs.length > 0 && (
-          <div className="flex items-center justify-between py-3">
-            <span className="text-sm text-gray-600">Proof</span>
-
-            <div className="flex flex-col items-end gap-1">
-              {proofs.map((file, index) => (
-                <a
-                  key={index}
-                  href={`${import.meta.env.VITE_SERVER_URL}/${file.replace(/^\/+/, "")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm text-(--primary-600) hover:underline"
-                >
-                  <Eye className="w-4 h-4" />
-                  {file.split("/").pop()}
-                </a>
-              ))}
+          <>
+            {/* Reference Number */}
+            <div className="flex items-center justify-between py-3">
+              <span className="text-sm text-gray-600">Reference No.</span>
+              <input
+                type="text"
+                placeholder="Enter reference number"
+                value={referenceNumber || ""}
+                onChange={(e) => setReferenceNumber(e.target.value)}
+                className="border rounded px-2 py-1 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-(--primary-500)"
+              />
             </div>
-          </div>
+
+            {/* Proof (multiple) */}
+            <div className="flex items-center justify-between py-3">
+              <span className="text-sm text-gray-600">Proof</span>
+
+              <div className="flex flex-col items-end gap-1">
+                {proofs.map((file, index) => (
+                  <a
+                    key={index}
+                    href={`${import.meta.env.VITE_SERVER_URL}/${file.replace(
+                      /^\/+/,
+                      ""
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-sm text-(--primary-600) hover:underline"
+                  >
+                    <Eye className="w-4 h-4" />
+                    {file.split("/").pop()}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </>
         )}
       </div>
 

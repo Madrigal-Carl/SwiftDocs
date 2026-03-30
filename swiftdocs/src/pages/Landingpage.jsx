@@ -44,7 +44,7 @@ function Landingpage() {
     try {
       Swal.fire({
         title: "Processing Request",
-        html: "Sending your email… please wait",
+        html: "Sending to your email… please wait",
         allowOutsideClick: false,
         allowEscapeKey: false,
         showConfirmButton: false,

@@ -6,7 +6,7 @@ export default function PaymentInformationCard({
   status,
   deliveryMethod,
   proof = [],
-  referenceNumber,
+  orNumber,
 }) {
   const showProof = status === "paid" || status === "released";
   const proofs = Array.isArray(proof) ? proof : [proof];
@@ -51,9 +51,11 @@ export default function PaymentInformationCard({
           <>
             {/* Reference Number */}
             <div className="flex items-center justify-between py-3">
-              <span className="text-sm text-gray-600">Official Receipt No.</span>
+              <span className="text-sm text-gray-600">
+                Official Receipt No.
+              </span>
               <span className="text-sm font-medium text-(--text-dark)">
-                {referenceNumber || "N/A"}
+                {orNumber || "N/A"}
               </span>
             </div>
 
@@ -67,7 +69,7 @@ export default function PaymentInformationCard({
                     key={index}
                     href={`${import.meta.env.VITE_SERVER_URL}/${file.replace(
                       /^\/+/,
-                      ""
+                      "",
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"

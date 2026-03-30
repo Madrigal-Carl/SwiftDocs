@@ -173,6 +173,9 @@ async function GetRequestWithStudent(requestId) {
       {
         association: "requirements",
       },
+      {
+        association: "or_number",
+      },
     ],
   });
 
@@ -273,6 +276,9 @@ async function GetRequestByReferenceNumber(referenceNumber) {
         },
         {
           association: "requirements",
+        },
+        {
+          association: "or_number",
         },
       ],
     },

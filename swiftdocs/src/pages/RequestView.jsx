@@ -670,18 +670,20 @@ export default function RequestView() {
                 return;
               }
 
-              const formattedAdditionalDocs = additionalDocsState.map(
-                (doc) => ({
-                  id: doc.id,
-                  unit_price: doc.unit_price,
-                }),
-              );
-
-              if (formattedAdditionalDocs.length > 0) {
-                await updateRmoAdditionalDocumentPrices(
-                  request.id,
-                  formattedAdditionalDocs,
+              if (nextStatus === "invoiced") {
+                const formattedAdditionalDocs = additionalDocsState.map(
+                  (doc) => ({
+                    id: doc.id,
+                    unit_price: doc.unit_price,
+                  }),
                 );
+
+                if (formattedAdditionalDocs.length > 0) {
+                  await updateRmoAdditionalDocumentPrices(
+                    request.id,
+                    formattedAdditionalDocs,
+                  );
+                }
               }
 
               await updateRmoRequestStatus(request.id, nextStatus, remarks);

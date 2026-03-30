@@ -15,6 +15,7 @@ module.exports = {
       Account,
       Receipt,
       OR_Number,
+      Special_Order,
     } = require("../models");
 
     // Get existing documents and accounts
@@ -87,11 +88,23 @@ module.exports = {
         faker.number.int({ min: 1, max: 3 }),
       );
 
+      let requiresSpecialOrder = false;
       for (const doc of randomDocs) {
         await Requested_Document.create({
           request_id: request.id,
           document_id: doc.id,
           quantity: faker.number.int({ min: 1, max: 5 }),
+        });
+
+        if (doc.type && doc.type.toLowerCase().includes("diploma")) {
+          requiresSpecialOrder = true;
+        }
+      }
+
+      if (requiresSpecialOrder) {
+        await Special_Order.create({
+          request_id: request.id,
+          so_number: `SO-${faker.string.numeric(6)}`,
         });
       }
 

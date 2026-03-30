@@ -1,6 +1,9 @@
 const Joi = require("joi");
 
 const schema = Joi.object({
+  special_order_number: Joi.string().allow(null, "").messages({
+    "string.base": "Special Order Number must be a string",
+  }),
   first_name: Joi.string().trim().required().messages({
     "string.empty": "First name is required",
     "any.required": "First name is required",

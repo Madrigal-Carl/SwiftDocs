@@ -7,7 +7,6 @@ export default function PaymentInformationCard({
   deliveryMethod,
   proof = [],
   referenceNumber,
-  setReferenceNumber,
 }) {
   const showProof = status === "paid" || status === "released";
   const proofs = Array.isArray(proof) ? proof : [proof];
@@ -52,14 +51,10 @@ export default function PaymentInformationCard({
           <>
             {/* Reference Number */}
             <div className="flex items-center justify-between py-3">
-              <span className="text-sm text-gray-600">Reference No.</span>
-              <input
-                type="text"
-                placeholder="Enter reference number"
-                value={referenceNumber || ""}
-                onChange={(e) => setReferenceNumber(e.target.value)}
-                className="border rounded px-2 py-1 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-(--primary-500)"
-              />
+              <span className="text-sm text-gray-600">Official Receipt No.</span>
+              <span className="text-sm font-medium text-(--text-dark)">
+                {referenceNumber || "N/A"}
+              </span>
             </div>
 
             {/* Proof (multiple) */}

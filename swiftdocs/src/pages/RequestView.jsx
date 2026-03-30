@@ -591,7 +591,7 @@ export default function RequestView() {
             status={request.status}
             deliveryMethod={request.delivery_method}
             proof={request.receipts?.map((r) => r.path) || []}
-            orNumber={request.or_number.or_number}
+            orNumber={request.or_number?.or_number}
             setReferenceNumber={setReferenceNumber}
           />
 

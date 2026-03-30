@@ -14,6 +14,7 @@ module.exports = {
       Log,
       Account,
       Receipt,
+      OR_Number,
     } = require("../models");
 
     // Get existing documents and accounts
@@ -215,6 +216,10 @@ module.exports = {
 
       // 7️⃣ Create Receipts for paid/released
       if (status === "paid" || status === "released") {
+        const orNumber = await OR_Number.create({
+          or_number: `OR-${faker.string.numeric(8)}`,
+        });
+
         const receiptCount = faker.number.int({ min: 1, max: 3 });
 
         const receipts = [];
@@ -222,6 +227,7 @@ module.exports = {
         for (let i = 0; i < receiptCount; i++) {
           receipts.push({
             request_id: request.id,
+            or_number_id: orNumber.id,
             path: "uploads/proofs/payment_sample.jpg",
             created_at: new Date(),
             updated_at: new Date(),

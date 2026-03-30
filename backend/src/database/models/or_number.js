@@ -1,28 +1,28 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Receipt extends Model {
+  class OR_Number extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Receipt.belongsTo(models.Request, {
+      OR_Number.hasMany(models.Receipt, {
+        foreignKey: "or_number_id",
+        as: "receipts",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
+      OR_Number.belongsTo(models.Request, {
         foreignKey: "request_id",
         as: "request",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
-      Receipt.belongsTo(models.OR_Number, {
-        foreignKey: "or_number_id",
-        as: "or_number",
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-      });
     }
   }
-  Receipt.init(
+  OR_Number.init(
     {
       request_id: {
         type: DataTypes.INTEGER,
@@ -32,26 +32,19 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       },
-      or_number_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: "or_numbers",
-          key: "id",
-        },
-      },
-      path: {
+      or_number: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
       },
     },
     {
       sequelize,
-      modelName: "Receipt",
-      tableName: "receipts",
+      modelName: "OR_Number",
+      tableName: "or_numbers",
       underscored: true,
       timestamps: true,
     },
   );
-  return Receipt;
+  return OR_Number;
 };

@@ -591,7 +591,7 @@ export default function RequestView() {
             status={request.status}
             deliveryMethod={request.delivery_method}
             proof={request.receipts?.map((r) => r.path) || []}
-            referenceNumber={referenceNumber}
+            orNumber={request.or_number.or_number}
             setReferenceNumber={setReferenceNumber}
           />
 
@@ -643,7 +643,8 @@ export default function RequestView() {
         request={request}
         role={user.role}
         onClose={() => setModalOpen(false)}
-        onSubmit={async (remarks, files, orNumber) => {  // <-- added orNumber
+        onSubmit={async (remarks, files, orNumber) => {
+          // <-- added orNumber
           const nextStatus = getNextStatus(
             user.role,
             request.status,
@@ -693,7 +694,7 @@ export default function RequestView() {
               formData.append("reference_number", referenceNumber);
 
               // Pass OR number
-              formData.append("or_number", orNumber);  // <-- new line
+              formData.append("or_number", orNumber); // <-- new line
 
               files.forEach((file) => {
                 formData.append("proofs", file);

@@ -37,7 +37,7 @@ export default function RequestView() {
   const [modalAction, setModalAction] = useState(null);
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [referenceNumber, setReferenceNumber] = useState("");
   const isRmoPending = user?.role === "rmo" && request?.status === "pending";
 
   const [additionalDocsState, setAdditionalDocsState] = useState([]);
@@ -45,6 +45,12 @@ export default function RequestView() {
   useEffect(() => {
     if (request?.additional_documents) {
       setAdditionalDocsState(request.additional_documents);
+    }
+  }, [request]);
+
+  useEffect(() => {
+    if (request?.reference_number) {
+      setReferenceNumber(request.reference_number);
     }
   }, [request]);
 
@@ -585,6 +591,8 @@ export default function RequestView() {
             status={request.status}
             deliveryMethod={request.delivery_method}
             proof={request.receipts?.map((r) => r.path) || []}
+            referenceNumber={referenceNumber}
+            setReferenceNumber={setReferenceNumber}
           />
 
           {/*  Notes Card */}
@@ -682,6 +690,7 @@ export default function RequestView() {
               const formData = new FormData();
               formData.append("status", nextStatus);
               formData.append("note", remarks);
+              formData.append("reference_number", referenceNumber);
 
               files.forEach((file) => {
                 formData.append("proofs", file);

@@ -591,7 +591,7 @@ export default function RequestView() {
             status={request.status}
             deliveryMethod={request.delivery_method}
             proof={request.receipts?.map((r) => r.path) || []}
-            orNumber={request.or_number.or_number}
+            orNumber={request.or_number?.or_number}
             setReferenceNumber={setReferenceNumber}
           />
 
@@ -670,18 +670,20 @@ export default function RequestView() {
                 return;
               }
 
-              const formattedAdditionalDocs = additionalDocsState.map(
-                (doc) => ({
-                  id: doc.id,
-                  unit_price: doc.unit_price,
-                }),
-              );
-
-              if (formattedAdditionalDocs.length > 0) {
-                await updateRmoAdditionalDocumentPrices(
-                  request.id,
-                  formattedAdditionalDocs,
+              if (nextStatus === "invoiced") {
+                const formattedAdditionalDocs = additionalDocsState.map(
+                  (doc) => ({
+                    id: doc.id,
+                    unit_price: doc.unit_price,
+                  }),
                 );
+
+                if (formattedAdditionalDocs.length > 0) {
+                  await updateRmoAdditionalDocumentPrices(
+                    request.id,
+                    formattedAdditionalDocs,
+                  );
+                }
               }
 
               await updateRmoRequestStatus(request.id, nextStatus, remarks);

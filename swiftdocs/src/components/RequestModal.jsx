@@ -634,7 +634,7 @@ function RequestModal({ isOpen, onClose }) {
                 </label>
 
                 <p className="text-xs text-gray-400 mt-1">
-                  JPG, JPEG, PNG only (Max 5MB each)
+                  JPG, JPEG, PNG, and PDF only (Max 5MB each)
                 </p>
 
                 {/* File preview */}

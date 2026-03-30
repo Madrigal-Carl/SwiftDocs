@@ -1,10 +1,15 @@
 const { Receipt } = require("../database/models");
 
-async function CreateReceipts(requestId, proofPaths = []) {
+async function CreateReceipts(requestId, proofPaths = [], orNumberId) {
   if (!proofPaths || proofPaths.length === 0) return [];
+
+  if (!orNumberId) {
+    throw new Error("Cannot create receipts without OR number ID");
+  }
 
   const receipts = proofPaths.map((path) => ({
     request_id: requestId,
+    or_number_id: orNumberId, // ✅ link to OR_Number
     path,
   }));
 

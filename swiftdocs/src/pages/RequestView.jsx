@@ -643,7 +643,7 @@ export default function RequestView() {
         request={request}
         role={user.role}
         onClose={() => setModalOpen(false)}
-        onSubmit={async (remarks, files) => {
+        onSubmit={async (remarks, files, orNumber) => {  // <-- added orNumber
           const nextStatus = getNextStatus(
             user.role,
             request.status,
@@ -691,6 +691,9 @@ export default function RequestView() {
               formData.append("status", nextStatus);
               formData.append("note", remarks);
               formData.append("reference_number", referenceNumber);
+
+              // Pass OR number
+              formData.append("or_number", orNumber);  // <-- new line
 
               files.forEach((file) => {
                 formData.append("proofs", file);

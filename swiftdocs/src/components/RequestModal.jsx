@@ -52,6 +52,7 @@ function RequestModal({ isOpen, onClose }) {
   });
 
   const [submitting, setSubmitting] = useState(false);
+  const [specialOrderNumber, setSpecialOrderNumber] = useState("");
 
   const capitalizeWords = (str) =>
     str.replace(/\b\w/g, (char) => char.toUpperCase());
@@ -89,6 +90,12 @@ function RequestModal({ isOpen, onClose }) {
     () => selectedDocuments.map((d) => d.id),
     [selectedDocuments],
   );
+
+  const hasDiploma = useMemo(() => {
+    return selectedDocuments.some((doc) =>
+      doc.name.toLowerCase().includes("diploma"),
+    );
+  }, [selectedDocuments]);
 
   const filteredDocuments = useMemo(() => {
     if (!searchInput.trim()) return availableDocuments;
@@ -161,8 +168,11 @@ function RequestModal({ isOpen, onClose }) {
 
     if (selectedDocuments.length === 0) newErrors.documents = true;
     if (!purpose.trim()) newErrors.purpose = true;
-
     if (!deliveryMethod) newErrors.deliveryMethod = true;
+
+    if (hasDiploma && !specialOrderNumber.trim()) {
+      newErrors.specialOrderNumber = true;
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -278,6 +288,7 @@ function RequestModal({ isOpen, onClose }) {
 
         notes: academicInfo.academicNotes,
 
+        special_order_number: specialOrderNumber,
         purpose: purpose,
         delivery_method: deliveryMethod,
         documents: selectedDocuments.map((doc) => ({
@@ -321,6 +332,7 @@ function RequestModal({ isOpen, onClose }) {
     setCurrentStep(1);
     setAgreed(false);
     setSearchInput("");
+    setSpecialOrderNumber("");
     setAvailableDocuments([]);
     setSelectedDocuments([]);
     setStudentInfo({
@@ -821,6 +833,29 @@ function RequestModal({ isOpen, onClose }) {
                   </table>
                 </div>
               </div>
+
+              {hasDiploma && (
+                <div className="mt-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Special Order Number
+                  </label>
+
+                  <input
+                    type="text"
+                    value={specialOrderNumber}
+                    onChange={(e) => setSpecialOrderNumber(e.target.value)}
+                    placeholder="Enter Special Order Number"
+                    className={`w-full px-4 py-3 border rounded-lg input-focus focus:outline-none 
+        ${errors.specialOrderNumber ? "border-red-500" : "border-gray-300"}
+      `}
+                  />
+
+                  <p className="text-xs text-gray-500 mt-1">
+                    Required when requesting Diploma (2nd Copy).
+                  </p>
+                </div>
+              )}
+
               <div className="flex justify-between mt-8">
                 <button
                   onClick={() => goToStep(1)}

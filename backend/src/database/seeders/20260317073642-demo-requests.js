@@ -217,6 +217,7 @@ module.exports = {
       // 7️⃣ Create Receipts for paid/released
       if (status === "paid" || status === "released") {
         const orNumber = await OR_Number.create({
+          request_id: request.id,
           or_number: `OR-${faker.string.numeric(8)}`,
         });
 

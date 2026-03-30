@@ -7,6 +7,14 @@ const updateRequestStatusSchema = Joi.object({
     "any.required": "Status is required",
   }),
   note: Joi.string().trim().empty("").default(null).optional(),
+  or_number: Joi.string().trim().max(255).when("status", {
+  is: "paid",
+  then: Joi.required().messages({
+    "string.empty": "OR number is required when marking as paid",
+    "any.required": "OR number is required when marking as paid",
+  }),
+  otherwise: Joi.optional(),
+  }),
 });
 
 function validateUpdateRequestStatus(req, res, next) {

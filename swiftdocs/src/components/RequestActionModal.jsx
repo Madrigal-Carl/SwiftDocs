@@ -11,9 +11,7 @@ export default function RequestActionModal({
 }) {
   const [remarks, setRemarks] = useState("");
   const [files, setFiles] = useState([]);
-  const [referenceNumber, setReferenceNumber] = useState(
-    request ? request.reference_number || "" : ""
-  );
+  const [orNumber, setOrNumber] = useState(request ? request.or_number || "" : "");
   const [submitting, setSubmitting] = useState(false);
 
   if (!isOpen || !request) return null;
@@ -38,10 +36,11 @@ export default function RequestActionModal({
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
-      await onSubmit(remarks, files, referenceNumber); // send referenceNumber as well
+      // Send remarks, files, AND OR number
+      await onSubmit(remarks, files, orNumber);
       setRemarks("");
       setFiles([]);
-      setReferenceNumber("");
+      setOrNumber("");
     } finally {
       setSubmitting(false);
     }
@@ -142,16 +141,16 @@ export default function RequestActionModal({
               )}
             </div>
 
-            {/* Reference Number Input */}
+            {/* OR Number Input */}
             <div className="mt-4">
               <label className="text-xs text-gray-500 uppercase tracking-wider">
-                Reference Number
+                OR Number
               </label>
               <input
-                type="number"
-                value={referenceNumber}
-                onChange={(e) => setReferenceNumber(e.target.value)}
-                placeholder="Enter reference number"
+                type="text"
+                value={orNumber}
+                onChange={(e) => setOrNumber(e.target.value)}
+                placeholder="Enter OR number"
                 className="w-full mt-2 p-3 text-sm border border-(--border-light) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-500)"
               />
             </div>

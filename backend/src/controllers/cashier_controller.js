@@ -17,21 +17,29 @@ async function GetRequestsForCashier(req, res) {
 async function UpdateRequestStatus(req, res) {
   const io = req.app.get("io");
 
-  const proofPaths = (req.files || []).map(
-    (file) => `uploads/proofs/${file.filename}`,
-  );
+  try {
+    const proofPaths = (req.files || []).map(
+      (file) => `uploads/proofs/${file.filename}`
+    );
 
-  const request = await cashierService.UpdateRequestStatus(
-    Number(req.params.id),
-    req.body.status,
-    req.user,
-    req.body.note,
-    proofPaths,
-  );
+    const request = await cashierService.UpdateRequestStatus(
+      Number(req.params.id),
+      req.body.status,
+      req.user,
+      req.body.note,
+      proofPaths,
+      req.body.or_number // OR number from frontend
+    );
 
-  io.emit("requestsUpdated");
+    io.emit("requestsUpdated");
 
-  res.json(request);
+    res.json(request);
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({
+      message: error.message || "Failed to update request status",
+    });
+  }
 }
 
 module.exports = {

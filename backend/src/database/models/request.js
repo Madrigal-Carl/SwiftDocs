@@ -23,6 +23,12 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
+      Request.hasOne(models.OR_Number, {
+        foreignKey: "request_id",
+        as: "or_number",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
       Request.hasMany(models.Requirement, {
         foreignKey: "request_id",
         as: "requirements",

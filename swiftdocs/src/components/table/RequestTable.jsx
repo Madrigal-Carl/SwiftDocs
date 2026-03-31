@@ -103,11 +103,20 @@ export default function RequestTable() {
             className="appearance-none pl-9 pr-10 py-2 rounded-lg border border-(--border-light) bg-white focus:outline-none focus:ring-2 focus:ring-(--primary-300) text-sm cursor-pointer"
           >
             <option value="">All Statuses</option>
-            <option value="pending">Pending</option>
-            <option value="invoiced">Invoiced</option>
-            <option value="paid">Paid</option>
-            <option value="released">Released</option>
-            <option value="rejected">Rejected</option>
+            {user.role === "cashier" ? (
+              <>
+                <option value="invoiced">Invoiced</option>
+                <option value="paid">Paid</option>
+              </>
+            ) : (
+              <>
+                <option value="pending">Pending</option>
+                <option value="invoiced">Invoiced</option>
+                <option value="paid">Paid</option>
+                <option value="released">Released</option>
+                <option value="rejected">Rejected</option>
+              </>
+            )}
           </select>
           <Filter className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
           <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />

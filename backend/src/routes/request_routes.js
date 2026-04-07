@@ -18,8 +18,8 @@ const {
 router.post(
   "/",
   allowGuestOrRMO,
-  uploadRequirements.array("requirements", 5),
   uploadLimiter,
+  uploadRequirements.array("requirements", 5),
   validateCreateRequest,
   requestController.CreateRequest,
 );
@@ -27,8 +27,8 @@ router.post(
 // Request status update for requested documents
 router.post(
   "/status/:referenceNumber/send-email",
-  strictLimiter,
   requireGuest,
+  strictLimiter,
   requestController.SendRequestEmail,
 );
 
@@ -36,6 +36,7 @@ router.post(
 router.get(
   "/",
   requireAuth,
+  userLimiter,
   requireRole("admin", "rmo"),
   requestController.GetAllRequestsWithStudent,
 );
@@ -44,6 +45,7 @@ router.get(
 router.get(
   "/analytics",
   requireAuth,
+  userLimiter,
   requireRole("rmo", "cashier", "admin"),
   requestController.GetRequestAnalytics,
 );

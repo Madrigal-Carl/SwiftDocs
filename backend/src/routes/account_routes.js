@@ -4,12 +4,17 @@ const accountController = require("../controllers/account_controller");
 const requireAuth = require("../middlewares/auth");
 const requireRole = require("../middlewares/role");
 const allowSelfOrAdmin = require("../middlewares/allow_self_or_admin");
-const { validateUpdateAccount, validateChangePassword } = require("../validators/account_validator");
+const {
+  validateUpdateAccount,
+  validateChangePassword,
+} = require("../validators/account_validator");
+const { userLimiter } = require("../middlewares/rate_limiter");
 
 // Get all accounts
 router.get(
   "/",
   requireAuth,
+  userLimiter,
   requireRole("admin"),
   accountController.getAllAccounts,
 );
@@ -18,6 +23,7 @@ router.get(
 router.get(
   "/analytics",
   requireAuth,
+  userLimiter,
   requireRole("admin"),
   accountController.getUserStats,
 );
@@ -26,8 +32,9 @@ router.get(
 router.patch(
   "/change-password",
   requireAuth,
+  userLimiter,
   validateChangePassword,
-  accountController.changePassword
+  accountController.changePassword,
 );
 
 // Get specific account by ID
@@ -46,6 +53,5 @@ router.patch(
   validateUpdateAccount,
   accountController.updateAccount,
 );
-
 
 module.exports = router;

@@ -8,11 +8,13 @@ const {
   validateCreateDocument,
   validateUpdateDocument,
 } = require("../validators/document_validator");
+const { userLimiter } = require("../middlewares/rate_limiter");
 
 // fetch document analytics
 router.get(
   "/analytics",
   requireAuth,
+  userLimiter,
   requireRole("admin", "rmo"),
   documentController.GetDocumentAnalytics,
 );
@@ -28,6 +30,7 @@ router.get(
 router.get(
   "/",
   requireAuth,
+  userLimiter,
   requireRole("rmo"),
   documentController.GetAllDocuments,
 );
@@ -36,6 +39,7 @@ router.get(
 router.get(
   "/:id",
   requireAuth,
+  userLimiter,
   requireRole("rmo"),
   documentController.GetDocumentById,
 );
@@ -44,6 +48,7 @@ router.get(
 router.post(
   "/",
   requireAuth,
+  userLimiter,
   requireRole("rmo"),
   validateCreateDocument,
   documentController.CreateDocument,
@@ -53,6 +58,7 @@ router.post(
 router.patch(
   "/:id",
   requireAuth,
+  userLimiter,
   requireRole("rmo"),
   validateUpdateDocument,
   documentController.UpdateDocument,
@@ -62,6 +68,7 @@ router.patch(
 router.delete(
   "/:id",
   requireAuth,
+  userLimiter,
   requireRole("rmo"),
   documentController.DeleteDocument,
 );

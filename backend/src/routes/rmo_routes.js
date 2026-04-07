@@ -7,11 +7,13 @@ const {
   validateUpdateRequestStatus,
   validateUpdateAdditionalDocuments,
 } = require("../validators/rmo_validator");
+const { userLimiter } = require("../middlewares/rate_limiter");
 
 // update additional document prices
 router.patch(
   "/requests/:id/additional-documents",
   requireAuth,
+  userLimiter,
   requireRole("rmo"),
   validateUpdateAdditionalDocuments,
   rmoController.UpdateAdditionalDocumentPrices,
@@ -21,6 +23,7 @@ router.patch(
 router.patch(
   "/requests/:id/status",
   requireAuth,
+  userLimiter,
   requireRole("rmo"),
   validateUpdateRequestStatus,
   rmoController.UpdateRequestStatus,

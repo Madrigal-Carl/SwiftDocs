@@ -18,14 +18,20 @@ router.post(
   "/register",
   // requireGuest,
   requireAuth,
-  requireRole("admin"),
   strictLimiter,
+  requireRole("admin"),
   validateRegister,
   authController.register,
 );
 
 // Login
-router.post("/login", requireGuest, validateLogin, authController.login);
+router.post(
+  "/login",
+  requireGuest,
+  strictLimiter,
+  validateLogin,
+  authController.login,
+);
 
 // Logout
 router.post(

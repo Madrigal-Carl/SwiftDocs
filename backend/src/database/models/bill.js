@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Requested_Document.belongsTo(models.Request, {
+      Bill.belongsTo(models.Request, {
         foreignKey: "request_id",
         as: "request",
         onDelete: "CASCADE",

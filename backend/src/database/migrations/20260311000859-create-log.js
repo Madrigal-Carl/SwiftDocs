@@ -34,15 +34,36 @@ module.exports = {
         allowNull: false,
       },
       action: {
-        type: Sequelize.ENUM("rejected", "released", "paid", "invoiced"),
+        type: Sequelize.ENUM(
+          "released",
+          "paid",
+          "invoiced",
+          "deficient",
+          "under_review",
+          "balance_due",
+        ),
         allowNull: false,
       },
       from_status: {
-        type: Sequelize.ENUM("pending", "paid", "invoiced"),
+        type: Sequelize.ENUM(
+          "pending",
+          "paid",
+          "invoiced",
+          "deficient",
+          "under_review",
+          "balance_due",
+        ),
         allowNull: false,
       },
       to_status: {
-        type: Sequelize.ENUM("rejected", "released", "paid", "invoiced"),
+        type: Sequelize.ENUM(
+          "released",
+          "paid",
+          "invoiced",
+          "deficient",
+          "under_review",
+          "balance_due",
+        ),
         allowNull: false,
       },
       notes: {

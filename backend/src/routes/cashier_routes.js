@@ -4,7 +4,8 @@ const cashierController = require("../controllers/cashier_controller");
 const requireRole = require("../middlewares/role");
 const requireAuth = require("../middlewares/auth");
 const {
-  validateUpdateRequestStatus,
+  validateApprovePayment,
+  validateUpdateToReview,
 } = require("../validators/cashier_validator");
 const upload = require("../middlewares/upload");
 const { uploadLimiter, userLimiter } = require("../middlewares/rate_limiter");
@@ -18,9 +19,19 @@ router.get(
   cashierController.GetRequestsForCashier,
 );
 
+// update request → UNDER REVIEW (no upload)
+router.patch(
+  "/requests/:id/review",
+  requireAuth,
+  userLimiter,
+  requireRole("cashier"),
+  validateUpdateToReview,
+  cashierController.UpdateToReview,
+);
+
 // update request status
 router.patch(
-  "/requests/:id/status",
+  "/requests/:id/approve-payment",
   requireAuth,
   uploadLimiter,
   requireRole("cashier"),
@@ -37,8 +48,8 @@ router.patch(
       next();
     });
   },
-  validateUpdateRequestStatus,
-  cashierController.UpdateRequestStatus,
+  validateApprovePayment,
+  cashierController.ApprovePayment,
 );
 
 module.exports = router;

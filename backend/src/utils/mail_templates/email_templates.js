@@ -2,19 +2,86 @@ function pendingTemplate(data) {
   const fullName = data.student.getFullName();
 
   return {
-    subject: "Document Request is Under Review",
+    subject: "Document Request Submitted Successfully",
+    html: `
+      <p>Dear ${fullName},</p>
+
+      <p>Your document request with reference number 
+      <strong>${data.reference_number}</strong> has been <strong>successfully submitted</strong>.</p>
+
+      <p>Our team has received your request and it will be processed shortly.</p>
+
+      <p>You will be notified once your request moves to the next stage.</p>
+
+      <p>Thank you for using our service.</p>
+
+      <p>Sincerely,<br>Registrar Office</p>
+    `,
+  };
+}
+
+function balanceDueTemplate(data) {
+  const fullName = data.student.getFullName();
+
+  return {
+    subject: "Outstanding Balance for Your Request",
+    html: `
+      <p>Dear ${fullName},</p>
+
+      <p>Your document request with reference number 
+      <strong>${data.reference_number}</strong> currently has an <strong>outstanding balance</strong>.</p>
+
+      ${data.notes ? `<p><strong>Details:</strong> ${data.notes}</p>` : ""}
+
+      <p>Please settle the remaining balance so that your request can proceed.</p>
+
+      <p>If you have already made a payment, kindly disregard this message or contact us.</p>
+
+      <p>Sincerely,<br>Registrar Office</p>
+    `,
+  };
+}
+
+function underReviewTemplate(data) {
+  const fullName = data.student.getFullName();
+
+  return {
+    subject: "Your Request is Under Review",
     html: `
       <p>Dear ${fullName},</p>
 
       <p>Your document request with reference number 
       <strong>${data.reference_number}</strong> is currently <strong>under review</strong>.</p>
 
-      <p>Our team is carefully checking your request details and submitted requirements. 
-      You will be notified once the review process is complete.</p>
+      <p>Our team is reviewing your submitted information and requirements.</p>
 
-      <p>If additional information or documents are needed, we will contact you.</p>
+      <p>You will be notified once the review process is complete.</p>
 
       <p>Thank you for your patience.</p>
+
+      <p>Sincerely,<br>Registrar Office</p>
+    `,
+  };
+}
+
+function deficientTemplate(data) {
+  const fullName = data.student.getFullName();
+
+  return {
+    subject: "Additional Requirements Needed",
+    html: `
+      <p>Dear ${fullName},</p>
+
+      <p>Your document request with reference number 
+      <strong>${data.reference_number}</strong> is currently marked as <strong>deficient</strong>.</p>
+
+      <p>To proceed, please provide the following required documents or information:</p>
+
+      ${data.notes ? `<p><strong>Required:</strong> ${data.notes}</p>` : ""}
+
+      <p>Once completed, your request will continue processing.</p>
+
+      <p>If you have questions, feel free to contact us.</p>
 
       <p>Sincerely,<br>Registrar Office</p>
     `,
@@ -52,54 +119,6 @@ function invoicedTemplate(data) {
   };
 }
 
-function rejectedTemplate(data, reason) {
-  const fullName = data.student.getFullName();
-
-  return {
-    subject: "Your Document Request Has Been Rejected",
-    html: `
-      <p>Dear ${fullName},</p>
-
-      <p>We regret to inform you that your document request with reference number
-      <strong>${data.reference_number}</strong> has been rejected.</p>
-
-      <p><strong>Reason:</strong> ${reason}</p>
-
-      <p>If you believe this decision was made in error, please contact the Registrar Office.</p>
-
-      <p>Sincerely,<br>Registrar Office</p>
-    `,
-  };
-}
-
-function releasedTemplate(data) {
-  const fullName = data.student.getFullName();
-  const documents = data.getDocumentSummary();
-
-  const docList = documents
-    .map((d) => `<li>${d.type} (x${d.quantity})</li>`)
-    .join("");
-
-  return {
-    subject: "Your Documents Are Ready for Release",
-    html: `
-      <p>Dear ${fullName},</p>
-
-      <p>Your requested documents with reference number 
-      <strong>${data.reference_number}</strong> have been released.</p>
-
-      <p><strong>Released Documents:</strong></p>
-      <ul>
-        ${docList}
-      </ul>
-
-      <p>You may now coordinate with the Registrar Office.</p>
-
-      <p>Sincerely,<br>Registrar Office</p>
-    `,
-  };
-}
-
 function paidTemplate(data) {
   const fullName = data.student.getFullName();
   const documents = data.getDocumentSummary();
@@ -131,10 +150,65 @@ function paidTemplate(data) {
   };
 }
 
+function releasedTemplate(data) {
+  const fullName = data.student.getFullName();
+  const documents = data.getDocumentSummary();
+
+  const docList = documents
+    .map((d) => `<li>${d.type} (x${d.quantity})</li>`)
+    .join("");
+
+  return {
+    subject: "Your Documents Are Ready for Release",
+    html: `
+      <p>Dear ${fullName},</p>
+
+      <p>Your requested documents with reference number 
+      <strong>${data.reference_number}</strong> have been <strong>released</strong>.</p>
+
+      <p><strong>Released Documents:</strong></p>
+      <ul>
+        ${docList}
+      </ul>
+
+      <p>You may now coordinate with the Registrar Office to receive your documents.</p>
+
+      <p>We would greatly appreciate your feedback on our service to help us improve.</p>
+
+      <p>Thank you for choosing our office.</p>
+
+      <p>Sincerely,<br>Registrar Office</p>
+    `,
+  };
+}
+
+function rejectedTemplate(data, reason) {
+  const fullName = data.student.getFullName();
+
+  return {
+    subject: "Your Document Request Has Been Rejected",
+    html: `
+      <p>Dear ${fullName},</p>
+
+      <p>We regret to inform you that your document request with reference number
+      <strong>${data.reference_number}</strong> has been rejected.</p>
+
+      ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ""}
+
+      <p>If you believe this decision was made in error, please contact the Registrar Office.</p>
+
+      <p>Sincerely,<br>Registrar Office</p>
+    `,
+  };
+}
+
 module.exports = {
-  invoiced: invoicedTemplate,
-  rejected: rejectedTemplate,
-  released: releasedTemplate,
-  paid: paidTemplate,
   pending: pendingTemplate,
+  balance_due: balanceDueTemplate,
+  under_review: underReviewTemplate,
+  deficient: deficientTemplate,
+  invoiced: invoicedTemplate,
+  paid: paidTemplate,
+  released: releasedTemplate,
+  rejected: rejectedTemplate,
 };

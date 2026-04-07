@@ -14,35 +14,44 @@ async function GetRequestsForCashier(req, res) {
   res.json(requests);
 }
 
-async function UpdateRequestStatus(req, res) {
+async function ApprovePayment(req, res) {
   const io = req.app.get("io");
 
-  try {
-    const proofPaths = (req.files || []).map(
-      (file) => `uploads/proofs/${file.filename}`
-    );
+  const proofPaths = (req.files || []).map(
+    (file) => `uploads/proofs/${file.filename}`,
+  );
 
-    const request = await cashierService.UpdateRequestStatus(
-      Number(req.params.id),
-      req.body.status,
-      req.user,
-      req.body.note,
-      proofPaths,
-      req.body.or_number // OR number from frontend
-    );
+  const request = await cashierService.ApprovePayment(
+    Number(req.params.id),
+    req.body.status,
+    req.user,
+    req.body.note,
+    proofPaths,
+    req.body.or_number,
+  );
 
-    io.emit("requestsUpdated");
+  io.emit("requestsUpdated");
 
-    res.json(request);
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({
-      message: error.message || "Failed to update request status",
-    });
-  }
+  res.json(request);
+}
+
+async function UpdateToReview(req, res) {
+  const io = req.app.get("io");
+
+  const request = await cashierService.UpdateToReview(
+    Number(req.params.id),
+    req.body.status,
+    req.user,
+    req.body.note,
+  );
+
+  io.emit("requestsUpdated");
+
+  res.json(request);
 }
 
 module.exports = {
   GetRequestsForCashier,
-  UpdateRequestStatus,
+  ApprovePayment,
+  UpdateToReview,
 };

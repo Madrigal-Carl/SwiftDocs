@@ -1,12 +1,15 @@
 // /middlewares/rate_limiter.js
 const rateLimit = require("express-rate-limit");
-const { ipKeyGenerator } = require("express-rate-limit");
 const { RedisStore } = require("rate-limit-redis");
+const { ipKeyGenerator } = require("express-rate-limit");
 const redis = require("../config/redis");
 
 const createStore = (prefix) =>
   new RedisStore({
-    sendCommand: (...args) => redis.sendCommand(...args),
+    sendCommand: (command, ...args) => {
+      if (!command) return Promise.resolve();
+      return redis.call(command, ...args);
+    },
     prefix,
   });
 

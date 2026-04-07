@@ -17,7 +17,7 @@ async function RequestDocuments(data, files = []) {
     await educationRepository.CreateEducation(
       {
         student_id: student.id,
-        lrn: data.lrn,
+        ...(data.lrn && { lrn: data.lrn }),
         education_level: data.education_level,
         program: data.program,
         school_last_attended: data.school_last_attended,
@@ -38,16 +38,6 @@ async function RequestDocuments(data, files = []) {
       },
       t,
     );
-
-    if (data.special_order_number) {
-      await specialOrderRepository.CreateSpecialOrder(
-        {
-          request_id: request.id,
-          so_number: data.special_order_number,
-        },
-        t,
-      );
-    }
 
     if (Array.isArray(data.documents) && data.documents.length) {
       await Promise.all(

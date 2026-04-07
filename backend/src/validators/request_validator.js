@@ -1,9 +1,6 @@
 const Joi = require("joi");
 
 const schema = Joi.object({
-  special_order_number: Joi.string().allow(null, "").messages({
-    "string.base": "Special Order Number must be a string",
-  }),
   first_name: Joi.string().trim().required().messages({
     "string.empty": "First name is required",
     "any.required": "First name is required",
@@ -41,9 +38,8 @@ const schema = Joi.object({
     "string.pattern.base": "Phone number must contain only numbers",
     "any.required": "Phone number is required",
   }),
-  lrn: Joi.string().required().messages({
-    "string.empty": "LRN is required",
-    "any.required": "LRN is required",
+  lrn: Joi.string().trim().optional().messages({
+    "string.base": "LRN must be a string",
   }),
   purpose: Joi.string().required().messages({
     "string.empty": "Purpose is required",

@@ -258,30 +258,6 @@ function Landingpage() {
         </div>
       </section>
 
-      <div className="bg-slate-50 border-y border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <p className="text-center text-sm font-semibold text-slate-500 uppercase tracking-wider mb-6">
-            Trusted by leading universities
-          </p>
-          <div className="flex justify-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition-all duration-500 flex-wrap">
-            <div className="flex items-center gap-2 text-xl font-bold text-slate-800">
-              <Hexagon className="w-8 h-8 text-(--primary-600)" /> UniTech
-            </div>
-            <div className="flex items-center gap-2 text-xl font-bold text-slate-800">
-              <Triangle className="w-8 h-8 text-rose-600" /> State College
-            </div>
-            <div className="flex items-center gap-2 text-xl font-bold text-slate-800">
-              <Triangle className="w-8 h-8 text-amber-600" /> Global Inst.
-            </div>
-            <div className="flex items-center gap-2 text-xl font-bold text-slate-800">
-              <Square className="w-8 h-8 text-emerald-600" /> Global Metro Univ.
-            </div>
-            <div className="flex items-center gap-2 text-xl font-bold text-slate-800 md:flex">
-              <Octagon className="w-8 h-8 text-blue-600" /> Global Academy
-            </div>
-          </div>
-        </div>
-      </div>
 
       <section id="features" className="py-24 bg-white relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -40,6 +40,8 @@ module.exports = {
       status: {
         type: Sequelize.ENUM(
           "rejected",
+          "deficient",
+          "under_review",
           "released",
           "pending",
           "paid",
@@ -49,6 +51,10 @@ module.exports = {
         defaultValue: "pending",
       },
       request_completed: {
+        type: Sequelize.DATEONLY,
+        allowNull: true,
+      },
+      expected_release_date: {
         type: Sequelize.DATEONLY,
         allowNull: true,
       },

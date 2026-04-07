@@ -7,7 +7,7 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const http = require("http");
 const { Server } = require("socket.io");
-
+const { globalLimiter, apiLimiter } = require("./middlewares/rate_limiter");
 const errorHandler = require("./middlewares/error_handler");
 
 const app = express();
@@ -54,6 +54,12 @@ app.use(
 
 // request logger
 app.use(morgan("dev"));
+
+// global baseline
+app.use(globalLimiter);
+
+// apply to all API routes
+app.use("/api", apiLimiter);
 
 // body parsing
 app.use(express.json());

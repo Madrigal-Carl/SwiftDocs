@@ -68,10 +68,15 @@ module.exports = {
       ]);
 
       const requestDate = faker.date.past();
-      const expectedRelease = faker.date.soon({
-        days: 10,
-        refDate: requestDate,
-      });
+      const hasExpectedRelease = ["invoiced", "paid", "released"].includes(
+        status,
+      );
+      const expectedRelease = hasExpectedRelease
+        ? faker.date.soon({
+            days: 10,
+            refDate: requestDate,
+          })
+        : null;
 
       const requestCompleted =
         status === "released"

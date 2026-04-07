@@ -8,7 +8,8 @@ async function UpdateRequestStatus(req, res) {
     req.body.status,
     req.user,
     req.body.note,
-    req.body.additional_documents,
+    req.body.bills,
+    req.body.expected_release_date,
   );
 
   io.emit("requestsUpdated");

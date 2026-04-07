@@ -36,8 +36,7 @@ async function SendRMOUpdateMail({ request, status, reason }) {
     return;
   }
 
-  const { subject, html } =
-    status === "rejected" ? template(request, reason) : template(request);
+  const { subject, html } = template(request);
 
   await transporter.sendMail({
     from: `"Registrar Office" <${process.env.SMTP_USER}>`,

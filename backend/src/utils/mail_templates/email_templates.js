@@ -182,7 +182,7 @@ function releasedTemplate(data) {
   };
 }
 
-function rejectedTemplate(data, reason) {
+function rejectedTemplate(data) {
   const fullName = data.student.getFullName();
 
   return {
@@ -191,11 +191,13 @@ function rejectedTemplate(data, reason) {
       <p>Dear ${fullName},</p>
 
       <p>We regret to inform you that your document request with reference number
-      <strong>${data.reference_number}</strong> has been rejected.</p>
+      <strong>${data.reference_number}</strong> has been <strong>rejected</strong>.</p>
 
-      ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ""}
+      <p>This decision was made because the request was not processed or completed within the allowable timeframe.</p>
 
-      <p>If you believe this decision was made in error, please contact the Registrar Office.</p>
+      <p>If you still wish to proceed, you may submit a new request or contact the Registrar Office for assistance.</p>
+
+      <p>If you believe this decision was made in error, please feel free to reach out to us.</p>
 
       <p>Sincerely,<br>Registrar Office</p>
     `,

@@ -8,9 +8,10 @@ async function UpdateRequestStatus(
   status,
   account,
   note = null,
-  additionalDocs = [],
+  bills = [],
+  expected_release_date = null,
 ) {
-  const allowedStatuses = ["invoiced", "rejected", "released"];
+  const allowedStatuses = ["deficient", "invoiced", "released"];
 
   if (!allowedStatuses.includes(status)) {
     throw new Error("Invalid status for RMO");
@@ -18,16 +19,10 @@ async function UpdateRequestStatus(
 
   const request = await requestRepository.FindRequestById(requestId, null, {
     include: [
-      {
-        association: "student",
-      },
-      {
-        association: "requested_documents",
-        include: ["document"],
-      },
-      {
-        association: "additional_documents",
-      },
+      { association: "student" },
+      { association: "requested_documents", include: ["document"] },
+      { association: "additional_documents" },
+      { association: "bills" },
     ],
   });
 
@@ -35,23 +30,50 @@ async function UpdateRequestStatus(
     throw new Error("Request not found");
   }
 
-  if (status === "invoiced" && !request.isPending()) {
-    throw new Error("Only pending requests can be invoiced");
-  }
-
   const previousStatus = request.status;
 
-  const actions = {
-    invoiced: () => request.markInvoiced(),
-    rejected: () => request.markRejected(),
-    released: () => request.markReleased(),
-  };
+  if (status === "deficient") {
+    if (!request.isUnderReview()) {
+      throw new Error("Only under_review requests can be marked deficient");
+    }
 
-  if (!actions[status]) {
-    throw new Error("Invalid status");
+    request.markUnderReviewToDeficient();
   }
 
-  actions[status]();
+  if (status === "invoiced") {
+    if (request.isUnderReview()) {
+      request.markUnderReviewToInvoiced();
+    } else if (request.isDeficient()) {
+      request.markDeficientToInvoiced();
+    } else {
+      throw new Error(
+        "Only under_review or deficient requests can be invoiced",
+      );
+    }
+
+    if (Array.isArray(bills) && bills.length > 0) {
+      await Promise.all(
+        bills.map((bill) =>
+          requestRepository.CreateBill({
+            request_id: request.id,
+            name: bill.name,
+            price: bill.price,
+          }),
+        ),
+      );
+    }
+    if (expected_release_date) {
+      request.expected_release_date = expected_release_date;
+    }
+  }
+
+  if (status === "released") {
+    if (!request.isPaid()) {
+      throw new Error("Only paid requests can be released");
+    }
+
+    request.markPaidToReleased();
+  }
 
   await request.save();
 
@@ -66,9 +88,11 @@ async function UpdateRequestStatus(
   });
 
   await mailService.SendRMOUpdateMail({
-    request,
+    request: {
+      ...request.toJSON(),
+      notes: note,
+    },
     status,
-    reason: note,
   });
 
   return {

@@ -2,21 +2,38 @@ const Joi = require("joi");
 
 const updateRequestStatusSchema = Joi.object({
   status: Joi.string()
-    .valid("invoiced", "rejected", "released")
+    .valid("deficient", "invoiced", "released")
     .required()
     .messages({
       "string.empty": "Status is required",
-      "any.only": "Status must be invoiced, rejected, or released",
+      "any.only": "Status must be deficient, invoiced, or released",
       "any.required": "Status is required",
     }),
-
   note: Joi.when("status", {
-    is: "rejected",
+    is: "deficient",
     then: Joi.string().trim().required().messages({
-      "string.empty": "Rejection reason is required",
-      "any.required": "Rejection reason is required",
+      "string.empty": "Required documents must be provided",
+      "any.required": "Required documents must be provided",
     }),
     otherwise: Joi.string().trim().empty("").default(null).optional(),
+  }),
+  bills: Joi.when("status", {
+    is: "invoiced",
+    then: Joi.array()
+      .items(
+        Joi.object({
+          name: Joi.string().required(),
+          price: Joi.number().min(0).required(),
+        }),
+      )
+      .min(1)
+      .required(),
+    otherwise: Joi.forbidden(),
+  }),
+  expected_release_date: Joi.when("status", {
+    is: "invoiced",
+    then: Joi.date().required(),
+    otherwise: Joi.forbidden(),
   }),
 });
 

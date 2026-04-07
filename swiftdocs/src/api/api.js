@@ -14,6 +14,8 @@ api.interceptors.response.use(
     return Promise.reject(
       error.response?.data || { message: "Something went wrong" },
     );
+    // console.error(error);
+    // return Promise.reject(error.response?.data || error);
   },
 );
 

@@ -1,11 +1,12 @@
 // /middlewares/rate_limiter.js
 const rateLimit = require("express-rate-limit");
-const RedisStore = require("rate-limit-redis");
+const { ipKeyGenerator } = require("express-rate-limit");
+const { RedisStore } = require("rate-limit-redis");
 const redis = require("../config/redis");
 
 const createStore = (prefix) =>
   new RedisStore({
-    sendCommand: (...args) => redis.call(...args),
+    sendCommand: (...args) => redis.sendCommand(...args),
     prefix,
   });
 
@@ -44,7 +45,7 @@ const userLimiter = rateLimit({
   store: createStore("user:"),
   windowMs: 5 * 60 * 1000,
   max: 30,
-  keyGenerator: (req) => req.user?.id || req.ip,
+  keyGenerator: (req) => req.user?.id || ipKeyGenerator(req),
 });
 
 // Upload limiter (heavy endpoints)

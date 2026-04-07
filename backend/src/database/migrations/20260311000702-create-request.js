@@ -41,6 +41,7 @@ module.exports = {
         type: Sequelize.ENUM(
           "rejected",
           "deficient",
+          "balance_due",
           "under_review",
           "released",
           "pending",

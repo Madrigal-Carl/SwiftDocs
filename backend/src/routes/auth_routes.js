@@ -6,6 +6,8 @@ const requireAuth = require("../middlewares/auth");
 const requireGuest = require("../middlewares/guest");
 const requireRole = require("../middlewares/role");
 
+const { strictLimiter } = require("../middlewares/rate_limiter");
+
 const {
   validateRegister,
   validateLogin,
@@ -16,13 +18,20 @@ router.post(
   "/register",
   // requireGuest,
   requireAuth,
+  strictLimiter,
   requireRole("admin"),
   validateRegister,
   authController.register,
 );
 
 // Login
-router.post("/login", requireGuest, validateLogin, authController.login);
+router.post(
+  "/login",
+  requireGuest,
+  strictLimiter,
+  validateLogin,
+  authController.login,
+);
 
 // Logout
 router.post(

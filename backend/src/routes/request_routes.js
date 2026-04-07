@@ -8,10 +8,17 @@ const requestController = require("../controllers/request_controller");
 const { validateCreateRequest } = require("../validators/request_validator");
 const uploadRequirements = require("../middlewares/uploadRequirements");
 
+const {
+  strictLimiter,
+  userLimiter,
+  uploadLimiter,
+} = require("../middlewares/rate_limiter");
+
 // Request documents
 router.post(
   "/",
   allowGuestOrRMO,
+  uploadLimiter,
   uploadRequirements.array("requirements", 5),
   validateCreateRequest,
   requestController.CreateRequest,
@@ -21,6 +28,7 @@ router.post(
 router.post(
   "/status/:referenceNumber/send-email",
   requireGuest,
+  strictLimiter,
   requestController.SendRequestEmail,
 );
 
@@ -28,6 +36,7 @@ router.post(
 router.get(
   "/",
   requireAuth,
+  userLimiter,
   requireRole("admin", "rmo"),
   requestController.GetAllRequestsWithStudent,
 );
@@ -36,6 +45,7 @@ router.get(
 router.get(
   "/analytics",
   requireAuth,
+  userLimiter,
   requireRole("rmo", "cashier", "admin"),
   requestController.GetRequestAnalytics,
 );

@@ -7,11 +7,13 @@ const {
   validateUpdateRequestStatus,
 } = require("../validators/cashier_validator");
 const upload = require("../middlewares/upload");
+const { uploadLimiter, userLimiter } = require("../middlewares/rate_limiter");
 
 //get requests with invoiced and paid requests status for cashier
 router.get(
   "/requests",
   requireAuth,
+  userLimiter,
   requireRole("cashier"),
   cashierController.GetRequestsForCashier,
 );
@@ -20,6 +22,7 @@ router.get(
 router.patch(
   "/requests/:id/status",
   requireAuth,
+  uploadLimiter,
   requireRole("cashier"),
   (req, res, next) => {
     upload.array("proofs", 3)(req, res, function (err) {

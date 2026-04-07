@@ -12,13 +12,7 @@ const receiptRepository = require("../repositories/receipt_repository");
 async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
   let { search = "", status = "" } = filters;
 
-  const allowedStatuses = [
-    "pending",
-    "balance_due",
-    "under_review",
-    "paid",
-    "invoiced",
-  ];
+  const allowedStatuses = ["pending", "balance_due", "paid", "invoiced"];
 
   search = search.trim();
   status = status.trim();
@@ -57,7 +51,7 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
     attributes: ["status", "request_date"],
   });
 
-  const stats = computeStats(allRequests);
+  const stats = computeStats(allRequests, "year", "cashier");
 
   const { docs, pages, total } = await Request.paginate({
     page,

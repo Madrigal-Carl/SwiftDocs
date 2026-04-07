@@ -1,57 +1,55 @@
+// /middlewares/rate_limiter.js
 const rateLimit = require("express-rate-limit");
+const RedisStore = require("rate-limit-redis");
+const redis = require("../config/redis");
+
+const createStore = (prefix) =>
+  new RedisStore({
+    sendCommand: (...args) => redis.call(...args),
+    prefix,
+  });
 
 /*
 |--------------------------------------------------------------------------
-| GLOBAL LIMITER (light)
+| LIMITERS
 |--------------------------------------------------------------------------
 */
+
+// Global (light) limiter
 const globalLimiter = rateLimit({
+  store: createStore("global:"),
   windowMs: 15 * 60 * 1000,
-  max: 300, // overall traffic cap
+  max: 300,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-/*
-|--------------------------------------------------------------------------
-| NORMAL API LIMITER
-|--------------------------------------------------------------------------
-*/
+// API normal limiter
 const apiLimiter = rateLimit({
+  store: createStore("api:"),
   windowMs: 5 * 60 * 1000,
   max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
 });
 
-/*
-|--------------------------------------------------------------------------
-| STRICT LIMITER (auth, email, etc.)
-|--------------------------------------------------------------------------
-*/
+// Strict limiter (auth, login, email)
 const strictLimiter = rateLimit({
+  store: createStore("strict:"),
   windowMs: 10 * 60 * 1000,
   max: 5,
   message: { message: "Too many attempts. Try again later." },
 });
 
-/*
-|--------------------------------------------------------------------------
-| USER-BASED LIMITER (after auth)
-|--------------------------------------------------------------------------
-*/
+// User-based limiter (per user)
 const userLimiter = rateLimit({
+  store: createStore("user:"),
   windowMs: 5 * 60 * 1000,
   max: 30,
   keyGenerator: (req) => req.user?.id || req.ip,
 });
 
-/*
-|--------------------------------------------------------------------------
-| UPLOAD LIMITER (heavy endpoints)
-|--------------------------------------------------------------------------
-*/
+// Upload limiter (heavy endpoints)
 const uploadLimiter = rateLimit({
+  store: createStore("upload:"),
   windowMs: 5 * 60 * 1000,
   max: 10,
   message: { message: "Too many uploads. Please slow down." },

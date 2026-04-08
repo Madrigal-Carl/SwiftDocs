@@ -1,5 +1,5 @@
 function pendingTemplate(data) {
-  const fullName = data.student.getFullName();
+  const fullName = data.request.student.getFullName();
 
   return {
     subject: "Document Request Submitted Successfully",
@@ -21,7 +21,7 @@ function pendingTemplate(data) {
 }
 
 function balanceDueTemplate(data) {
-  const fullName = data.student.getFullName();
+  const fullName = data.request.student.getFullName();
 
   return {
     subject: "Outstanding Balance for Your Request",
@@ -43,7 +43,7 @@ function balanceDueTemplate(data) {
 }
 
 function underReviewTemplate(data) {
-  const fullName = data.student.getFullName();
+  const fullName = data.request.student.getFullName();
 
   return {
     subject: "Your Request is Under Review",
@@ -65,7 +65,7 @@ function underReviewTemplate(data) {
 }
 
 function deficientTemplate(data) {
-  const fullName = data.student.getFullName();
+  const fullName = data.request.student.getFullName();
 
   return {
     subject: "Additional Requirements Needed",
@@ -89,7 +89,7 @@ function deficientTemplate(data) {
 }
 
 function invoicedTemplate(data) {
-  const fullName = data.student.getFullName();
+  const fullName = data.request.student.getFullName();
   const documents = data.getDocumentSummary();
   const total = data.getGrandTotal();
 
@@ -120,7 +120,7 @@ function invoicedTemplate(data) {
 }
 
 function paidTemplate(data) {
-  const fullName = data.student.getFullName();
+  const fullName = data.request.student.getFullName();
   const documents = data.getDocumentSummary();
   const total = data.getGrandTotal();
 
@@ -151,7 +151,7 @@ function paidTemplate(data) {
 }
 
 function releasedTemplate(data) {
-  const fullName = data.student.getFullName();
+  const fullName = data.request.student.getFullName();
   const documents = data.getDocumentSummary();
 
   const docList = documents
@@ -183,7 +183,7 @@ function releasedTemplate(data) {
 }
 
 function rejectedTemplate(data) {
-  const fullName = data.student.getFullName();
+  const fullName = data.request.student.getFullName();
 
   return {
     subject: "Your Document Request Has Been Rejected",

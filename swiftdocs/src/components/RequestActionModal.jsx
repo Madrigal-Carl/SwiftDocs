@@ -11,7 +11,9 @@ export default function RequestActionModal({
 }) {
   const [remarks, setRemarks] = useState("");
   const [files, setFiles] = useState([]);
-  const [orNumber, setOrNumber] = useState(request ? request.or_number || "" : "");
+  const [orNumber, setOrNumber] = useState(
+    request ? request.or_number || "" : "",
+  );
   const [submitting, setSubmitting] = useState(false);
 
   if (!isOpen || !request) return null;
@@ -19,9 +21,13 @@ export default function RequestActionModal({
   const getApproveLabel = () => {
     switch (request.status) {
       case "pending":
-        return "Approve Review";
+      case "balance_due":
+        return "Validate Request";
+      case "under_review":
+      case "deficient":
+        return "Send to Billing";
       case "invoiced":
-        return "Approve Payment";
+        return "Mark Paid";
       case "paid":
         return "Release Request";
       default:
@@ -36,7 +42,6 @@ export default function RequestActionModal({
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
-      // Send remarks, files, AND OR number
       await onSubmit(remarks, files, orNumber);
       setRemarks("");
       setFiles([]);
@@ -54,7 +59,7 @@ export default function RequestActionModal({
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-semibold text-(--text-dark)">
-            {isReject ? "Reject Request" : getApproveLabel()}
+            {isReject ? "Decline Request" : getApproveLabel()}
           </h2>
           <button
             onClick={onClose}
@@ -95,71 +100,81 @@ export default function RequestActionModal({
         </div>
 
         {/* Cashier Actions */}
-        {action === "approve" && role === "cashier" && request.status === "invoiced" && (
-          <div className="mb-6">
-            {/* File Upload */}
-            <label className="text-xs text-gray-500 uppercase tracking-wider">
-              Upload Payment Proofs
-            </label>
-
-            <div className="mt-2">
-              <label className="flex flex-col items-center justify-center w-full p-4 border border-dashed border-(--border-light) rounded-lg cursor-pointer bg-(--bg-light) hover:bg-white transition">
-                <div className="flex flex-col items-center justify-center text-center">
-                  <FileText className="w-6 h-6 text-(--primary-500) mb-2" />
-                  <p className="text-sm font-medium text-(--text-dark)">Click to upload</p>
-                  <p className="text-xs text-gray-400">PNG, JPG (multiple allowed)</p>
-                </div>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={(e) => setFiles(Array.from(e.target.files))}
-                  className="hidden"
-                />
+        {action === "approve" &&
+          role === "cashier" &&
+          request.status === "invoiced" && (
+            <div className="mb-6">
+              {/* File Upload */}
+              <label className="text-xs text-gray-500 uppercase tracking-wider">
+                Upload Payment Proofs
               </label>
 
-              {/* Selected files */}
-              {files.length > 0 && (
-                <div className="mt-3 space-y-2">
-                  {files.map((file, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between px-3 py-2 text-xs rounded-lg bg-(--bg-light) border border-(--border-light)"
-                    >
-                      <span className="truncate">{file.name}</span>
-                      <button
-                        onClick={() =>
-                          setFiles((prev) => prev.filter((_, i) => i !== index))
-                        }
-                        className="text-red-500 hover:text-red-600"
+              <div className="mt-2">
+                <label className="flex flex-col items-center justify-center w-full p-4 border border-dashed border-(--border-light) rounded-lg cursor-pointer bg-(--bg-light) hover:bg-white transition">
+                  <div className="flex flex-col items-center justify-center text-center">
+                    <FileText className="w-6 h-6 text-(--primary-500) mb-2" />
+                    <p className="text-sm font-medium text-(--text-dark)">
+                      Click to upload
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      PNG, JPG (multiple allowed)
+                    </p>
+                  </div>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(e) => setFiles(Array.from(e.target.files))}
+                    className="hidden"
+                  />
+                </label>
+
+                {/* Selected files */}
+                {files.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    {files.map((file, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between px-3 py-2 text-xs rounded-lg bg-(--bg-light) border border-(--border-light)"
                       >
-                        <X size={14} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                        <span className="truncate">{file.name}</span>
+                        <button
+                          onClick={() =>
+                            setFiles((prev) =>
+                              prev.filter((_, i) => i !== index),
+                            )
+                          }
+                          className="text-red-500 hover:text-red-600"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* OR Number Input */}
+              <div className="mt-4">
+                <label className="text-xs text-gray-500 uppercase tracking-wider">
+                  OR Number
+                </label>
+                <input
+                  type="text"
+                  value={orNumber}
+                  onChange={(e) => setOrNumber(e.target.value)}
+                  placeholder="Enter OR number"
+                  className="w-full mt-2 p-3 text-sm border border-(--border-light) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-500)"
+                />
+              </div>
+
+              {files.length > 0 && (
+                <p className="text-xs text-gray-400 mt-1">
+                  {files.length} file(s) selected
+                </p>
               )}
             </div>
-
-            {/* OR Number Input */}
-            <div className="mt-4">
-              <label className="text-xs text-gray-500 uppercase tracking-wider">
-                OR Number
-              </label>
-              <input
-                type="text"
-                value={orNumber}
-                onChange={(e) => setOrNumber(e.target.value)}
-                placeholder="Enter OR number"
-                className="w-full mt-2 p-3 text-sm border border-(--border-light) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-500)"
-              />
-            </div>
-
-            {files.length > 0 && (
-              <p className="text-xs text-gray-400 mt-1">{files.length} file(s) selected</p>
-            )}
-          </div>
-        )}
+          )}
 
         {/* Remarks */}
         <div className="mb-6">
@@ -196,7 +211,7 @@ export default function RequestActionModal({
             {submitting
               ? "Processing..."
               : isReject
-                ? "Reject Request"
+                ? "Decline Request"
                 : getApproveLabel()}
           </button>
         </div>

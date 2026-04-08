@@ -39,14 +39,14 @@ export default function PaymentInformationCard({
       border: "border-orange-200",
       text: "text-orange-700",
       icon: "text-orange-600",
-      message: "Payment not required. Please settle the balance.",
+      message: "Payment not required. Settle balance needed.",
     },
     deficient: {
       bg: "bg-rose-50",
       border: "border-rose-200",
       text: "text-rose-700",
       icon: "text-rose-600",
-      message: "Submission is incomplete. Please provide missing requirements.",
+      message: "Submission is incomplete. Missing requirements.",
     },
   };
 

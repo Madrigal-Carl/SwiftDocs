@@ -11,7 +11,6 @@ import {
   Book,
   File,
   Download,
-  Stamp,
 } from "lucide-react";
 import StatusBadge from "../components/StatusBadge";
 import { fetchRequestByReference } from "../services/request_service.js";
@@ -27,7 +26,10 @@ import {
 } from "../services/rmo_service.js";
 import { showToast } from "../utils/swal.js";
 import { getNextStatus } from "../utils/requestStatus.js";
-import { updateCashierRequestStatus } from "../services/cashier_service";
+import {
+  updateCashierRequestStatus,
+  updateCashierRequestReview,
+} from "../services/cashier_service";
 
 export default function RequestView() {
   const { reference_number } = useParams();
@@ -134,7 +136,7 @@ export default function RequestView() {
                 className="flex items-center gap-4 px-4 py-2 text-sm font-semibold rounded-lg border border-red-300 text-red-600 hover:bg-red-50 transition-colors"
               >
                 <CircleX className="w-4 h-4" />
-                Reject
+                Decline
               </button>
             )}
 
@@ -691,15 +693,25 @@ export default function RequestView() {
               formData.append("status", nextStatus);
               formData.append("note", remarks);
               formData.append("reference_number", referenceNumber);
-
-              // Pass OR number
-              formData.append("or_number", orNumber); // <-- new line
+              formData.append("or_number", orNumber);
 
               files.forEach((file) => {
                 formData.append("proofs", file);
               });
 
-              await updateCashierRequestStatus(request.id, formData);
+              const isPaymentFlow =
+                request.status === "invoiced" && nextStatus === "paid";
+
+              if (isPaymentFlow) {
+                await updateCashierRequestStatus(request.id, formData);
+              } else {
+                const reviewPayload = {
+                  status: nextStatus,
+                  note: remarks,
+                };
+
+                await updateCashierRequestReview(request.id, reviewPayload);
+              }
             }
 
             showToast("success", `Request ${nextStatus} successfully!`);

@@ -12,8 +12,8 @@ const updateRequestStatusSchema = Joi.object({
   note: Joi.when("status", {
     is: "deficient",
     then: Joi.string().trim().required().messages({
-      "string.empty": "Required documents must be provided",
-      "any.required": "Required documents must be provided",
+      "string.empty": "Remarks/Reason is needed",
+      "any.required": "Remarks/Reason is needed",
     }),
     otherwise: Joi.string().trim().empty("").default(null).optional(),
   }),

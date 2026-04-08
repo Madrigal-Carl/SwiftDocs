@@ -161,11 +161,9 @@ async function ApprovePayment(requestId, account, note, proofPaths, orNumber) {
   });
 
   await mailService.SendCashierUpdateMail({
-    request: {
-      ...request.toJSON(),
-      notes: note,
-    },
-    status: "paid",
+    request: request,
+    status: emailStatus,
+    notes: note,
   });
 
   request.or_number = orNumber;
@@ -225,11 +223,9 @@ async function UpdateToReview(requestId, status, account, note = null) {
 
   if (emailStatus) {
     await mailService.SendCashierUpdateMail({
-      request: {
-        ...request.toJSON(),
-        notes: note,
-      },
+      request: request,
       status: emailStatus,
+      notes: note,
     });
   }
 

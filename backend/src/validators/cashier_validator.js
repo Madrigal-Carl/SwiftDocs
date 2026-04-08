@@ -76,7 +76,14 @@ const reviewSchema = Joi.object({
     .messages({
       "any.only": "Status must be under_review or balance_due",
     }),
-  note: Joi.string().trim().empty("").default(null).optional(),
+  note: Joi.when("status", {
+    is: "balance_due",
+    then: Joi.string().trim().required().messages({
+      "any.required": "Remarks/Reason is needed",
+      "string.empty": "Remarks/Reason is needed",
+    }),
+    otherwise: Joi.string().trim().allow("", null).optional(),
+  }),
 });
 
 function validateUpdateToReview(req, res, next) {

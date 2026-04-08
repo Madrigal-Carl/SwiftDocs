@@ -88,11 +88,9 @@ async function UpdateRequestStatus(
   });
 
   await mailService.SendRMOUpdateMail({
-    request: {
-      ...request.toJSON(),
-      notes: note,
-    },
+    request: request,
     status,
+    notes: note,
   });
 
   return {

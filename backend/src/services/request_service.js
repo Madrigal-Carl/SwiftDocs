@@ -182,8 +182,6 @@ async function GetRequestWithStudent(requestId) {
   const formattedLogs = (request.logs || []).map((log) => {
     const account = log.account;
 
-    let full_name = null;
-
     return {
       ...log.toJSON(),
       account_full_name: account ? account.getFullName() : null,

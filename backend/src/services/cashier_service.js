@@ -46,13 +46,6 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
     ];
   }
 
-  const allRequests = await Request.findAll({
-    where: { status: allowedStatuses },
-    attributes: ["status", "request_date"],
-  });
-
-  const stats = computeStats(allRequests, "year", "cashier");
-
   const { docs, pages, total } = await Request.paginate({
     page,
     paginate: limit,
@@ -102,7 +95,6 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
   return {
     data: result,
     pagination: { total, pages, page, limit },
-    stats,
   };
 }
 

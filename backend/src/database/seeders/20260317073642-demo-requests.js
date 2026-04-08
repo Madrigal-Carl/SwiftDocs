@@ -67,7 +67,14 @@ module.exports = {
         "released",
       ]);
 
-      const requestDate = faker.date.past();
+      const currentYear = new Date().getFullYear();
+      const requestDate = faker.date
+        .between({
+          from: new Date(`${currentYear}-01-01`),
+          to: new Date(),
+        })
+        .toISOString()
+        .split("T")[0];
       const hasExpectedRelease = ["invoiced", "paid", "released"].includes(
         status,
       );

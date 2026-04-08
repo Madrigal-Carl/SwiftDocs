@@ -47,7 +47,9 @@ async function GetAllRequestsWithStudent(req, res) {
 
 async function GetRequestAnalytics(req, res) {
   const timeframe = req.query.timeframe || "year";
-  const stats = await requestService.GetRequestAnalytics(timeframe);
+  const role = req.user?.role || "admin";
+
+  const stats = await requestService.GetRequestAnalytics(timeframe, role);
 
   res.json(stats);
 }

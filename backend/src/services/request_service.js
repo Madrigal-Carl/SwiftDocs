@@ -244,10 +244,38 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
   };
 }
 
-async function GetRequestAnalytics(timeframe = "year") {
+async function GetRequestAnalytics(timeframe = "year", role = "admin") {
   const requests = await requestRepository.GetAllRequestStatuses();
 
-  const stats = computeStats(requests, timeframe);
+  const STATUS_MAP = {
+    cashier: ["pending", "balance_due", "invoiced", "paid"],
+    rmo: [
+      "under review",
+      "deficient",
+      "invoiced",
+      "paid",
+      "released",
+      "rejected",
+    ],
+    admin: [
+      "pending",
+      "balance due",
+      "under review",
+      "deficient",
+      "invoiced",
+      "paid",
+      "released",
+      "rejected",
+    ],
+  };
+
+  const allowedStatuses = STATUS_MAP[role] || STATUS_MAP.admin;
+
+  const filteredRequests = requests.filter((req) =>
+    allowedStatuses.includes(req.status),
+  );
+
+  const stats = computeStats(filteredRequests, timeframe);
 
   return stats;
 }

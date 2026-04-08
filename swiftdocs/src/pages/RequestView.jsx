@@ -510,30 +510,6 @@ export default function RequestView() {
 
         {/* Right Column - Smaller */}
         <div className="space-y-6">
-          {/* Special Order Card */}
-          {request.special_order && (
-            <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
-                  <Stamp className="w-4 h-4 text-(--primary-600)" />
-                </div>
-                <h3 className="font-semibold text-(--text-dark)">
-                  Special Order
-                </h3>
-              </div>
-
-              <div className="flex items-center justify-between p-3 rounded-lg">
-                <p className="text-xs text-gray-500 uppercase tracking-wider">
-                  Special Order Number
-                </p>
-
-                <p className="text-sm font-semibold text-(--text-dark)">
-                  {request.special_order.so_number}
-                </p>
-              </div>
-            </div>
-          )}
-
           {/* Requirements Card */}
           <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">

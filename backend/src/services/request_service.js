@@ -8,7 +8,6 @@ const requirementRepository = require("../repositories/requirement_repository");
 const additionalDocumentRepository = require("../repositories/additional_document_repository");
 const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
-const specialOrderRepository = require("../repositories/special_order_repository");
 
 async function RequestDocuments(data, files = []) {
   const result = await sequelize.transaction(async (t) => {
@@ -97,9 +96,6 @@ async function RequestDocuments(data, files = []) {
         {
           association: "requirements",
         },
-        {
-          association: "special_order",
-        },
       ],
     });
   });
@@ -179,9 +175,6 @@ async function GetRequestWithStudent(requestId) {
       },
       {
         association: "or_number",
-      },
-      {
-        association: "special_order",
       },
     ],
   });
@@ -316,9 +309,6 @@ async function GetRequestByReferenceNumber(referenceNumber) {
         },
         {
           association: "or_number",
-        },
-        {
-          association: "special_order",
         },
       ],
     },

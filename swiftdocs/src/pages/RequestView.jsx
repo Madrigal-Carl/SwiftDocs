@@ -703,9 +703,9 @@ export default function RequestView() {
             if (user.role === "cashier") {
               const formData = new FormData();
               formData.append("status", nextStatus);
-              formData.append("note", remarks);
+              formData.append("note", note);
               formData.append("reference_number", referenceNumber);
-              formData.append("or_number", orNumber);
+              formData.append("or_number", or_number);
 
               files.forEach((file) => {
                 formData.append("proofs", file);
@@ -719,7 +719,7 @@ export default function RequestView() {
               } else {
                 const reviewPayload = {
                   status: nextStatus,
-                  note: remarks,
+                  note: note,
                 };
 
                 await updateCashierRequestReview(request.id, reviewPayload);

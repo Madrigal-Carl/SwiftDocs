@@ -3,7 +3,6 @@ const { Op } = Sequelize;
 const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
-const { computeStats } = require("../utils/stats_computation");
 const receiptRepository = require("../repositories/receipt_repository");
 
 /**
@@ -130,8 +129,14 @@ async function ApprovePayment(requestId, account, note, proofPaths, orNumber) {
     throw new Error("Only invoiced requests can be marked as paid");
   }
 
-  if (!orNumber) {
-    throw new Error("OR number is required");
+  const existingOR = await OR_Number.findOne({
+    where: {
+      or_number: orNumber,
+    },
+  });
+
+  if (existingOR) {
+    throw new Error("OR number already exists");
   }
 
   const previousStatus = request.status;
@@ -162,7 +167,7 @@ async function ApprovePayment(requestId, account, note, proofPaths, orNumber) {
 
   await mailService.SendCashierUpdateMail({
     request: request,
-    status: emailStatus,
+    status: "paid",
     notes: note,
   });
 

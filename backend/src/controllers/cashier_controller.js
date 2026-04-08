@@ -23,7 +23,6 @@ async function ApprovePayment(req, res) {
 
   const request = await cashierService.ApprovePayment(
     Number(req.params.id),
-    req.body.status,
     req.user,
     req.body.note,
     proofPaths,

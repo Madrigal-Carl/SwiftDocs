@@ -51,9 +51,17 @@ async function UpdateRequestStatus(
       );
     }
 
-    if (Array.isArray(bills) && bills.length > 0) {
+    const validBills = (bills || []).filter(
+      (b) => b.name?.trim() !== "" && b.price !== "" && b.price !== null,
+    );
+
+    if (request.delivery_method === "delivery" && validBills.length === 0) {
+      throw new Error("At least one bill is required for delivery requests");
+    }
+
+    if (validBills.length > 0) {
       await Promise.all(
-        bills.map((bill) =>
+        validBills.map((bill) =>
           requestRepository.CreateBill({
             request_id: request.id,
             name: bill.name,
@@ -117,8 +125,8 @@ async function UpdateAdditionalDocumentPrices(
     throw new Error("Request not found");
   }
 
-  if (!request.isPending()) {
-    throw new Error("Prices can only be updated while request is pending");
+  if (!request.isUnderReview()) {
+    throw new Error("Prices can only be updated while request is under review");
   }
 
   for (const doc of additionalDocs) {

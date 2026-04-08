@@ -89,9 +89,11 @@ function deficientTemplate(data) {
 }
 
 function invoicedTemplate(data) {
-  const fullName = data.request.student.getFullName();
-  const documents = data.getDocumentSummary();
-  const total = data.getGrandTotal();
+  const req = data.request;
+
+  const fullName = req.student.getFullName();
+  const documents = req.getDocumentSummary();
+  const total = req.getGrandTotal();
 
   const docList = documents
     .map((d) => `<li>${d.type} (x${d.quantity}) - ₱${d.total}</li>`)
@@ -103,12 +105,10 @@ function invoicedTemplate(data) {
       <p>Dear ${fullName},</p>
 
       <p>Your document request with reference number 
-      <strong>${data.reference_number}</strong> has been invoiced.</p>
+      <strong>${req.reference_number}</strong> has been invoiced.</p>
 
       <p><strong>Requested Documents:</strong></p>
-      <ul>
-        ${docList}
-      </ul>
+      <ul>${docList}</ul>
 
       <p><strong>Total Amount: ₱${total}</strong></p>
 
@@ -120,9 +120,11 @@ function invoicedTemplate(data) {
 }
 
 function paidTemplate(data) {
-  const fullName = data.request.student.getFullName();
-  const documents = data.getDocumentSummary();
-  const total = data.getGrandTotal();
+  const req = data.request;
+
+  const fullName = req.student.getFullName();
+  const documents = req.getDocumentSummary();
+  const total = req.getGrandTotal();
 
   const docList = documents
     .map((d) => `<li>${d.type} (x${d.quantity})</li>`)
@@ -151,8 +153,10 @@ function paidTemplate(data) {
 }
 
 function releasedTemplate(data) {
-  const fullName = data.request.student.getFullName();
-  const documents = data.getDocumentSummary();
+  const req = data.request;
+
+  const fullName = req.student.getFullName();
+  const documents = req.getDocumentSummary();
 
   const docList = documents
     .map((d) => `<li>${d.type} (x${d.quantity})</li>`)

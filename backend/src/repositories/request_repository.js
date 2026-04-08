@@ -1,4 +1,4 @@
-const { Request, Sequelize } = require("../database/models");
+const { Request, Bill, Sequelize } = require("../database/models");
 const { Op } = Sequelize;
 
 function CreateRequest(data, transaction) {
@@ -10,6 +10,10 @@ function FindRequestById(id, transaction = null, options = {}) {
     transaction,
     ...options,
   });
+}
+
+function CreateBill(data, transaction = null) {
+  return Bill.create(data, { transaction });
 }
 
 async function FindByReferenceNumber(referenceNumber, options = {}) {
@@ -145,6 +149,7 @@ async function GetAllRequestStatuses() {
 
 module.exports = {
   CreateRequest,
+  CreateBill,
   FindRequestById,
   FindByReferenceNumber,
   GetAllRequestStatuses,

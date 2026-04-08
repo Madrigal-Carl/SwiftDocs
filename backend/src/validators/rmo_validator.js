@@ -9,6 +9,40 @@ const updateRequestStatusSchema = Joi.object({
       "any.only": "Status must be deficient, invoiced, or released",
       "any.required": "Status is required",
     }),
+  bills: Joi.when("status", {
+    is: "invoiced",
+    then: Joi.array()
+      .items(
+        Joi.object({
+          name: Joi.string().required().messages({
+            "string.empty": "Bill name is required",
+            "any.required": "Bill name is required",
+          }),
+          price: Joi.number().min(0).required().messages({
+            "number.base": "Bill price must be a number",
+            "number.min": "Bill price must be at least 0",
+            "any.required": "Bill price is required",
+          }),
+        }),
+      )
+      .min(1)
+      .optional()
+      .messages({
+        "array.base": "Bills must be an array",
+        "array.min": "At least one bill is required when status is invoiced",
+      }),
+    otherwise: Joi.forbidden().messages({
+      "any.unknown": "Bills are not allowed unless status is invoiced",
+    }),
+  }),
+  expected_release_date: Joi.when("status", {
+    is: "invoiced",
+    then: Joi.date().required().messages({
+      "any.required": "Expected release date is required",
+      "date.base": "Expected release date must be a valid date",
+    }),
+    otherwise: Joi.string().trim().empty("").default(null).optional(),
+  }),
   note: Joi.when("status", {
     is: "deficient",
     then: Joi.string().trim().required().messages({
@@ -16,24 +50,6 @@ const updateRequestStatusSchema = Joi.object({
       "any.required": "Remarks/Reason is needed",
     }),
     otherwise: Joi.string().trim().empty("").default(null).optional(),
-  }),
-  bills: Joi.when("status", {
-    is: "invoiced",
-    then: Joi.array()
-      .items(
-        Joi.object({
-          name: Joi.string().required(),
-          price: Joi.number().min(0).required(),
-        }),
-      )
-      .min(1)
-      .required(),
-    otherwise: Joi.forbidden(),
-  }),
-  expected_release_date: Joi.when("status", {
-    is: "invoiced",
-    then: Joi.date().required(),
-    otherwise: Joi.forbidden(),
   }),
 });
 

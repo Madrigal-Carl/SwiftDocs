@@ -10,10 +10,25 @@ export default function RequestActionModal({
   role,
 }) {
   const [remarks, setRemarks] = useState("");
+  const [expectedReleaseDate, setExpectedReleaseDate] = useState("");
   const [files, setFiles] = useState([]);
   const [orNumber, setOrNumber] = useState(
     request ? request.or_number || "" : "",
   );
+  const [bills, setBills] = useState([{ name: "", price: "" }]);
+  const handleBillChange = (index, field, value) => {
+    setBills((prev) => {
+      const updated = [...prev];
+      updated[index][field] = value;
+      return updated;
+    });
+  };
+  const addBill = () => {
+    setBills((prev) => [...prev, { name: "", price: "" }]);
+  };
+  const removeBill = (index) => {
+    setBills((prev) => prev.filter((_, i) => i !== index));
+  };
   const [submitting, setSubmitting] = useState(false);
 
   if (!isOpen || !request) return null;
@@ -42,9 +57,20 @@ export default function RequestActionModal({
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
-      await onSubmit(remarks, files, orNumber);
+      const validBills = bills.filter(
+        (b) => b.name?.trim() !== "" || b.price?.toString().trim() !== "",
+      );
+
+      await onSubmit({
+        note: remarks,
+        files,
+        or_number: orNumber,
+        expected_release_date: expectedReleaseDate,
+        ...(validBills.length > 0 && { bills: validBills }),
+      });
       setRemarks("");
       setFiles([]);
+      setExpectedReleaseDate("");
       setOrNumber("");
     } finally {
       setSubmitting(false);
@@ -175,6 +201,79 @@ export default function RequestActionModal({
               )}
             </div>
           )}
+
+        {(role === "rmo" && request.status === "under_review") ||
+          (request.status === "deficient" && action === "approve" && (
+            <div className="flex flex-col gap-4 mb-4">
+              <div>
+                <label className="text-xs text-gray-500 uppercase tracking-wider">
+                  Bills
+                </label>
+
+                <div className="mt-2 space-y-3">
+                  {bills.map((bill, index) => (
+                    <div
+                      key={index}
+                      className="flex gap-2 items-center p-3 border border-(--border-light) rounded-lg bg-(--bg-light)"
+                    >
+                      {/* Name */}
+                      <input
+                        type="text"
+                        value={bill.name}
+                        onChange={(e) =>
+                          handleBillChange(index, "name", e.target.value)
+                        }
+                        placeholder="Bill name"
+                        className="flex-1 p-2 text-sm border border-(--border-light) rounded-md focus:outline-none focus:ring-2 focus:ring-(--primary-500)"
+                      />
+
+                      {/* Price */}
+                      <input
+                        type="number"
+                        value={bill.price}
+                        onChange={(e) =>
+                          handleBillChange(index, "price", e.target.value)
+                        }
+                        placeholder="Price"
+                        className="w-28 p-2 text-sm border border-(--border-light) rounded-md focus:outline-none focus:ring-2 focus:ring-(--primary-500)"
+                      />
+
+                      {/* Remove */}
+                      {bills.length > 1 && (
+                        <button
+                          onClick={() => removeBill(index)}
+                          className="text-red-500 text-xs hover:text-red-600"
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+
+                  {/* Add Button */}
+                  <button
+                    onClick={addBill}
+                    className="text-xs text-(--primary-600) hover:underline"
+                  >
+                    + Add another bill
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs text-gray-500 uppercase tracking-wider">
+                  Expected Release Date
+                </label>
+
+                <input
+                  type="date"
+                  value={expectedReleaseDate}
+                  onChange={(e) => setExpectedReleaseDate(e.target.value)}
+                  className="w-full mt-2 p-3 text-sm border border-(--border-light) rounded-lg focus:outline-none focus:ring-2 focus:ring-(--primary-500)"
+                />
+              </div>
+            </div>
+          ))}
 
         {/* Remarks */}
         <div className="mb-6">

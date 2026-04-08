@@ -11,11 +11,7 @@ export async function updateRmoAdditionalDocumentPrices(
   return res.data;
 }
 
-export async function updateRmoRequestStatus(id, status, note) {
-  const res = await api.patch(`/rmo/requests/${id}/status`, {
-    status,
-    note,
-  });
-
+export async function updateRmoRequestStatus(id, data) {
+  const res = await api.patch(`/rmo/requests/${id}/status`, data);
   return res.data;
 }

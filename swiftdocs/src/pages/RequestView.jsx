@@ -41,7 +41,8 @@ export default function RequestView() {
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [referenceNumber, setReferenceNumber] = useState("");
-  const isRmoPending = user?.role === "rmo" && request?.status === "pending";
+  const isRmoPending =
+    user?.role === "rmo" && request?.status === "under_review";
 
   const [additionalDocsState, setAdditionalDocsState] = useState([]);
 
@@ -513,67 +514,68 @@ export default function RequestView() {
         {/* Right Column - Smaller */}
         <div className="space-y-6">
           {/* Requirements Card */}
-          <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
-                <File className="w-4 h-4 text-(--primary-600)" />
+
+          {request.requirements.length !== 0 && (
+            <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
+                  <File className="w-4 h-4 text-(--primary-600)" />
+                </div>
+                <h3 className="font-semibold text-(--text-dark)">
+                  Requirements
+                </h3>
               </div>
-              <h3 className="font-semibold text-(--text-dark)">Requirements</h3>
-            </div>
 
-            <div className="space-y-3">
-              {request.requirements.length === 0 && (
-                <p className="text-sm text-gray-500">No requirements.</p>
-              )}
+              <div className="space-y-3">
+                {request.requirements.map((file, index) => {
+                  const fileUrl = `${BASE_URL}/${file.path}`;
+                  const fileName = getFileName(file.path);
+                  const ext = fileName.split(".").pop().toUpperCase();
 
-              {request.requirements.map((file, index) => {
-                const fileUrl = `${BASE_URL}/${file.path}`;
-                const fileName = getFileName(file.path);
-                const ext = fileName.split(".").pop().toUpperCase();
+                  const isImage = ["JPG", "JPEG", "PNG"].includes(ext);
 
-                const isImage = ["JPG", "JPEG", "PNG"].includes(ext);
-
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 border border-(--border-light) rounded-lg hover:bg-(--bg-light)/50 transition-colors group"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0
-              ${isImage ? "bg-blue-50" : "bg-red-50"}`}
-                      >
-                        <span
-                          className={`text-xs font-bold
-                ${isImage ? "text-blue-600" : "text-red-600"}`}
-                        >
-                          {ext}
-                        </span>
-                      </div>
-
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-(--text-dark) truncate">
-                          {fileName}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Uploaded requirement
-                        </p>
-                      </div>
-                    </div>
-
-                    <a
-                      href={fileUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="p-2 rounded-lg hover:bg-(--primary-100) text-gray-400 hover:text-(--primary-600) transition-colors"
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 border border-(--border-light) rounded-lg hover:bg-(--bg-light)/50 transition-colors group"
                     >
-                      <Download className="w-4 h-4" />
-                    </a>
-                  </div>
-                );
-              })}
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div
+                          className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0
+              ${isImage ? "bg-blue-50" : "bg-red-50"}`}
+                        >
+                          <span
+                            className={`text-xs font-bold
+                ${isImage ? "text-blue-600" : "text-red-600"}`}
+                          >
+                            {ext}
+                          </span>
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-(--text-dark) truncate">
+                            {fileName}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Uploaded requirement
+                          </p>
+                        </div>
+                      </div>
+
+                      <a
+                        href={fileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="p-2 rounded-lg hover:bg-(--primary-100) text-gray-400 hover:text-(--primary-600) transition-colors"
+                      >
+                        <Download className="w-4 h-4" />
+                      </a>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Payment Information Card */}
           <PaymentInformationCard
@@ -642,7 +644,13 @@ export default function RequestView() {
         request={request}
         role={user.role}
         onClose={() => setModalOpen(false)}
-        onSubmit={async (remarks, files, orNumber) => {
+        onSubmit={async ({
+          note,
+          files,
+          or_number,
+          expected_release_date,
+          bills,
+        }) => {
           // <-- added orNumber
           const nextStatus = getNextStatus(
             user.role,
@@ -684,8 +692,12 @@ export default function RequestView() {
                   );
                 }
               }
-
-              await updateRmoRequestStatus(request.id, nextStatus, remarks);
+              await updateRmoRequestStatus(request.id, {
+                status: nextStatus,
+                note,
+                expected_release_date,
+                bills: nextStatus === "invoiced" ? bills : undefined,
+              });
             }
 
             if (user.role === "cashier") {

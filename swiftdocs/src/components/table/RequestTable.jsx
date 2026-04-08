@@ -10,7 +10,10 @@ import RequestActionModal from "../RequestActionModal.jsx";
 import { showToast } from "../../utils/swal.js";
 import { getNextStatus } from "../../utils/requestStatus.js";
 import { updateRmoRequestStatus } from "../../services/rmo_service.js";
-import { updateCashierRequestStatus } from "../../services/cashier_service";
+import {
+  updateCashierRequestStatus,
+  updateCashierRequestReview,
+} from "../../services/cashier_service";
 
 export default function RequestTable() {
   const { user } = useAuth();
@@ -333,7 +336,13 @@ export default function RequestTable() {
           setModalOpen(false);
           setSelectedRequest(null);
         }}
-        onSubmit={async (remarks, files) => {
+        onSubmit={async ({
+          note,
+          files,
+          or_number,
+          expected_release_date,
+          bills,
+        }) => {
           const nextStatus = getNextStatus(
             user.role,
             selectedRequest.status,
@@ -349,19 +358,40 @@ export default function RequestTable() {
             if (user.role === "cashier") {
               const formData = new FormData();
               formData.append("status", nextStatus);
-              formData.append("note", remarks);
+              formData.append("note", note);
+              formData.append(
+                "reference_number",
+                selectedRequest.reference_number,
+              );
+              formData.append("or_number", or_number);
 
-              files.forEach((file) => {
+              (files || []).forEach((file) => {
                 formData.append("proofs", file);
               });
 
-              await updateCashierRequestStatus(selectedRequest.id, formData);
+              const isPaymentFlow =
+                selectedRequest.status === "invoiced" && nextStatus === "paid";
+
+              if (isPaymentFlow) {
+                await updateCashierRequestStatus(selectedRequest.id, formData);
+              } else {
+                const reviewPayload = {
+                  status: nextStatus,
+                  note,
+                };
+
+                await updateCashierRequestReview(
+                  selectedRequest.id,
+                  reviewPayload,
+                );
+              }
             } else {
-              await updateRmoRequestStatus(
-                selectedRequest.id,
-                nextStatus,
-                remarks,
-              );
+              await updateRmoRequestStatus(selectedRequest.id, {
+                status: nextStatus,
+                note,
+                expected_release_date,
+                bills: nextStatus === "invoiced" ? bills : undefined,
+              });
             }
 
             showToast("success", `Request ${nextStatus} successfully!`);

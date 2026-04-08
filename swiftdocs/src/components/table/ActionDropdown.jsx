@@ -74,7 +74,9 @@ export default function ActionDropdown({
       )}
 
       {approve &&
-        (status !== "pending" || (status === "pending" && !other)) && (
+        (status === "under_review" || status === "deficient"
+          ? other
+          : status !== "pending" || (status === "pending" && !other)) && (
           <button
             onClick={() => {
               onApprove?.();

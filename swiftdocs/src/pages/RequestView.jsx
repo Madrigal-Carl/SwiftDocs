@@ -42,7 +42,8 @@ export default function RequestView() {
   const [loading, setLoading] = useState(true);
   const [referenceNumber, setReferenceNumber] = useState("");
   const isRmoPending =
-    user?.role === "rmo" && request?.status === "under_review";
+    user?.role === "rmo" &&
+    (request?.status === "under_review" || request?.status === "deficient");
 
   const [additionalDocsState, setAdditionalDocsState] = useState([]);
 

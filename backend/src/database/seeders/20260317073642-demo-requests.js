@@ -223,8 +223,7 @@ module.exports = {
           request_id: request.id,
           type: faker.commerce.productName(),
           quantity: faker.number.int({ min: 1, max: 3 }),
-          unit_price:
-            status === "pending" ? 0 : faker.number.int({ min: 50, max: 500 }),
+          unit_price: isBilling ? faker.number.int({ min: 50, max: 500 }) : 0,
         });
       }
 

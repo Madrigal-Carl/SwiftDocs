@@ -24,7 +24,11 @@ module.exports = {
       where: { role: "cashier" },
     });
 
-    for (let i = 0; i < 30; i++) {
+    // ✅ Distribution controls
+    const todayProbability = 0.2; // 20% today cases
+    const onTimeProbability = 0.4; // 40% on-time
+
+    for (let i = 0; i < 100; i++) {
       // ------------------------
       // 1. Student
       // ------------------------
@@ -55,7 +59,7 @@ module.exports = {
       });
 
       // ------------------------
-      // 2. Status
+      // 2. Status (INCLUDING REJECTED)
       // ------------------------
       const status = faker.helpers.arrayElement([
         "pending",
@@ -65,9 +69,15 @@ module.exports = {
         "invoiced",
         "paid",
         "released",
+        "rejected", // ✅ added
       ]);
 
+      const isRejected = status === "rejected";
+      const isBilling = ["invoiced", "paid", "released"].includes(status);
+      const isReleased = status === "released";
+
       const currentYear = new Date().getFullYear();
+
       const requestDate = faker.date
         .between({
           from: new Date(`${currentYear}-01-01`),
@@ -75,20 +85,106 @@ module.exports = {
         })
         .toISOString()
         .split("T")[0];
-      const hasExpectedRelease = ["invoiced", "paid", "released"].includes(
-        status,
-      );
-      const expectedRelease = hasExpectedRelease
-        ? faker.date.soon({
-            days: 10,
-            refDate: requestDate,
-          })
-        : null;
 
-      const requestCompleted =
-        status === "released"
-          ? faker.date.between({ from: requestDate, to: expectedRelease })
-          : null;
+      const requestDateObj = new Date(requestDate);
+
+      const today = new Date();
+
+      let expectedRelease = null;
+      let requestCompleted = null;
+
+      // ------------------------
+      // REJECTED CASE (no logs, null dates)
+      // ------------------------
+      if (isRejected) {
+        expectedRelease = null;
+        requestCompleted = null;
+      } else {
+        // ------------------------
+        // expected_release_date
+        // ------------------------
+        if (isBilling) {
+          const isTodayCase = faker.datatype.boolean({
+            probability: todayProbability,
+          });
+
+          if (isTodayCase) {
+            expectedRelease = today;
+          } else {
+            const isFuture = faker.datatype.boolean({ probability: 0.5 });
+
+            if (isFuture) {
+              // future expected release
+              expectedRelease = faker.date.soon({
+                days: faker.number.int({ min: 1, max: 14 }),
+                refDate: requestDateObj,
+              });
+            } else {
+              // past expected release (overdue scenario)
+              expectedRelease = faker.date.recent({ days: 30 });
+            }
+          }
+        }
+
+        // ------------------------
+        // request_completed
+        // ------------------------
+        if (isReleased) {
+          const isTodayCase = faker.datatype.boolean({
+            probability: todayProbability,
+          });
+
+          if (isTodayCase) {
+            requestCompleted = today;
+          } else {
+            const isOnTime = faker.datatype.boolean({
+              probability: onTimeProbability,
+            });
+
+            if (isOnTime) {
+              // ON TIME
+              requestCompleted = faker.date.soon({
+                days: faker.number.int({ min: 1, max: 5 }),
+                refDate: new Date(expectedRelease),
+              });
+            } else {
+              // LATE (still completed but after request date and before/around expected)
+              const from = requestDateObj;
+              const to = new Date(expectedRelease);
+
+              requestCompleted = faker.date.between({
+                from: from < to ? from : to,
+                to: from < to ? to : from,
+              });
+            }
+          }
+        }
+
+        if ((status === "invoiced" || status === "paid") && !requestCompleted) {
+          const isWithinDeadline = faker.datatype.boolean({ probability: 0.7 });
+
+          if (isWithinDeadline && expectedRelease) {
+            const isFuture = faker.datatype.boolean({ probability: 0.6 });
+
+            if (isFuture) {
+              expectedRelease = faker.date.soon({
+                days: faker.number.int({ min: 1, max: 14 }),
+                refDate: requestDateObj,
+              });
+            } else {
+              const now = new Date();
+              const max = faker.date.soon({
+                days: faker.number.int({ min: 1, max: 3 }),
+                refDate: now,
+              });
+
+              expectedRelease = max;
+            }
+
+            requestCompleted = null;
+          }
+        }
+      }
 
       const request = await Request.create({
         student_id: student.id,
@@ -133,7 +229,7 @@ module.exports = {
       }
 
       // ------------------------
-      // 5. Bills (ONLY invoiced+)
+      // 5. Bills
       // ------------------------
       if (["invoiced", "paid", "released"].includes(status)) {
         const billCount = faker.number.int({ min: 0, max: 3 });
@@ -148,67 +244,68 @@ module.exports = {
       }
 
       // ------------------------
-      // 6. LOG FLOW (FULL PATH)
+      // 6. LOG FLOW (SKIP REJECTED)
       // ------------------------
       const logs = [];
 
-      const addLog = (from, to, role, account) => {
-        logs.push({
-          account_id: account.id,
-          request_id: request.id,
-          role,
-          action: to,
-          from_status: from,
-          to_status: to,
-          notes: request.notes,
-          created_at: new Date(),
-          updated_at: new Date(),
-        });
-      };
+      if (!isRejected) {
+        const addLog = (from, to, role, account) => {
+          logs.push({
+            account_id: account.id,
+            request_id: request.id,
+            role,
+            action: to,
+            from_status: from,
+            to_status: to,
+            notes: request.notes,
+            created_at: new Date(),
+            updated_at: new Date(),
+          });
+        };
 
-      // simulate real flow
-      switch (status) {
-        case "balance_due":
-          addLog("pending", "balance_due", "cashier", cashierAccount);
-          break;
-
-        case "under_review":
-          if (faker.datatype.boolean()) {
+        switch (status) {
+          case "balance_due":
             addLog("pending", "balance_due", "cashier", cashierAccount);
-            addLog("balance_due", "under_review", "cashier", cashierAccount);
-          } else {
+            break;
+
+          case "under_review":
+            if (faker.datatype.boolean()) {
+              addLog("pending", "balance_due", "cashier", cashierAccount);
+              addLog("balance_due", "under_review", "cashier", cashierAccount);
+            } else {
+              addLog("pending", "under_review", "cashier", cashierAccount);
+            }
+            break;
+
+          case "deficient":
             addLog("pending", "under_review", "cashier", cashierAccount);
-          }
-          break;
-
-        case "deficient":
-          addLog("pending", "under_review", "cashier", cashierAccount);
-          addLog("under_review", "deficient", "rmo", rmoAccount);
-          break;
-
-        case "invoiced":
-          addLog("pending", "under_review", "cashier", cashierAccount);
-
-          if (faker.datatype.boolean()) {
             addLog("under_review", "deficient", "rmo", rmoAccount);
-            addLog("deficient", "invoiced", "rmo", rmoAccount);
-          } else {
+            break;
+
+          case "invoiced":
+            addLog("pending", "under_review", "cashier", cashierAccount);
+
+            if (faker.datatype.boolean()) {
+              addLog("under_review", "deficient", "rmo", rmoAccount);
+              addLog("deficient", "invoiced", "rmo", rmoAccount);
+            } else {
+              addLog("under_review", "invoiced", "rmo", rmoAccount);
+            }
+            break;
+
+          case "paid":
+            addLog("pending", "under_review", "cashier", cashierAccount);
             addLog("under_review", "invoiced", "rmo", rmoAccount);
-          }
-          break;
+            addLog("invoiced", "paid", "cashier", cashierAccount);
+            break;
 
-        case "paid":
-          addLog("pending", "under_review", "cashier", cashierAccount);
-          addLog("under_review", "invoiced", "rmo", rmoAccount);
-          addLog("invoiced", "paid", "cashier", cashierAccount);
-          break;
-
-        case "released":
-          addLog("pending", "under_review", "cashier", cashierAccount);
-          addLog("under_review", "invoiced", "rmo", rmoAccount);
-          addLog("invoiced", "paid", "cashier", cashierAccount);
-          addLog("paid", "released", "rmo", rmoAccount);
-          break;
+          case "released":
+            addLog("pending", "under_review", "cashier", cashierAccount);
+            addLog("under_review", "invoiced", "rmo", rmoAccount);
+            addLog("invoiced", "paid", "cashier", cashierAccount);
+            addLog("paid", "released", "rmo", rmoAccount);
+            break;
+        }
       }
 
       if (logs.length) await Log.bulkCreate(logs);

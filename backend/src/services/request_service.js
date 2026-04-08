@@ -228,6 +228,8 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
         total_documents: totalDocuments,
         total_price: totalPrice,
         other: hasOther,
+        request_completed: req.request_completed,
+        expected_release_date: req.expected_release_date,
         created_at: req.createdAt.toISOString(),
       },
     };
@@ -250,7 +252,7 @@ async function GetRequestAnalytics(timeframe = "year", role = "admin") {
   const STATUS_MAP = {
     cashier: ["pending", "balance_due", "invoiced", "paid"],
     rmo: [
-      "under review",
+      "under_review",
       "deficient",
       "invoiced",
       "paid",
@@ -259,8 +261,8 @@ async function GetRequestAnalytics(timeframe = "year", role = "admin") {
     ],
     admin: [
       "pending",
-      "balance due",
-      "under review",
+      "balance_due",
+      "under_review",
       "deficient",
       "invoiced",
       "paid",

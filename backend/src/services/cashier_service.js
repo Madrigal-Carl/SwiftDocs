@@ -49,7 +49,19 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
   const { docs, pages, total } = await Request.paginate({
     page,
     paginate: limit,
-    order: [["created_at", "DESC"]],
+    order: [
+      [
+        Sequelize.literal(`
+      CASE 
+        WHEN \`Request\`.\`expected_release_date\` IS NULL THEN 1
+        ELSE 0
+      END
+    `),
+        "ASC",
+      ],
+      [Sequelize.col("expected_release_date"), "ASC"],
+      ["created_at", "DESC"],
+    ],
     where,
     include: [
       {
@@ -87,6 +99,8 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
         status: req.status,
         total_documents: totalDocuments,
         total_price: totalPrice,
+        request_completed: req.request_completed,
+        expected_release_date: req.expected_release_date,
         created_at: req.createdAt.toISOString(),
       },
     };

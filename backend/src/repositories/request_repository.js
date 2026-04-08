@@ -79,7 +79,7 @@ async function FetchAllRequestsWithStudent(page = 1, limit = 10, filters = {}) {
     {
       association: "student",
       attributes: ["id", "first_name", "middle_name", "last_name"],
-      required: false, // ✅ keep LEFT JOIN always
+      required: false,
       include: [
         {
           association: "education",
@@ -99,7 +99,19 @@ async function FetchAllRequestsWithStudent(page = 1, limit = 10, filters = {}) {
   return Request.paginate({
     page,
     paginate: limit,
-    order: [["created_at", "DESC"]],
+    order: [
+      [
+        Sequelize.literal(`
+      CASE 
+        WHEN \`Request\`.\`expected_release_date\` IS NULL THEN 1
+        ELSE 0
+      END
+    `),
+        "ASC",
+      ],
+      [Sequelize.col("expected_release_date"), "ASC"],
+      ["created_at", "DESC"],
+    ],
     where,
     include: requestIncludes,
     distinct: true,

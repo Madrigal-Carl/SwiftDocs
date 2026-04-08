@@ -202,8 +202,10 @@ export default function RequestActionModal({
             </div>
           )}
 
-        {(role === "rmo" && request.status === "under_review") ||
-          (request.status === "deficient" && action === "approve" && (
+        {role === "rmo" &&
+          (request.status === "under_review" ||
+            request.status === "deficient") &&
+          action === "approve" && (
             <div className="flex flex-col gap-4 mb-4">
               <div>
                 <label className="text-xs text-gray-500 uppercase tracking-wider">
@@ -273,7 +275,7 @@ export default function RequestActionModal({
                 />
               </div>
             </div>
-          ))}
+          )}
 
         {/* Remarks */}
         <div className="mb-6">

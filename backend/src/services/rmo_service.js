@@ -125,8 +125,10 @@ async function UpdateAdditionalDocumentPrices(
     throw new Error("Request not found");
   }
 
-  if (!request.isUnderReview()) {
-    throw new Error("Prices can only be updated while request is under review");
+  if (!request.isUnderReview() && !request.isDeficient()) {
+    throw new Error(
+      "Prices can only be updated while request is under review or deficient",
+    );
   }
 
   for (const doc of additionalDocs) {

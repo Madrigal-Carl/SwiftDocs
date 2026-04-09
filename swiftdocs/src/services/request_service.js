@@ -32,12 +32,8 @@ export const createRequest = (data) => {
 };
 
 export async function requestEmailStatus(referenceNumber) {
-  try {
-    const res = await api.post(`/request/status/${referenceNumber}/send-email`);
-    return res.data;
-  } catch (err) {
-    throw err.response?.data || { message: "Failed to fetch request" };
-  }
+  const res = await api.post(`/request/status/${referenceNumber}/send-email`);
+  return res.data;
 }
 
 export async function fetchRequestAnalytics(timeframe = "year") {

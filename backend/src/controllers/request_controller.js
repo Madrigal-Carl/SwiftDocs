@@ -11,14 +11,22 @@ async function CreateRequest(req, res) {
 }
 
 async function SendRequestEmail(req, res) {
-  const result = await requestService.SendRequestEmail(
-    req.params.referenceNumber,
-  );
+  try {
+    const result = await requestService.SendRequestEmail(
+      req.params.referenceNumber,
+    );
 
-  res.json({
-    message: "Email sent successfully",
-    data: result,
-  });
+    res.json({
+      message: "Email sent successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error sending email:", error);
+
+    res.status(500).json({
+      message: error.message || error,
+    });
+  }
 }
 
 async function GetRequest(req, res) {

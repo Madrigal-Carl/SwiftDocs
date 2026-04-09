@@ -11,6 +11,7 @@ import {
   Book,
   File,
   Download,
+  ReceiptText,
 } from "lucide-react";
 import StatusBadge from "../components/StatusBadge";
 import { fetchRequestByReference } from "../services/request_service.js";
@@ -402,8 +403,8 @@ export default function RequestView() {
 
               const renderOthers = (list) =>
                 list.map((doc, index) => {
-                  const subtotal = doc.price * doc.quantity;
-
+                  const price = doc.unit_price || 0;
+                  const subtotal = price * doc.quantity;
                   return (
                     <div
                       key={index}
@@ -473,7 +474,7 @@ export default function RequestView() {
                       <div className="border-t border-(--border-light) mb-3"></div>
                       <div className="space-y-3">
                         {isRmoPending
-                          ? renderOthers(others)
+                          ? renderOthers(additionalDocsState)
                           : renderList(others)}
                       </div>
                     </div>
@@ -515,7 +516,6 @@ export default function RequestView() {
         {/* Right Column - Smaller */}
         <div className="space-y-6">
           {/* Requirements Card */}
-
           {request.requirements.length !== 0 && (
             <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-4">
@@ -580,22 +580,76 @@ export default function RequestView() {
 
           {/* Payment Information Card */}
           <PaymentInformationCard
-            amount={[
-              ...(request.requested_documents || []),
-              ...(isRmoPending
-                ? additionalDocsState
-                : request.additional_documents || []),
-            ].reduce((sum, doc) => {
-              const price = doc.document?.price || doc.unit_price || 0;
-              const quantity = doc.quantity || 0;
-              return sum + price * quantity;
-            }, 0)}
+            amount={
+              [
+                ...(request.requested_documents || []),
+                ...(isRmoPending
+                  ? additionalDocsState
+                  : request.additional_documents || []),
+              ].reduce((sum, doc) => {
+                const price = doc.document?.price || doc.unit_price || 0;
+                const quantity = doc.quantity || 0;
+                return sum + price * quantity;
+              }, 0) +
+              (request.bills || []).reduce(
+                (sum, bill) => sum + (bill.price || 0),
+                0,
+              )
+            }
             status={request.status}
             deliveryMethod={request.delivery_method}
             proof={request.receipts?.map((r) => r.path) || []}
             orNumber={request.or_number?.or_number}
             setReferenceNumber={setReferenceNumber}
           />
+
+          {/* Bills Card */}
+          {request.bills?.length !== 0 && (
+            <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
+                  <ReceiptText className="w-4 h-4 text-(--primary-600)" />
+                </div>
+                <h3 className="font-semibold text-(--text-dark)">
+                  Billing Breakdown
+                </h3>
+              </div>
+
+              <div className="space-y-3">
+                {request.bills.map((bill, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 border border-(--border-light) rounded-lg hover:bg-(--bg-light)/50 transition-colors"
+                  >
+                    {/* Left: Bill Info */}
+                    <div className="flex flex-col min-w-0 w-2/3">
+                      <p className="text-sm font-medium text-(--text-dark) truncate">
+                        {bill.name}
+                      </p>
+                    </div>
+
+                    {/* Right: Price */}
+                    <div className="text-sm font-semibold text-(--text-dark)">
+                      ₱{bill.price.toFixed(2)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Total */}
+              <div className="flex items-center justify-between pt-4 mt-4 border-t border-(--border-light)">
+                <span className="text-xs text-gray-500 uppercase tracking-wider">
+                  Total Bills
+                </span>
+                <span className="text-lg font-bold text-(--primary-600)">
+                  ₱
+                  {request.bills
+                    .reduce((sum, b) => sum + (b.price || 0), 0)
+                    .toFixed(2)}
+                </span>
+              </div>
+            </div>
+          )}
 
           {/*  Notes Card */}
           <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">

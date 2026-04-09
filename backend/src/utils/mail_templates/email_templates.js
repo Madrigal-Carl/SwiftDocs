@@ -7,7 +7,7 @@ function pendingTemplate(data) {
       <p>Dear ${fullName},</p>
 
       <p>Your document request with reference number 
-      <strong>${data.reference_number}</strong> has been <strong>successfully submitted</strong>.</p>
+      <strong>${data.request.reference_number}</strong> has been <strong>successfully submitted</strong>.</p>
 
       <p>Our team has received your request and it will be processed shortly.</p>
 
@@ -29,7 +29,7 @@ function balanceDueTemplate(data) {
       <p>Dear ${fullName},</p>
 
       <p>Your document request with reference number 
-      <strong>${data.reference_number}</strong> currently has an <strong>outstanding balance</strong>.</p>
+      <strong>${data.request.reference_number}</strong> currently has an <strong>outstanding balance</strong>.</p>
 
       ${data.notes ? `<p><strong>Details:</strong> ${data.notes}</p>` : ""}
 
@@ -51,7 +51,7 @@ function underReviewTemplate(data) {
       <p>Dear ${fullName},</p>
 
       <p>Your document request with reference number 
-      <strong>${data.reference_number}</strong> is currently <strong>under review</strong>.</p>
+      <strong>${data.request.reference_number}</strong> is currently <strong>under review</strong>.</p>
 
       <p>Our team is reviewing your submitted information and requirements.</p>
 
@@ -73,7 +73,7 @@ function deficientTemplate(data) {
       <p>Dear ${fullName},</p>
 
       <p>Your document request with reference number 
-      <strong>${data.reference_number}</strong> is currently marked as <strong>deficient</strong>.</p>
+      <strong>${data.request.reference_number}</strong> is currently marked as <strong>deficient</strong>.</p>
 
       <p>To proceed, please provide the following required documents or information:</p>
 
@@ -136,7 +136,7 @@ function paidTemplate(data) {
       <p>Dear ${fullName},</p>
 
       <p>We are pleased to inform you that your payment for the document request with reference number 
-      <strong>${data.reference_number}</strong> has been successfully <strong>verified</strong>.</p>
+      <strong>${req.reference_number}</strong> has been successfully <strong>verified</strong>.</p>
 
       <p><strong>Requested Documents:</strong></p>
       <ul>
@@ -159,8 +159,13 @@ function releasedTemplate(data) {
   const documents = req.getDocumentSummary();
 
   const docList = documents
-    .map((d) => `<li>${d.type} (x${d.quantity})</li>`)
+    .map((d) => `<li>${d.type} (x${d.quantity ?? 1})</li>`)
     .join("");
+
+  const deliveryParagraph =
+    req.delivery_method === "delivery"
+      ? `<p>We will deliver your documents to your address: ${req.student.address}</p>`
+      : `<p>You may now coordinate with the Registrar Office to receive your documents.</p>`;
 
   return {
     subject: "Your Documents Are Ready for Release",
@@ -168,14 +173,14 @@ function releasedTemplate(data) {
       <p>Dear ${fullName},</p>
 
       <p>Your requested documents with reference number 
-      <strong>${data.reference_number}</strong> have been <strong>released</strong>.</p>
+      <strong>${req.reference_number}</strong> have been <strong>released</strong>.</p>
 
       <p><strong>Released Documents:</strong></p>
       <ul>
         ${docList}
       </ul>
 
-      <p>You may now coordinate with the Registrar Office to receive your documents.</p>
+      ${deliveryParagraph}
 
       <p>We would greatly appreciate your feedback on our service to help us improve.</p>
 
@@ -195,7 +200,7 @@ function rejectedTemplate(data) {
       <p>Dear ${fullName},</p>
 
       <p>We regret to inform you that your document request with reference number
-      <strong>${data.reference_number}</strong> has been <strong>rejected</strong>.</p>
+      <strong>${data.request.reference_number}</strong> has been <strong>rejected</strong>.</p>
 
       <p>This decision was made because the request was not processed or completed within the allowable timeframe.</p>
 

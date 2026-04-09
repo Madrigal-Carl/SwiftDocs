@@ -37,10 +37,14 @@ const updateRequestStatusSchema = Joi.object({
   }),
   expected_release_date: Joi.when("status", {
     is: "invoiced",
-    then: Joi.date().required().messages({
-      "any.required": "Expected release date is required",
-      "date.base": "Expected release date must be a valid date",
-    }),
+    then: Joi.alternatives()
+      .try(
+        Joi.date().messages({
+          "date.base": "Expected release date must be a valid date",
+        }),
+        Joi.string().trim().empty(""),
+      )
+      .optional(),
     otherwise: Joi.string().trim().empty("").default(null).optional(),
   }),
   note: Joi.when("status", {

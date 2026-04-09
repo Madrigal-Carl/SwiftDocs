@@ -2,19 +2,72 @@ function pendingTemplate(data) {
   const fullName = data.student.getFullName();
 
   return {
-    subject: "Update on Your Document Request",
+    subject: "Request Received",
     html: `
-      <p>Dear ${fullName},</p>
+      <p>Hi ${fullName},</p>
 
-      <p>We would like to inform you that your request for academic documents with reference number 
-      <strong>${data.reference_number}</strong> is currently <strong>under review</strong>.</p>
+      <p>We’ve received your document request (Ref: <strong>${data.reference_number}</strong>).</p>
 
-      <p>Our office is presently verifying the details of your request. You will be notified once the next step becomes available.</p>
+      <p>We’ll keep you posted as it moves forward.</p>
 
-      <p>Thank you for your patience.</p>
+      <p>– Registrar Office</p>
+    `,
+  };
+}
 
-      <p>Sincerely,<br>
-      Registrar Office</p>
+function underReviewTemplate(data) {
+  const fullName = data.student.getFullName();
+
+  return {
+    subject: "Request Update: Under Review",
+    html: `
+      <p>Hi ${fullName},</p>
+
+      <p>Your request (Ref: <strong>${data.reference_number}</strong>) is now <strong>under review</strong>.</p>
+
+      <p>We’re currently checking your details and requirements.</p>
+
+      <p>More updates soon.</p>
+
+      <p>– Registrar Office</p>
+    `,
+  };
+}
+
+function deficientTemplate(data) {
+  const fullName = data.student.getFullName();
+
+  return {
+    subject: "Request Update: Action Needed",
+    html: `
+      <p>Hi ${fullName},</p>
+
+      <p>Your request (Ref: <strong>${data.reference_number}</strong>) needs a bit more info.</p>
+
+      ${data.notes ? `<p><strong>Required:</strong> ${data.notes}</p>` : ""}
+
+      <p>Please submit the missing requirement(s) so we can continue processing.</p>
+
+      <p>– Registrar Office</p>
+    `,
+  };
+}
+
+function balanceDueTemplate(data) {
+  const fullName = data.student.getFullName();
+
+  return {
+    subject: "Request Update: Balance Due",
+    html: `
+      <p>Hi ${fullName},</p>
+
+      <p>Your request (Ref: <strong>${data.reference_number}</strong>) has a remaining balance.</p>
+
+      ${data.notes ? `<p><strong>Details:</strong> ${data.notes}</p>` : ""}
+
+      <p>Please settle it so we can proceed.</p>
+
+      <p>– Registrar Office</p>
     `,
   };
 }
@@ -23,19 +76,15 @@ function invoicedTemplate(data) {
   const fullName = data.student.getFullName();
 
   return {
-    subject: "Invoice for Your Document Request",
+    subject: "Request Update: Invoice Ready",
     html: `
-      <p>Dear ${fullName},</p>
+      <p>Hi ${fullName},</p>
 
-      <p>This is to inform you that an invoice has been generated for your document request with reference number 
-      <strong>${data.reference_number}</strong>.</p>
+      <p>Your request (Ref: <strong>${data.reference_number}</strong>) now has an invoice.</p>
 
-      <p>Please proceed with the required payment so that we may begin processing your requested documents.</p>
+      <p>You can proceed with payment anytime.</p>
 
-      <p>If payment has already been completed, kindly disregard this message.</p>
-
-      <p>Sincerely,<br>
-      Registrar Office</p>
+      <p>– Registrar Office</p>
     `,
   };
 }
@@ -44,17 +93,15 @@ function paidTemplate(data) {
   const fullName = data.student.getFullName();
 
   return {
-    subject: "Processing of Your Document Request",
+    subject: "Request Update: Payment Received",
     html: `
-      <p>Dear ${fullName},</p>
+      <p>Hi ${fullName},</p>
 
-      <p>We acknowledge receipt of your payment for the document request with reference number 
-      <strong>${data.reference_number}</strong>.</p>
+      <p>We’ve received your payment for request <strong>${data.reference_number}</strong>.</p>
 
-      <p>Your requested documents are now being processed. You will be notified once they are ready for release.</p>
+      <p>Your documents are now being processed.</p>
 
-      <p>Sincerely,<br>
-      Registrar Office</p>
+      <p>– Registrar Office</p>
     `,
   };
 }
@@ -62,18 +109,21 @@ function paidTemplate(data) {
 function releasedTemplate(data) {
   const fullName = data.student.getFullName();
 
+  const releaseMessage =
+    data.delivery_method === "delivery"
+      ? `<p>Your documents will be delivered to your address: ${data.student.address}</p>`
+      : `<p>You can now coordinate with the Registrar Office for release.</p>`;
+
   return {
-    subject: "Documents Ready for Release",
+    subject: "Request Update: Documents Released",
     html: `
-      <p>Dear ${fullName},</p>
+      <p>Hi ${fullName},</p>
 
-      <p>We are pleased to inform you that your requested documents under reference number 
-      <strong>${data.reference_number}</strong> have been successfully processed and released.</p>
+      <p>Good news! Your documents (Ref: <strong>${data.reference_number}</strong>) have been released.</p>
 
-      <p>You may now coordinate with the Registrar Office should you require further assistance.</p>
+      ${releaseMessage}
 
-      <p>Sincerely,<br>
-      Registrar Office</p>
+      <p>– Registrar Office</p>
     `,
   };
 }
@@ -82,23 +132,24 @@ function rejectedTemplate(data) {
   const fullName = data.student.getFullName();
 
   return {
-    subject: "Update Regarding Your Document Request",
+    subject: "Request Update: Not Approved",
     html: `
-      <p>Dear ${fullName},</p>
+      <p>Hi ${fullName},</p>
 
-      <p>We regret to inform you that your document request with reference number 
-      <strong>${data.reference_number}</strong> has been <strong>rejected</strong>.</p>
+      <p>Your request (Ref: <strong>${data.reference_number}</strong>) was not approved.</p>
 
-      <p>If you believe this decision was made in error or if further clarification is required, please contact the Registrar Office.</p>
+      <p>If you have questions or want to try again, feel free to contact us.</p>
 
-      <p>Sincerely,<br>
-      Registrar Office</p>
+      <p>– Registrar Office</p>
     `,
   };
 }
 
 module.exports = {
   pending: pendingTemplate,
+  under_review: underReviewTemplate,
+  deficient: deficientTemplate,
+  balance_due: balanceDueTemplate,
   invoiced: invoicedTemplate,
   paid: paidTemplate,
   released: releasedTemplate,

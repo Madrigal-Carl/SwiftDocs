@@ -100,15 +100,11 @@ async function RequestDocuments(data, files = []) {
     });
   });
 
-  try {
-    await mailService.SendMail({
-      to: result.student.email,
-      status: "pending",
-      data: result,
-    });
-  } catch (err) {
-    console.error("Failed to send pending email:", err.message);
-  }
+  await mailService.SendRMOUpdateMail({
+    request: result,
+    status: "pending",
+    notes: null,
+  });
 
   return result;
 }
@@ -125,7 +121,7 @@ async function SendRequestEmail(referenceNumber) {
           include: ["document"],
         },
         {
-          association: "additional_documents",
+          association: "bills",
         },
       ],
     },

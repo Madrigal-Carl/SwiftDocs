@@ -111,20 +111,21 @@ module.exports = (sequelize, DataTypes) => {
 
     getGrandTotal() {
       const requestedTotal = (this.requested_documents || []).reduce(
-        (sum, rd) => {
-          return sum + (rd.quantity || 0) * (rd.document?.price || 0);
-        },
+        (sum, rd) => sum + (rd.quantity || 0) * (rd.document?.price || 0),
         0,
       );
 
       const additionalTotal = (this.additional_documents || []).reduce(
-        (sum, ad) => {
-          return sum + (ad.quantity || 0) * (ad.unit_price || 0);
-        },
+        (sum, ad) => sum + (ad.quantity || 0) * (ad.unit_price || 0),
         0,
       );
 
-      return requestedTotal + additionalTotal;
+      const billsTotal = (this.bills || []).reduce(
+        (sum, bill) => sum + (bill.price || 0),
+        0,
+      );
+
+      return requestedTotal + additionalTotal + billsTotal;
     }
 
     getDocumentSummary() {

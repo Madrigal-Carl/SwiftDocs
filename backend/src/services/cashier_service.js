@@ -120,6 +120,7 @@ async function ApprovePayment(requestId, account, note, proofPaths, orNumber) {
       { association: "student" },
       { association: "requested_documents", include: ["document"] },
       { association: "additional_documents" },
+      { association: "bills" },
     ],
   });
 

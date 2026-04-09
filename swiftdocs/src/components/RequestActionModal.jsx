@@ -58,7 +58,10 @@ export default function RequestActionModal({
     try {
       setSubmitting(true);
       const validBills = bills.filter(
-        (b) => b.name?.trim() !== "" || b.price?.toString().trim() !== "",
+        (b) =>
+          b.name?.trim() !== "" &&
+          b.price?.toString().trim() !== "" &&
+          b.price !== null,
       );
 
       await onSubmit({

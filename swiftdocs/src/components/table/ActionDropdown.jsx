@@ -73,21 +73,22 @@ export default function ActionDropdown({
         </button>
       )}
 
-      {approve &&
-        (status === "under_review" || status === "deficient"
-          ? other
-          : status !== "pending" || (status === "pending" && !other)) && (
-          <button
-            onClick={() => {
-              onApprove?.();
-              setIsOpen(false);
-            }}
-            className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--primary-50) flex items-center gap-2"
-          >
-            <Check className="w-4 h-4 text-green-600" />
-            Approve
-          </button>
-        )}
+      {!(
+        approve &&
+        (status === "under_review" || status === "deficient") &&
+        other
+      ) && (
+        <button
+          onClick={() => {
+            onApprove?.();
+            setIsOpen(false);
+          }}
+          className="w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-(--primary-50) flex items-center gap-2"
+        >
+          <Check className="w-4 h-4 text-green-600" />
+          Approve
+        </button>
+      )}
 
       {reject && (
         <button

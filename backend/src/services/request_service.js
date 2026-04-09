@@ -267,7 +267,7 @@ async function GetRequestAnalytics(timeframe = "year", role = "admin") {
     allowedStatuses.includes(req.status),
   );
 
-  const stats = computeStats(filteredRequests, timeframe);
+  const stats = computeStats(filteredRequests, timeframe, role);
 
   return stats;
 }

@@ -11,7 +11,13 @@ const receiptRepository = require("../repositories/receipt_repository");
 async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
   let { search = "", status = "" } = filters;
 
-  const allowedStatuses = ["pending", "balance_due", "paid", "invoiced"];
+  const allowedStatuses = [
+    "pending",
+    "balance_due",
+    "under_review",
+    "paid",
+    "invoiced",
+  ];
 
   search = search.trim();
   status = status.trim();

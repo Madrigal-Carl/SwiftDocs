@@ -81,7 +81,7 @@ export default function RequestTable() {
   };
 
   const STATUS_MAP = {
-    cashier: ["pending", "balance_due", "invoiced", "paid"],
+    cashier: ["pending", "balance_due", "under_review", "invoiced", "paid"],
     rmo: [
       "under_review",
       "deficient",

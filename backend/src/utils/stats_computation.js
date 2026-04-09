@@ -1,9 +1,31 @@
-function computeStats(requests, timeframe = "year") {
+function computeStats(requests, timeframe = "year", role = "admin") {
   const now = new Date();
 
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
   const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+
+  const roleStatusMap = {
+    rmo: ["under_review", "deficient", "paid", "invoiced", "released"],
+    cashier: ["pending", "balance_due", "paid", "invoiced", "under_review"],
+    admin: [
+      "pending",
+      "balance_due",
+      "deficient",
+      "under_review",
+      "paid",
+      "invoiced",
+      "released",
+      "rejected",
+    ],
+  };
+
+  const allowedStatuses = roleStatusMap[role] || [];
+
+  // Filter requests based on role's allowed statuses
+  const filteredRequests = requests.filter((req) =>
+    allowedStatuses.includes(req.status),
+  );
 
   let startDate;
   if (timeframe === "week") {
@@ -33,7 +55,7 @@ function computeStats(requests, timeframe = "year") {
   const countByStatus = {};
   const monthlyTrend = {};
 
-  statuses.forEach((status) => {
+  allowedStatuses.forEach((status) => {
     countByStatus[status] = 0;
   });
 
@@ -79,7 +101,7 @@ function computeStats(requests, timeframe = "year") {
 
   const paidReleasedRequests = [];
 
-  requests.forEach((req) => {
+  filteredRequests.forEach((req) => {
     const status = req.status;
     const date = new Date(req.request_date);
 

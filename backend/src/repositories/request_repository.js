@@ -1,4 +1,4 @@
-const { Request, Bill, Sequelize } = require("../database/models");
+const { Request, Bill, Log, Sequelize } = require("../database/models");
 const { Op } = Sequelize;
 
 function CreateRequest(data, transaction) {
@@ -147,6 +147,30 @@ async function GetAllRequestStatuses() {
   });
 }
 
+async function FetchDeficientAndBalanceDueRequests() {
+  return Request.findAll({
+    where: {
+      status: {
+        [Op.in]: ["deficient", "balance_due"],
+      },
+    },
+    include: [
+      {
+        association: "student",
+        attributes: ["id", "first_name", "middle_name", "last_name", "email"],
+      },
+    ],
+    order: [["created_at", "DESC"]],
+  });
+}
+
+async function GetLatestLogByRequestId(requestId) {
+  return Log.findOne({
+    where: { request_id: requestId },
+    order: [["created_at", "DESC"]],
+  });
+}
+
 module.exports = {
   CreateRequest,
   CreateBill,
@@ -154,4 +178,6 @@ module.exports = {
   FindByReferenceNumber,
   GetAllRequestStatuses,
   FetchAllRequestsWithStudent,
+  FetchDeficientAndBalanceDueRequests,
+  GetLatestLogByRequestId,
 };

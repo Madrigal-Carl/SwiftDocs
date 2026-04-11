@@ -172,7 +172,7 @@ async function ApprovePayment(requestId, account, note, proofPaths, orNumber) {
     notes: note,
   });
 
-  await mailService.SendCashierUpdateMail({
+  await mailService.SendUpdateMail({
     request: request,
     status: "paid",
     notes: note,
@@ -234,7 +234,7 @@ async function UpdateToReview(requestId, status, account, note = null) {
   const emailStatus = emailStatusMap[status];
 
   if (emailStatus) {
-    await mailService.SendCashierUpdateMail({
+    await mailService.SendUpdateMail({
       request: request,
       status: emailStatus,
       notes: note,

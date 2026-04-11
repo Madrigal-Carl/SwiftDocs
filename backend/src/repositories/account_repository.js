@@ -72,6 +72,15 @@ async function updateRememberMe(id, remember) {
   return account;
 }
 
+async function findAdminAccount(options = {}) {
+  return Account.findOne({
+    where: {
+      role: "admin",
+    },
+    ...options,
+  });
+}
+
 module.exports = {
   fetchAllAccounts,
   fetchAllAccountsRaw,
@@ -79,4 +88,5 @@ module.exports = {
   findByEmail,
   create,
   updateRememberMe,
+  findAdminAccount,
 };

@@ -95,7 +95,7 @@ async function UpdateRequestStatus(
     notes: note,
   });
 
-  await mailService.SendRMOUpdateMail({
+  await mailService.SendUpdateMail({
     request: request,
     status,
     notes: note,

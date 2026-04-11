@@ -100,7 +100,7 @@ async function RequestDocuments(data, files = []) {
     });
   });
 
-  await mailService.SendRMOUpdateMail({
+  await mailService.SendUpdateMail({
     request: result,
     status: "pending",
     notes: null,

@@ -30,7 +30,7 @@ module.exports = {
         onDelete: "CASCADE",
       },
       role: {
-        type: Sequelize.ENUM("rmo", "cashier"),
+        type: Sequelize.ENUM("rmo", "cashier", "system"),
         allowNull: false,
       },
       action: {

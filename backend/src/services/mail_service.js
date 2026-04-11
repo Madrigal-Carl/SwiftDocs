@@ -29,27 +29,7 @@ async function SendMail({ to, status, data }) {
   });
 }
 
-async function SendRMOUpdateMail({ request, status, notes }) {
-  const template = templates[status];
-
-  if (!template) {
-    return;
-  }
-
-  const { subject, html } = template({
-    request,
-    notes,
-  });
-
-  await transporter.sendMail({
-    from: `"Registrar Office" <${process.env.SMTP_USER}>`,
-    to: request.student.email,
-    subject,
-    html,
-  });
-}
-
-async function SendCashierUpdateMail({ request, status, notes }) {
+async function SendUpdateMail({ request, status, notes }) {
   const template = templates[status];
 
   if (!template) {
@@ -71,6 +51,5 @@ async function SendCashierUpdateMail({ request, status, notes }) {
 
 module.exports = {
   SendMail,
-  SendRMOUpdateMail,
-  SendCashierUpdateMail,
+  SendUpdateMail,
 };

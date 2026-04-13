@@ -17,63 +17,6 @@ function pendingTemplate(data) {
   };
 }
 
-function underReviewTemplate(data) {
-  const fullName = data.student.getFullName();
-
-  return {
-    subject: "Request Update: Under Review",
-    html: `
-      <p>Hi ${fullName},</p>
-
-      <p>Your request (Ref: <strong>${data.reference_number}</strong>) is now <strong>under review</strong>.</p>
-
-      <p>We’re currently checking your details and requirements.</p>
-
-      <p>More updates soon.</p>
-
-      <p>– Registrar Office</p>
-    `,
-  };
-}
-
-function deficientTemplate(data) {
-  const fullName = data.student.getFullName();
-
-  return {
-    subject: "Request Update: Action Needed",
-    html: `
-      <p>Hi ${fullName},</p>
-
-      <p>Your request (Ref: <strong>${data.reference_number}</strong>) needs a bit more info.</p>
-
-      ${data.notes ? `<p><strong>Required:</strong> ${data.notes}</p>` : ""}
-
-      <p>Please submit the missing requirement(s) so we can continue processing.</p>
-
-      <p>– Registrar Office</p>
-    `,
-  };
-}
-
-function balanceDueTemplate(data) {
-  const fullName = data.student.getFullName();
-
-  return {
-    subject: "Request Update: Balance Due",
-    html: `
-      <p>Hi ${fullName},</p>
-
-      <p>Your request (Ref: <strong>${data.reference_number}</strong>) has a remaining balance.</p>
-
-      ${data.notes ? `<p><strong>Details:</strong> ${data.notes}</p>` : ""}
-
-      <p>Please settle it so we can proceed.</p>
-
-      <p>– Registrar Office</p>
-    `,
-  };
-}
-
 function invoicedTemplate(data) {
   const fullName = data.student.getFullName();
 
@@ -166,9 +109,6 @@ function rejectedTemplate(data) {
 
 module.exports = {
   pending: pendingTemplate,
-  under_review: underReviewTemplate,
-  deficient: deficientTemplate,
-  balance_due: balanceDueTemplate,
   invoiced: invoicedTemplate,
   paid: paidTemplate,
   released: releasedTemplate,

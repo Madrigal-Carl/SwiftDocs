@@ -37,6 +37,7 @@ module.exports = {
         type: Sequelize.ENUM(
           "approved_rmo",
           "approved_cashier",
+          "pending",
           "rejected",
           "invoiced",
           "paid",
@@ -51,10 +52,10 @@ module.exports = {
       to_status: {
         type: Sequelize.ENUM(
           "pending",
-          "rejected",
           "released",
           "paid",
           "invoiced",
+          "rejected",
         ),
         allowNull: false,
       },

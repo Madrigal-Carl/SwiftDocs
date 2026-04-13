@@ -153,9 +153,6 @@ module.exports = (sequelize, DataTypes) => {
       if (!this.isPending())
         throw new Error("Only pending requests can be invoiced");
 
-      if (!this.isRequestApproved())
-        throw new Error("Request must be approved by RMO and Cashier");
-
       this.status = "invoiced";
     }
 

@@ -44,28 +44,6 @@ function balanceDueTemplate(data) {
   };
 }
 
-function underReviewTemplate(data) {
-  const fullName = data.request.student.getFullName();
-
-  return {
-    subject: "Your Request is Under Review",
-    html: `
-      <p>Dear ${fullName},</p>
-
-      <p>Your document request with reference number 
-      <strong>${data.request.reference_number}</strong> is currently <strong>under review</strong>.</p>
-
-      <p>Our team is reviewing your submitted information and requirements.</p>
-
-      <p>You will be notified once the review process is complete.</p>
-
-      <p>Thank you for your patience.</p>
-
-      <p>Sincerely,<br>Registrar Office</p>
-    `,
-  };
-}
-
 function deficientTemplate(data) {
   const fullName = data.request.student.getFullName();
 
@@ -233,7 +211,6 @@ function rejectedTemplate(data) {
 module.exports = {
   pending: pendingTemplate,
   balance_due: balanceDueTemplate,
-  under_review: underReviewTemplate,
   deficient: deficientTemplate,
   invoiced: invoicedTemplate,
   paid: paidTemplate,

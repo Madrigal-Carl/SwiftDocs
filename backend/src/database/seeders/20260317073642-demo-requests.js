@@ -25,7 +25,7 @@ module.exports = {
       where: { role: "cashier" },
     });
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
       // ------------------------
       // 1. STUDENT
       // ------------------------
@@ -35,7 +35,7 @@ module.exports = {
         last_name: faker.person.lastName(),
         birth_date: faker.date.birthdate({ min: 18, max: 30, mode: "age" }),
         sex: faker.helpers.arrayElement(["male", "female"]),
-        email: faker.internet.email(),
+        email: "carl.madrigal05@gmail.com",
         address: faker.location.streetAddress(),
         phone_number: faker.phone.number(),
       });
@@ -168,6 +168,8 @@ module.exports = {
       const now = new Date();
 
       const addApprovalLog = (role, action, account) => {
+        if (!account) return;
+
         logs.push({
           account_id: account.id,
           request_id: request.id,
@@ -197,12 +199,14 @@ module.exports = {
 
       if (!isRejected) {
         if (["invoiced", "paid", "released"].includes(status)) {
-          if (faker.datatype.boolean()) {
-            addApprovalLog("rmo", "approved_rmo", rmoAccount);
-            addApprovalLog("cashier", "approved_cashier", cashierAccount);
-          } else {
-            addApprovalLog("cashier", "approved_cashier", cashierAccount);
-            addApprovalLog("rmo", "approved_rmo", rmoAccount);
+          if (rmoAccount && cashierAccount) {
+            if (faker.datatype.boolean()) {
+              addApprovalLog("rmo", "approved_rmo", rmoAccount);
+              addApprovalLog("cashier", "approved_cashier", cashierAccount);
+            } else {
+              addApprovalLog("cashier", "approved_cashier", cashierAccount);
+              addApprovalLog("rmo", "approved_rmo", rmoAccount);
+            }
           }
 
           addStatusLog("pending", "invoiced", "system");
@@ -217,7 +221,9 @@ module.exports = {
         }
       }
 
-      if (logs.length) await Log.bulkCreate(logs);
+      if (logs.length) {
+        await Log.bulkCreate(logs);
+      }
 
       // ------------------------
       // 9. RECEIPTS

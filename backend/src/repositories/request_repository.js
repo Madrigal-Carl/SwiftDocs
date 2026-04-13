@@ -1,4 +1,4 @@
-const { Request, Bill, Log, Sequelize } = require("../database/models");
+const { Request, Bill, Sequelize } = require("../database/models");
 const { Op } = Sequelize;
 
 function CreateRequest(data, transaction) {

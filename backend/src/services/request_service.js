@@ -251,25 +251,9 @@ async function GetRequestAnalytics(timeframe = "year", role = "admin") {
   const requests = await requestRepository.GetAllRequestStatuses();
 
   const STATUS_MAP = {
-    cashier: ["pending", "balance_due", "invoiced", "paid"],
-    rmo: [
-      "under_review",
-      "deficient",
-      "invoiced",
-      "paid",
-      "released",
-      "rejected",
-    ],
-    admin: [
-      "pending",
-      "balance_due",
-      "under_review",
-      "deficient",
-      "invoiced",
-      "paid",
-      "released",
-      "rejected",
-    ],
+    cashier: ["pending", "invoiced", "paid"],
+    rmo: ["pending", "invoiced", "paid", "released", "rejected"],
+    admin: ["pending", "invoiced", "paid", "released", "rejected"],
   };
 
   const allowedStatuses = STATUS_MAP[role] || STATUS_MAP.admin;

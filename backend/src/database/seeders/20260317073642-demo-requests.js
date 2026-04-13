@@ -16,6 +16,7 @@ module.exports = {
       Receipt,
       OR_Number,
       Bill,
+      Validation,
     } = require("../models");
 
     const documents = await Document.findAll();
@@ -24,13 +25,9 @@ module.exports = {
       where: { role: "cashier" },
     });
 
-    // ✅ Distribution controls
-    const todayProbability = 0.2; // 20% today cases
-    const onTimeProbability = 0.4; // 40% on-time
-
     for (let i = 0; i < 100; i++) {
       // ------------------------
-      // 1. Student
+      // 1. STUDENT
       // ------------------------
       const student = await Student.create({
         first_name: faker.person.firstName(),
@@ -59,133 +56,39 @@ module.exports = {
       });
 
       // ------------------------
-      // 2. Status (INCLUDING REJECTED)
+      // 2. STATUS (NEW FLOW ONLY)
       // ------------------------
       const status = faker.helpers.arrayElement([
         "pending",
-        "balance_due",
-        "under_review",
-        "deficient",
         "invoiced",
         "paid",
         "released",
-        "rejected", // ✅ added
+        "rejected",
       ]);
 
       const isRejected = status === "rejected";
       const isBilling = ["invoiced", "paid", "released"].includes(status);
       const isReleased = status === "released";
 
-      const currentYear = new Date().getFullYear();
-
       const requestDate = faker.date
-        .between({
-          from: new Date(`${currentYear}-01-01`),
-          to: new Date(),
-        })
+        .recent({ days: 60 })
         .toISOString()
         .split("T")[0];
-
-      const requestDateObj = new Date(requestDate);
-
-      const today = new Date();
 
       let expectedRelease = null;
       let requestCompleted = null;
 
-      // ------------------------
-      // REJECTED CASE (no logs, null dates)
-      // ------------------------
-      if (isRejected) {
-        expectedRelease = null;
-        requestCompleted = null;
-      } else {
-        // ------------------------
-        // expected_release_date
-        // ------------------------
-        if (isBilling) {
-          const isTodayCase = faker.datatype.boolean({
-            probability: todayProbability,
-          });
-
-          if (isTodayCase) {
-            expectedRelease = today;
-          } else {
-            const isFuture = faker.datatype.boolean({ probability: 0.5 });
-
-            if (isFuture) {
-              // future expected release
-              expectedRelease = faker.date.soon({
-                days: faker.number.int({ min: 1, max: 14 }),
-                refDate: requestDateObj,
-              });
-            } else {
-              // past expected release (overdue scenario)
-              expectedRelease = faker.date.recent({ days: 30 });
-            }
-          }
-        }
-
-        // ------------------------
-        // request_completed
-        // ------------------------
-        if (isReleased) {
-          const isTodayCase = faker.datatype.boolean({
-            probability: todayProbability,
-          });
-
-          if (isTodayCase) {
-            requestCompleted = today;
-          } else {
-            const isOnTime = faker.datatype.boolean({
-              probability: onTimeProbability,
-            });
-
-            if (isOnTime) {
-              // ON TIME
-              requestCompleted = faker.date.soon({
-                days: faker.number.int({ min: 1, max: 5 }),
-                refDate: new Date(expectedRelease),
-              });
-            } else {
-              // LATE (still completed but after request date and before/around expected)
-              const from = requestDateObj;
-              const to = new Date(expectedRelease);
-
-              requestCompleted = faker.date.between({
-                from: from < to ? from : to,
-                to: from < to ? to : from,
-              });
-            }
-          }
-        }
-
-        if ((status === "invoiced" || status === "paid") && !requestCompleted) {
-          const isWithinDeadline = faker.datatype.boolean({ probability: 0.7 });
-
-          if (isWithinDeadline && expectedRelease) {
-            const isFuture = faker.datatype.boolean({ probability: 0.6 });
-
-            if (isFuture) {
-              expectedRelease = faker.date.soon({
-                days: faker.number.int({ min: 1, max: 14 }),
-                refDate: requestDateObj,
-              });
-            } else {
-              const now = new Date();
-              const max = faker.date.soon({
-                days: faker.number.int({ min: 1, max: 3 }),
-                refDate: now,
-              });
-
-              expectedRelease = max;
-            }
-
-            requestCompleted = null;
-          }
-        }
+      if (!isRejected && isBilling) {
+        expectedRelease = faker.date.soon({ days: 7 });
       }
 
+      if (isReleased) {
+        requestCompleted = faker.date.recent({ days: 3 });
+      }
+
+      // ------------------------
+      // 3. REQUEST
+      // ------------------------
       const request = await Request.create({
         student_id: student.id,
         purpose: faker.lorem.sentence(),
@@ -198,7 +101,22 @@ module.exports = {
       });
 
       // ------------------------
-      // 3. Requested Documents
+      // 4. VALIDATION (IMPORTANT)
+      // ------------------------
+      await Validation.create({
+        request_id: request.id,
+        rmo:
+          status !== "pending" && status !== "rejected"
+            ? faker.datatype.boolean({ probability: 0.9 })
+            : false,
+        cashier:
+          status !== "pending" && status !== "rejected"
+            ? faker.datatype.boolean({ probability: 0.9 })
+            : false,
+      });
+
+      // ------------------------
+      // 5. REQUESTED DOCUMENTS
       // ------------------------
       const randomDocs = faker.helpers.arrayElements(
         documents,
@@ -214,7 +132,7 @@ module.exports = {
       }
 
       // ------------------------
-      // 4. Additional Docs
+      // 6. ADDITIONAL DOCUMENTS
       // ------------------------
       const additionalCount = faker.number.int({ min: 0, max: 2 });
 
@@ -228,89 +146,57 @@ module.exports = {
       }
 
       // ------------------------
-      // 5. Bills
+      // 7. BILLS
       // ------------------------
-      if (["invoiced", "paid", "released"].includes(status)) {
-        const billCount = faker.number.int({ min: 0, max: 3 });
+      if (isBilling) {
+        const billCount = faker.number.int({ min: 1, max: 3 });
 
         for (let b = 0; b < billCount; b++) {
           await Bill.create({
             request_id: request.id,
-            name: faker.commerce.productName() + "-" + faker.string.uuid(),
+            name: faker.commerce.productName(),
             price: faker.number.int({ min: 100, max: 1000 }),
           });
         }
       }
 
       // ------------------------
-      // 6. LOG FLOW (SKIP REJECTED)
+      // 8. LOGS (NEW FLOW)
       // ------------------------
       const logs = [];
 
+      const addLog = (from, to, role, account) => {
+        logs.push({
+          account_id: account.id,
+          request_id: request.id,
+          role,
+          action: to,
+          from_status: from,
+          to_status: to,
+          notes: request.notes,
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
+      };
+
       if (!isRejected) {
-        const addLog = (from, to, role, account) => {
-          logs.push({
-            account_id: account.id,
-            request_id: request.id,
-            role,
-            action: to,
-            from_status: from,
-            to_status: to,
-            notes: request.notes,
-            created_at: new Date(),
-            updated_at: new Date(),
-          });
-        };
+        if (["invoiced", "paid", "released"].includes(status)) {
+          addLog("pending", "invoiced", "rmo", rmoAccount);
+        }
 
-        switch (status) {
-          case "balance_due":
-            addLog("pending", "balance_due", "cashier", cashierAccount);
-            break;
+        if (["paid", "released"].includes(status)) {
+          addLog("invoiced", "paid", "cashier", cashierAccount);
+        }
 
-          case "under_review":
-            if (faker.datatype.boolean()) {
-              addLog("pending", "balance_due", "cashier", cashierAccount);
-              addLog("balance_due", "under_review", "cashier", cashierAccount);
-            } else {
-              addLog("pending", "under_review", "cashier", cashierAccount);
-            }
-            break;
-
-          case "deficient":
-            addLog("pending", "under_review", "cashier", cashierAccount);
-            addLog("under_review", "deficient", "rmo", rmoAccount);
-            break;
-
-          case "invoiced":
-            addLog("pending", "under_review", "cashier", cashierAccount);
-
-            if (faker.datatype.boolean()) {
-              addLog("under_review", "deficient", "rmo", rmoAccount);
-              addLog("deficient", "invoiced", "rmo", rmoAccount);
-            } else {
-              addLog("under_review", "invoiced", "rmo", rmoAccount);
-            }
-            break;
-
-          case "paid":
-            addLog("pending", "under_review", "cashier", cashierAccount);
-            addLog("under_review", "invoiced", "rmo", rmoAccount);
-            addLog("invoiced", "paid", "cashier", cashierAccount);
-            break;
-
-          case "released":
-            addLog("pending", "under_review", "cashier", cashierAccount);
-            addLog("under_review", "invoiced", "rmo", rmoAccount);
-            addLog("invoiced", "paid", "cashier", cashierAccount);
-            addLog("paid", "released", "rmo", rmoAccount);
-            break;
+        if (status === "released") {
+          addLog("paid", "released", "rmo", rmoAccount);
         }
       }
 
       if (logs.length) await Log.bulkCreate(logs);
 
       // ------------------------
-      // 7. Receipts
+      // 9. RECEIPTS
       // ------------------------
       if (["paid", "released"].includes(status)) {
         const orNumber = await OR_Number.create({
@@ -319,7 +205,7 @@ module.exports = {
         });
 
         const receipts = Array.from({
-          length: faker.number.int({ min: 1, max: 3 }),
+          length: faker.number.int({ min: 1, max: 2 }),
         }).map(() => ({
           request_id: request.id,
           or_number_id: orNumber.id,
@@ -333,5 +219,7 @@ module.exports = {
     }
   },
 
-  async down(queryInterface, Sequelize) {},
+  async down(queryInterface, Sequelize) {
+    // optional cleanup
+  },
 };

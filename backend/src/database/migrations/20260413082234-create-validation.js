@@ -2,22 +2,12 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("logs", {
+    await queryInterface.createTable("validations", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
-      },
-      account_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "accounts",
-          key: "id",
-        },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       request_id: {
         type: Sequelize.INTEGER,
@@ -29,25 +19,15 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      role: {
-        type: Sequelize.ENUM("rmo", "cashier", "system"),
-        allowNull: false,
-      },
-      action: {
-        type: Sequelize.ENUM("rejected", "released", "paid", "invoiced"),
-        allowNull: false,
-      },
-      from_status: {
-        type: Sequelize.ENUM("pending", "paid", "invoiced"),
-        allowNull: false,
-      },
-      to_status: {
-        type: Sequelize.ENUM("rejected", "released", "paid", "invoiced"),
-        allowNull: false,
-      },
-      notes: {
-        type: Sequelize.TEXT,
+      rmo: {
+        type: Sequelize.BOOLEAN,
         allowNull: true,
+        defaultValue: false,
+      },
+      cashier: {
+        type: Sequelize.BOOLEAN,
+        allowNull: true,
+        defaultValue: false,
       },
       created_at: {
         allowNull: false,
@@ -64,6 +44,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("logs");
+    await queryInterface.dropTable("validations");
   },
 };

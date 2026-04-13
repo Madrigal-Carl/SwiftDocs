@@ -41,6 +41,12 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
+      Request.hasOne(models.Validation, {
+        foreignKey: "request_id",
+        as: "validations",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
       Request.hasMany(models.Requested_Document, {
         foreignKey: "request_id",
         as: "requested_documents",
@@ -67,18 +73,6 @@ module.exports = (sequelize, DataTypes) => {
 
     isPending() {
       return this.status === "pending";
-    }
-
-    isBalanceDue() {
-      return this.status === "balance_due";
-    }
-
-    isDeficient() {
-      return this.status === "deficient";
-    }
-
-    isUnderReview() {
-      return this.status === "under_review";
     }
 
     isInvoiced() {
@@ -155,64 +149,34 @@ module.exports = (sequelize, DataTypes) => {
       return [...requested, ...additional, ...bills];
     }
 
-    markPendingToBalanceDue() {
+    markPendingToInvoiced() {
       if (!this.isPending())
-        throw new Error("Only pending requests can become balance due");
-      this.status = "balance_due";
-    }
+        throw new Error("Only pending requests can be invoiced");
 
-    markPendingToUnderReview() {
-      if (!this.isPending())
-        throw new Error("Only pending requests can be under review");
-      this.status = "under_review";
-    }
+      if (!this.isRequestApproved())
+        throw new Error("Request must be approved by RMO and Cashier");
 
-    markBalanceDueToUnderReview() {
-      if (!this.isBalanceDue())
-        throw new Error("Only balance due requests can be under review");
-      this.status = "under_review";
-    }
-
-    markUnderReviewToDeficient() {
-      if (!this.isUnderReview())
-        throw new Error("Only under review requests can be marked deficient");
-      this.status = "deficient";
-    }
-
-    markDeficientToInvoiced() {
-      if (!this.isDeficient())
-        throw new Error("Only deficient requests can be invoiced");
-      this.status = "invoiced";
-    }
-
-    markUnderReviewToInvoiced() {
-      if (!this.isUnderReview())
-        throw new Error("Only under review requests can be invoiced");
       this.status = "invoiced";
     }
 
     markInvoicedToPaid() {
       if (!this.isInvoiced())
         throw new Error("Only invoiced requests can be paid");
+
       this.status = "paid";
     }
 
     markPaidToReleased() {
       if (!this.isPaid()) throw new Error("Only paid requests can be released");
+
       this.status = "released";
       this.request_completed = new Date();
     }
 
-    markDeficientToRejected() {
-      if (!this.isDeficient())
-        throw new Error("Only deficient requests can be rejected");
-      this.status = "rejected";
-    }
+    isRequestApproved() {
+      if (!this.validations) return false;
 
-    markBalanceDueToRejected() {
-      if (!this.isBalanceDue())
-        throw new Error("Only balance due requests can be rejected");
-      this.status = "rejected";
+      return this.validations.rmo && this.validations.cashier;
     }
   }
   Request.init(
@@ -246,9 +210,6 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.ENUM(
           "rejected",
-          "deficient",
-          "balance_due",
-          "under_review",
           "released",
           "pending",
           "paid",

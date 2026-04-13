@@ -161,35 +161,59 @@ module.exports = {
       }
 
       // ------------------------
-      // 8. LOGS (NEW FLOW)
+      // 8. LOGS (FIXED FLOW)
       // ------------------------
       const logs = [];
 
-      const addLog = (from, to, role, account) => {
+      const now = new Date();
+
+      const addApprovalLog = (role, action, account) => {
         logs.push({
           account_id: account.id,
+          request_id: request.id,
+          role,
+          action,
+          from_status: "pending",
+          to_status: "pending",
+          notes: request.notes,
+          created_at: now,
+          updated_at: now,
+        });
+      };
+
+      const addStatusLog = (from, to, role, account = null) => {
+        logs.push({
+          account_id: account ? account.id : null,
           request_id: request.id,
           role,
           action: to,
           from_status: from,
           to_status: to,
           notes: request.notes,
-          created_at: new Date(),
-          updated_at: new Date(),
+          created_at: now,
+          updated_at: now,
         });
       };
 
       if (!isRejected) {
         if (["invoiced", "paid", "released"].includes(status)) {
-          addLog("pending", "invoiced", "rmo", rmoAccount);
+          if (faker.datatype.boolean()) {
+            addApprovalLog("rmo", "approved_rmo", rmoAccount);
+            addApprovalLog("cashier", "approved_cashier", cashierAccount);
+          } else {
+            addApprovalLog("cashier", "approved_cashier", cashierAccount);
+            addApprovalLog("rmo", "approved_rmo", rmoAccount);
+          }
+
+          addStatusLog("pending", "invoiced", "system");
         }
 
         if (["paid", "released"].includes(status)) {
-          addLog("invoiced", "paid", "cashier", cashierAccount);
+          addStatusLog("invoiced", "paid", "cashier", cashierAccount);
         }
 
         if (status === "released") {
-          addLog("paid", "released", "rmo", rmoAccount);
+          addStatusLog("paid", "released", "rmo", rmoAccount);
         }
       }
 

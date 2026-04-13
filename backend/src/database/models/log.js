@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       Log.belongsTo(models.Account, {
         foreignKey: "account_id",
         as: "account",
-        onDelete: "CASCADE",
+        onDelete: "SET NULL",
         onUpdate: "CASCADE",
       });
       Log.belongsTo(models.Request, {
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       account_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "accounts",
           key: "id",
@@ -45,7 +45,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       action: {
-        type: DataTypes.ENUM("rejected", "released", "paid", "invoiced"),
+        type: DataTypes.ENUM(
+          "approved_rmo",
+          "approved_cashier",
+          "rejected",
+          "invoiced",
+          "paid",
+          "released",
+        ),
         allowNull: false,
       },
       from_status: {
@@ -53,7 +60,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       to_status: {
-        type: DataTypes.ENUM("rejected", "released", "paid", "invoiced"),
+        type: DataTypes.ENUM(
+          "pending",
+          "rejected",
+          "released",
+          "paid",
+          "invoiced",
+        ),
         allowNull: false,
       },
       notes: {

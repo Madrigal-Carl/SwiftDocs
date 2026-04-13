@@ -11,13 +11,13 @@ module.exports = {
       },
       account_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         references: {
           model: "accounts",
           key: "id",
         },
         onUpdate: "CASCADE",
-        onDelete: "CASCADE",
+        onDelete: "SET NULL",
       },
       request_id: {
         type: Sequelize.INTEGER,
@@ -34,7 +34,14 @@ module.exports = {
         allowNull: false,
       },
       action: {
-        type: Sequelize.ENUM("rejected", "released", "paid", "invoiced"),
+        type: Sequelize.ENUM(
+          "approved_rmo",
+          "approved_cashier",
+          "rejected",
+          "invoiced",
+          "paid",
+          "released",
+        ),
         allowNull: false,
       },
       from_status: {
@@ -42,7 +49,13 @@ module.exports = {
         allowNull: false,
       },
       to_status: {
-        type: Sequelize.ENUM("rejected", "released", "paid", "invoiced"),
+        type: Sequelize.ENUM(
+          "pending",
+          "rejected",
+          "released",
+          "paid",
+          "invoiced",
+        ),
         allowNull: false,
       },
       notes: {

@@ -6,18 +6,9 @@ function computeStats(requests, timeframe = "year", role = "admin") {
   const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
 
   const roleStatusMap = {
-    rmo: ["under_review", "deficient", "paid", "invoiced", "released"],
-    cashier: ["pending", "balance_due", "paid", "invoiced", "under_review"],
-    admin: [
-      "pending",
-      "balance_due",
-      "deficient",
-      "under_review",
-      "paid",
-      "invoiced",
-      "released",
-      "rejected",
-    ],
+    rmo: ["rejected", "pending", "paid", "invoiced", "released"],
+    cashier: ["pending", "paid", "invoiced"],
+    admin: ["rejected", "pending", "paid", "invoiced", "released"],
   };
 
   const allowedStatuses = roleStatusMap[role] || [];
@@ -41,16 +32,7 @@ function computeStats(requests, timeframe = "year", role = "admin") {
   const endDate = new Date(now);
   endDate.setHours(23, 59, 59, 999);
 
-  const statuses = [
-    "pending",
-    "balance_due",
-    "deficient",
-    "under_review",
-    "paid",
-    "invoiced",
-    "released",
-    "rejected",
-  ];
+  const statuses = ["pending", "paid", "invoiced", "released", "rejected"];
 
   const countByStatus = {};
   const monthlyTrend = {};

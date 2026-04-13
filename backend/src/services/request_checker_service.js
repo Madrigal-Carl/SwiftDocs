@@ -1,8 +1,4 @@
-const {
-  FetchStaleRequests,
-  FindRequestById,
-} = require("../repositories/request_repository");
-
+const { FetchStaleRequests } = require("../repositories/request_repository");
 const { SendUpdateMail } = require("../services/mail_service");
 const { CreateLog } = require("../repositories/log_repository");
 const { findAdminAccount } = require("../repositories/account_repository");
@@ -20,18 +16,13 @@ async function checkStaleRequests() {
       try {
         const fromStatus = req.status;
 
-        if (req.isDeficient()) {
-          req.markDeficientToRejected();
-        } else if (req.isBalanceDue()) {
-          req.markBalanceDueToRejected();
-        } else {
-          continue;
-        }
+        if (!req.isPending()) continue;
 
+        req.markRejected();
         await req.save();
 
         await CreateLog({
-          account_id: admin.id,
+          account_id: null,
           request_id: req.id,
           role: "system",
           action: "rejected",

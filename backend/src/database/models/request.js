@@ -170,6 +170,14 @@ module.exports = (sequelize, DataTypes) => {
       this.request_completed = new Date();
     }
 
+    markRejected() {
+      if (!this.isPending()) {
+        throw new Error("Only pending requests can be rejected");
+      }
+
+      this.status = "rejected";
+    }
+
     isRequestApproved() {
       if (!this.validations) return false;
 

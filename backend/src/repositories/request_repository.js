@@ -150,9 +150,7 @@ async function GetAllRequestStatuses() {
 async function FetchStaleRequests() {
   return Request.findAll({
     where: {
-      status: {
-        [Op.in]: ["deficient", "balance_due"],
-      },
+      status: "pending",
       updated_at: {
         [Op.lte]: Sequelize.literal("DATE_SUB(NOW(), INTERVAL 3 MONTH)"),
       },

@@ -19,13 +19,14 @@ async function SendMail({ to, status, data }) {
     throw new Error("Invalid request status");
   }
 
-  const { subject, html } = template(data);
+  const { subject, html, attachments } = template(data);
 
   await transporter.sendMail({
     from: `"Registrar Office" <${process.env.SMTP_USER}>`,
     to,
     subject,
     html,
+    attachments,
   });
 }
 
@@ -36,7 +37,7 @@ async function SendUpdateMail({ request, status, notes }) {
     return;
   }
 
-  const { subject, html } = template({
+  const { subject, html, attachments } = template({
     request,
     notes,
   });
@@ -46,6 +47,7 @@ async function SendUpdateMail({ request, status, notes }) {
     to: request.student.email,
     subject,
     html,
+    attachments,
   });
 }
 

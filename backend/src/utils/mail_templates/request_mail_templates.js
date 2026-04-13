@@ -1,3 +1,5 @@
+const path = require("path");
+
 function pendingTemplate(data) {
   const fullName = data.student.getFullName();
 
@@ -116,6 +118,13 @@ function releasedTemplate(data) {
 
   return {
     subject: "Request Update: Documents Released",
+    attachments: [
+      {
+        filename: "feedback-qr.png",
+        path: path.join(__dirname, "qr.png"),
+        cid: "feedbackqr",
+      },
+    ],
     html: `
       <p>Hi ${fullName},</p>
 
@@ -123,6 +132,16 @@ function releasedTemplate(data) {
 
       ${releaseMessage}
 
+      <p><strong>We would appreciate your feedback:</strong></p>
+
+      <img 
+        src="cid:feedbackqr"
+        alt="Feedback QR Code"
+        style="width:200px;height:200px;margin-top:10px;"
+      />
+
+      <p>Scan the QR code above to leave feedback.</p>
+      
       <p>– Registrar Office</p>
     `,
   };

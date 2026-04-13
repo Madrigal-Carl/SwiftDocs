@@ -25,7 +25,6 @@ services:
       - db
     volumes:
       - ./backend:/app
-      - /app/node_modules
     command: npm run dev
 
   redis:

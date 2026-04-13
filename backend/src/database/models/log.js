@@ -45,15 +45,38 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       action: {
-        type: DataTypes.ENUM("rejected", "released", "paid", "invoiced"),
+        type: DataTypes.ENUM(
+          "rejected",
+          "released",
+          "paid",
+          "under_review",
+          "invoiced",
+          "balance_due",
+          "deficient",
+        ),
         allowNull: false,
       },
       from_status: {
-        type: DataTypes.ENUM("pending", "paid", "invoiced"),
+        type: DataTypes.ENUM(
+          "pending",
+          "paid",
+          "invoiced",
+          "balance_due",
+          "under_review",
+          "deficient",
+        ),
         allowNull: false,
       },
       to_status: {
-        type: DataTypes.ENUM("rejected", "released", "paid", "invoiced"),
+        type: DataTypes.ENUM(
+          "rejected",
+          "released",
+          "paid",
+          "invoiced",
+          "balance_due",
+          "under_review",
+          "deficient",
+        ),
         allowNull: false,
       },
       notes: {

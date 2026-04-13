@@ -35,12 +35,13 @@ module.exports = {
       },
       action: {
         type: Sequelize.ENUM(
+          "rejected",
           "released",
           "paid",
-          "invoiced",
-          "deficient",
           "under_review",
+          "invoiced",
           "balance_due",
+          "deficient",
         ),
         allowNull: false,
       },
@@ -57,12 +58,13 @@ module.exports = {
       },
       to_status: {
         type: Sequelize.ENUM(
+          "rejected",
           "released",
           "paid",
           "invoiced",
-          "deficient",
-          "under_review",
           "balance_due",
+          "under_review",
+          "deficient",
         ),
         allowNull: false,
       },

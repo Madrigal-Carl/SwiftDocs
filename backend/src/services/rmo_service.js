@@ -39,7 +39,7 @@ async function UpdateRequestStatus(
   let action = status;
   let isSystemAction = false;
 
-  const approved = request.isRequestApproved();
+  let approved = request.isRequestApproved();
 
   if (status === "deficient") {
     if (!request.isPending()) {
@@ -60,6 +60,12 @@ async function UpdateRequestStatus(
     if (request.validations) {
       request.validations.rmo = true;
       await request.validations.save();
+
+      await request.reload({
+        include: [{ association: "validations" }],
+      });
+
+      approved = request.isRequestApproved();
     }
 
     if (approved) {

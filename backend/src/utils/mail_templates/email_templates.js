@@ -76,7 +76,7 @@ function invoicedTemplate(data) {
   const total = req.getGrandTotal();
 
   const docList = documents
-    .map((d) => `<li>${d.type} (x${d.quantity}) - ₱${d.total}</li>`)
+    .map((d) => `<li>${d.type} (x${d.quantity ?? 1}) - ₱${d.total}</li>`)
     .join("");
 
   return {
@@ -107,7 +107,7 @@ function paidTemplate(data) {
   const total = req.getGrandTotal();
 
   const docList = documents
-    .map((d) => `<li>${d.type} (x${d.quantity})</li>`)
+    .map((d) => `<li>${d.type} (x${d.quantity ?? 1})</li>`)
     .join("");
 
   return {

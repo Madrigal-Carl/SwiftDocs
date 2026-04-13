@@ -147,11 +147,14 @@ async function GetAllRequestStatuses() {
   });
 }
 
-async function FetchDeficientAndBalanceDueRequests() {
+async function FetchStaleRequests() {
   return Request.findAll({
     where: {
       status: {
         [Op.in]: ["deficient", "balance_due"],
+      },
+      updated_at: {
+        [Op.lte]: Sequelize.literal("DATE_SUB(NOW(), INTERVAL 3 MONTH)"),
       },
     },
     include: [
@@ -160,14 +163,6 @@ async function FetchDeficientAndBalanceDueRequests() {
         attributes: ["id", "first_name", "middle_name", "last_name", "email"],
       },
     ],
-    order: [["created_at", "DESC"]],
-  });
-}
-
-async function GetLatestLogByRequestId(requestId) {
-  return Log.findOne({
-    where: { request_id: requestId },
-    order: [["created_at", "DESC"]],
   });
 }
 
@@ -178,6 +173,5 @@ module.exports = {
   FindByReferenceNumber,
   GetAllRequestStatuses,
   FetchAllRequestsWithStudent,
-  FetchDeficientAndBalanceDueRequests,
-  GetLatestLogByRequestId,
+  FetchStaleRequests,
 };

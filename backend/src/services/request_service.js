@@ -5,6 +5,7 @@ const requestRepository = require("../repositories/request_repository");
 const requestedDocumentRepository = require("../repositories/requested_document_repository");
 const documentRepository = require("../repositories/document_repository");
 const requirementRepository = require("../repositories/requirement_repository");
+const validationRepository = require("../repositories/validation_repository");
 const additionalDocumentRepository = require("../repositories/additional_document_repository");
 const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
@@ -34,6 +35,13 @@ async function RequestDocuments(data, files = []) {
         purpose: data.purpose,
         notes: data.notes,
         delivery_method: data.delivery_method,
+      },
+      t,
+    );
+
+    await validationRepository.CreateValidation(
+      {
+        request_id: request.id,
       },
       t,
     );
@@ -95,6 +103,9 @@ async function RequestDocuments(data, files = []) {
         },
         {
           association: "requirements",
+        },
+        {
+          association: "validations",
         },
       ],
     });

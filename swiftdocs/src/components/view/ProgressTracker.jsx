@@ -1,17 +1,20 @@
-import { FileText, CreditCard, BadgeCheck, Check, XCircle } from "lucide-react";
+import {
+  FileText,
+  CreditCard,
+  BadgeCheck,
+  Check,
+  XCircle,
+  Clock,
+} from "lucide-react";
 import { STATUS_COLORS } from "../../utils/status_colors";
 
 export default function ProgressTracker({ status, completedDate, logs = [] }) {
   const normalize = (s) => s?.toLowerCase();
 
-  const getTransitionDate = (to, latest = false) => {
+  const getTransitionDate = (to) => {
     const filtered = logs
       .filter((l) => l.to_status === to)
-      .sort((a, b) =>
-        latest
-          ? new Date(b.createdAt) - new Date(a.createdAt)
-          : new Date(a.createdAt) - new Date(b.createdAt),
-      );
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     const log = filtered[0];
     return log ? log.createdAt.split("T")[0] : null;
@@ -20,36 +23,20 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
   const currentStatus = normalize(status);
 
   const isRejected = currentStatus === "rejected";
-  const isDeficient = currentStatus === "deficient";
-  const isBalanceDue = currentStatus === "balance_due";
   const isReleased = currentStatus === "released";
 
-  const isSpecialFlow = isRejected || isBalanceDue;
+  // ✅ MAIN FLOW ONLY
+  const order = ["pending", "invoiced", "paid", "released"];
 
-  const order = ["pending", "under_review", "invoiced", "paid", "released"];
   const currentIndex = order.indexOf(currentStatus);
-  const safeIndex = currentIndex === -1 ? order.length : currentIndex;
+  const safeIndex = currentIndex === -1 ? 0 : currentIndex;
 
   const dates = {
-    pending:
-      !isRejected && !isBalanceDue && safeIndex >= 1
-        ? getTransitionDate("under_review")
-        : null,
-
-    underReview:
-      !isRejected && !isBalanceDue && safeIndex >= 2
-        ? getTransitionDate("invoiced")
-        : null,
-
-    invoiced:
-      !isRejected && !isBalanceDue && safeIndex >= 3
-        ? getTransitionDate("paid")
-        : null,
-
-    paid:
-      !isRejected && !isBalanceDue && safeIndex >= 4
-        ? completedDate || getTransitionDate("released")
-        : null,
+    pending: safeIndex >= 0 ? getTransitionDate("pending") : null,
+    invoiced: safeIndex >= 1 ? getTransitionDate("invoiced") : null,
+    paid: safeIndex >= 2 ? getTransitionDate("paid") : null,
+    released:
+      safeIndex >= 3 ? completedDate || getTransitionDate("released") : null,
   };
 
   const steps = [
@@ -62,47 +49,32 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
     },
     {
       id: 1,
-      key: "under_review",
-      label: "Under Review",
-      icon: FileText,
-      date: dates.underReview,
-    },
-    {
-      id: 2,
       key: "invoiced",
       label: "Payment Pending",
       icon: CreditCard,
       date: dates.invoiced,
     },
     {
-      id: 3,
+      id: 2,
       key: "paid",
+      label: "Processing",
+      icon: Clock,
+      date: dates.paid,
+    },
+    {
+      id: 3,
+      key: "released",
       label: "Released",
       icon: BadgeCheck,
-      date: dates.paid,
+      date: dates.released,
     },
   ];
 
   const getStepState = (step) => {
-    // ✅ BALANCE DUE
-    if (isBalanceDue) {
-      if (step.key === "pending") return "active";
-      return "stale";
-    }
-
-    // ✅ DEFICIENT
-    if (isDeficient) {
-      if (["pending", "under_review"].includes(step.key)) return "active";
-      return "stale";
-    }
-
-    // ✅ REJECTED
     if (isRejected) return "stale";
 
-    // ✅ NORMAL FLOW
     const currentIndexRaw = order.indexOf(currentStatus);
-    const currentIndex =
-      currentIndexRaw === -1 ? order.length : currentIndexRaw;
+    const currentIndex = currentIndexRaw === -1 ? 0 : currentIndexRaw;
     const stepIndex = order.indexOf(step.key);
 
     if (isReleased) return "completed";
@@ -112,12 +84,10 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
     return "stale";
   };
 
-  const getStepClass = (state, step, index) => {
-    if (state === "completed") {
-      return `text-white`;
-    }
+  const getStepClass = (state) => {
+    if (state === "completed") return `text-white`;
 
-    if (state === "current" || state === "active") {
+    if (state === "current") {
       return `bg-white border-2 scale-110`;
     }
 
@@ -126,13 +96,15 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
 
   const getStepStyle = (state, step) => {
     const color =
-      step.key === "paid" ? STATUS_COLORS["released"] : STATUS_COLORS[step.key];
+      step.key === "released"
+        ? STATUS_COLORS["released"]
+        : STATUS_COLORS[step.key];
 
     if (state === "completed") {
       return { backgroundColor: color };
     }
 
-    if (state === "current" || state === "active") {
+    if (state === "current") {
       return {
         borderColor: color,
         color: color,
@@ -157,11 +129,9 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
         <div className="flex items-center relative justify-center">
           <div className="absolute top-5 left-1/2 -translate-x-1/2 h-0.5 bg-gray-200 w-[80%]" />
 
-          {steps.map((step, index) => {
+          {steps.map((step) => {
             const state = getStepState(step);
-
-            const isCompleted = state === "completed";
-            const StepIcon = isCompleted ? Check : step.icon;
+            const StepIcon = state === "completed" ? Check : step.icon;
 
             return (
               <div
@@ -172,8 +142,6 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${getStepClass(
                     state,
-                    step,
-                    index,
                   )}`}
                   style={getStepStyle(state, step)}
                 >
@@ -195,8 +163,8 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
             );
           })}
 
-          {/* 👉 REJECTED / DEFICIENT / BALANCE DUE NODE */}
-          {(isRejected || isDeficient || isBalanceDue) && (
+          {/* ✅ REJECTED NODE (kept separate like your original design) */}
+          {isRejected && (
             <div
               className="flex flex-col items-center relative z-10"
               style={{ width: "20%" }}
@@ -204,7 +172,7 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
               <div
                 className="w-10 h-10 rounded-full flex items-center justify-center text-white"
                 style={{
-                  backgroundColor: STATUS_COLORS[currentStatus],
+                  backgroundColor: STATUS_COLORS["rejected"],
                 }}
               >
                 <XCircle className="w-5 h-5" />
@@ -212,9 +180,9 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
 
               <span
                 className="mt-2 text-xs font-medium capitalize"
-                style={{ color: STATUS_COLORS[currentStatus] }}
+                style={{ color: STATUS_COLORS["rejected"] }}
               >
-                {currentStatus.replace("_", " ")}
+                rejected
               </span>
             </div>
           )}

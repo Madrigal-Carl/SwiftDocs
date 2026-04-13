@@ -8,9 +8,10 @@ async function UpdateRequestStatus(
   status,
   account,
   note = null,
-  additionalDocs = [],
+  bills = [],
+  expected_release_date = null,
 ) {
-  const allowedStatuses = ["invoiced", "rejected", "released"];
+  const allowedStatuses = ["deficient", "invoiced", "released"];
 
   if (!allowedStatuses.includes(status)) {
     throw new Error("Invalid status for RMO");
@@ -18,16 +19,10 @@ async function UpdateRequestStatus(
 
   const request = await requestRepository.FindRequestById(requestId, null, {
     include: [
-      {
-        association: "student",
-      },
-      {
-        association: "requested_documents",
-        include: ["document"],
-      },
-      {
-        association: "additional_documents",
-      },
+      { association: "student" },
+      { association: "requested_documents", include: ["document"] },
+      { association: "additional_documents" },
+      { association: "bills" },
     ],
   });
 
@@ -35,23 +30,58 @@ async function UpdateRequestStatus(
     throw new Error("Request not found");
   }
 
-  if (status === "invoiced" && !request.isPending()) {
-    throw new Error("Only pending requests can be invoiced");
-  }
-
   const previousStatus = request.status;
 
-  const actions = {
-    invoiced: () => request.markInvoiced(),
-    rejected: () => request.markRejected(),
-    released: () => request.markReleased(),
-  };
+  if (status === "deficient") {
+    if (!request.isUnderReview()) {
+      throw new Error("Only under_review requests can be marked deficient");
+    }
 
-  if (!actions[status]) {
-    throw new Error("Invalid status");
+    request.markUnderReviewToDeficient();
   }
 
-  actions[status]();
+  if (status === "invoiced") {
+    if (request.isUnderReview()) {
+      request.markUnderReviewToInvoiced();
+    } else if (request.isDeficient()) {
+      request.markDeficientToInvoiced();
+    } else {
+      throw new Error(
+        "Only under_review or deficient requests can be invoiced",
+      );
+    }
+
+    const validBills = (bills || []).filter(
+      (b) => b.name?.trim() !== "" && b.price !== "" && b.price !== null,
+    );
+
+    if (request.delivery_method === "delivery" && validBills.length === 0) {
+      throw new Error("At least one bill is required for delivery requests");
+    }
+
+    if (validBills.length > 0) {
+      await Promise.all(
+        validBills.map((bill) =>
+          requestRepository.CreateBill({
+            request_id: request.id,
+            name: bill.name,
+            price: bill.price,
+          }),
+        ),
+      );
+    }
+    if (expected_release_date) {
+      request.expected_release_date = expected_release_date;
+    }
+  }
+
+  if (status === "released") {
+    if (!request.isPaid()) {
+      throw new Error("Only paid requests can be released");
+    }
+
+    request.markPaidToReleased();
+  }
 
   await request.save();
 
@@ -65,10 +95,10 @@ async function UpdateRequestStatus(
     notes: note,
   });
 
-  await mailService.SendRMOUpdateMail({
-    request,
+  await mailService.SendUpdateMail({
+    request: request,
     status,
-    reason: note,
+    notes: note,
   });
 
   return {
@@ -95,8 +125,10 @@ async function UpdateAdditionalDocumentPrices(
     throw new Error("Request not found");
   }
 
-  if (!request.isPending()) {
-    throw new Error("Prices can only be updated while request is pending");
+  if (!request.isUnderReview() && !request.isDeficient()) {
+    throw new Error(
+      "Prices can only be updated while request is under review or deficient",
+    );
   }
 
   for (const doc of additionalDocs) {

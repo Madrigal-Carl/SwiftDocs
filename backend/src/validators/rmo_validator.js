@@ -2,19 +2,56 @@ const Joi = require("joi");
 
 const updateRequestStatusSchema = Joi.object({
   status: Joi.string()
-    .valid("invoiced", "rejected", "released")
+    .valid("deficient", "invoiced", "released")
     .required()
     .messages({
       "string.empty": "Status is required",
-      "any.only": "Status must be invoiced, rejected, or released",
+      "any.only": "Status must be deficient, invoiced, or released",
       "any.required": "Status is required",
     }),
-
+  bills: Joi.when("status", {
+    is: "invoiced",
+    then: Joi.array()
+      .items(
+        Joi.object({
+          name: Joi.string().required().messages({
+            "string.empty": "Bill name is required",
+            "any.required": "Bill name is required",
+          }),
+          price: Joi.number().min(0).required().messages({
+            "number.base": "Bill price must be a number",
+            "number.min": "Bill price must be at least 0",
+            "any.required": "Bill price is required",
+          }),
+        }),
+      )
+      .min(1)
+      .optional()
+      .messages({
+        "array.base": "Bills must be an array",
+        "array.min": "At least one bill is required when status is invoiced",
+      }),
+    otherwise: Joi.forbidden().messages({
+      "any.unknown": "Bills are not allowed unless status is invoiced",
+    }),
+  }),
+  expected_release_date: Joi.when("status", {
+    is: "invoiced",
+    then: Joi.alternatives()
+      .try(
+        Joi.date().messages({
+          "date.base": "Expected release date must be a valid date",
+        }),
+        Joi.string().trim().empty(""),
+      )
+      .optional(),
+    otherwise: Joi.string().trim().empty("").default(null).optional(),
+  }),
   note: Joi.when("status", {
-    is: "rejected",
+    is: "deficient",
     then: Joi.string().trim().required().messages({
-      "string.empty": "Rejection reason is required",
-      "any.required": "Rejection reason is required",
+      "string.empty": "Remarks/Reason is needed",
+      "any.required": "Remarks/Reason is needed",
     }),
     otherwise: Joi.string().trim().empty("").default(null).optional(),
   }),

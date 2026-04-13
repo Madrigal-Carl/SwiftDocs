@@ -11,7 +11,7 @@ import {
   Book,
   File,
   Download,
-  Stamp,
+  ReceiptText,
 } from "lucide-react";
 import StatusBadge from "../components/StatusBadge";
 import { fetchRequestByReference } from "../services/request_service.js";
@@ -27,7 +27,10 @@ import {
 } from "../services/rmo_service.js";
 import { showToast } from "../utils/swal.js";
 import { getNextStatus } from "../utils/requestStatus.js";
-import { updateCashierRequestStatus } from "../services/cashier_service";
+import {
+  updateCashierRequestStatus,
+  updateCashierRequestReview,
+} from "../services/cashier_service";
 
 export default function RequestView() {
   const { reference_number } = useParams();
@@ -39,7 +42,9 @@ export default function RequestView() {
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [referenceNumber, setReferenceNumber] = useState("");
-  const isRmoPending = user?.role === "rmo" && request?.status === "pending";
+  const isRmoPending =
+    user?.role === "rmo" &&
+    (request?.status === "under_review" || request?.status === "deficient");
 
   const [additionalDocsState, setAdditionalDocsState] = useState([]);
 
@@ -134,7 +139,7 @@ export default function RequestView() {
                 className="flex items-center gap-4 px-4 py-2 text-sm font-semibold rounded-lg border border-red-300 text-red-600 hover:bg-red-50 transition-colors"
               >
                 <CircleX className="w-4 h-4" />
-                Reject
+                Decline
               </button>
             )}
 
@@ -398,8 +403,8 @@ export default function RequestView() {
 
               const renderOthers = (list) =>
                 list.map((doc, index) => {
-                  const subtotal = doc.price * doc.quantity;
-
+                  const price = doc.unit_price || 0;
+                  const subtotal = price * doc.quantity;
                   return (
                     <div
                       key={index}
@@ -469,7 +474,7 @@ export default function RequestView() {
                       <div className="border-t border-(--border-light) mb-3"></div>
                       <div className="space-y-3">
                         {isRmoPending
-                          ? renderOthers(others)
+                          ? renderOthers(additionalDocsState)
                           : renderList(others)}
                       </div>
                     </div>
@@ -510,111 +515,141 @@ export default function RequestView() {
 
         {/* Right Column - Smaller */}
         <div className="space-y-6">
-          {/* Special Order Card */}
-          {request.special_order && (
+          {/* Requirements Card */}
+          {request.requirements.length !== 0 && (
             <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
-                  <Stamp className="w-4 h-4 text-(--primary-600)" />
+                  <File className="w-4 h-4 text-(--primary-600)" />
                 </div>
                 <h3 className="font-semibold text-(--text-dark)">
-                  Special Order
+                  Requirements
                 </h3>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-lg">
-                <p className="text-xs text-gray-500 uppercase tracking-wider">
-                  Special Order Number
-                </p>
+              <div className="space-y-3">
+                {request.requirements.map((file, index) => {
+                  const fileUrl = `${BASE_URL}/${file.path}`;
+                  const fileName = getFileName(file.path);
+                  const ext = fileName.split(".").pop().toUpperCase();
 
-                <p className="text-sm font-semibold text-(--text-dark)">
-                  {request.special_order.so_number}
-                </p>
+                  const isImage = ["JPG", "JPEG", "PNG"].includes(ext);
+
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 border border-(--border-light) rounded-lg hover:bg-(--bg-light)/50 transition-colors group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div
+                          className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0
+              ${isImage ? "bg-blue-50" : "bg-red-50"}`}
+                        >
+                          <span
+                            className={`text-xs font-bold
+                ${isImage ? "text-blue-600" : "text-red-600"}`}
+                          >
+                            {ext}
+                          </span>
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-(--text-dark) truncate">
+                            {fileName}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            Uploaded requirement
+                          </p>
+                        </div>
+                      </div>
+
+                      <a
+                        href={fileUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="p-2 rounded-lg hover:bg-(--primary-100) text-gray-400 hover:text-(--primary-600) transition-colors"
+                      >
+                        <Download className="w-4 h-4" />
+                      </a>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
 
-          {/* Requirements Card */}
-          <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
-                <File className="w-4 h-4 text-(--primary-600)" />
-              </div>
-              <h3 className="font-semibold text-(--text-dark)">Requirements</h3>
-            </div>
-
-            <div className="space-y-3">
-              {request.requirements.length === 0 && (
-                <p className="text-sm text-gray-500">No requirements.</p>
-              )}
-
-              {request.requirements.map((file, index) => {
-                const fileUrl = `${BASE_URL}/${file.path}`;
-                const fileName = getFileName(file.path);
-                const ext = fileName.split(".").pop().toUpperCase();
-
-                const isImage = ["JPG", "JPEG", "PNG"].includes(ext);
-
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 border border-(--border-light) rounded-lg hover:bg-(--bg-light)/50 transition-colors group"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0
-              ${isImage ? "bg-blue-50" : "bg-red-50"}`}
-                      >
-                        <span
-                          className={`text-xs font-bold
-                ${isImage ? "text-blue-600" : "text-red-600"}`}
-                        >
-                          {ext}
-                        </span>
-                      </div>
-
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-(--text-dark) truncate">
-                          {fileName}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Uploaded requirement
-                        </p>
-                      </div>
-                    </div>
-
-                    <a
-                      href={fileUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="p-2 rounded-lg hover:bg-(--primary-100) text-gray-400 hover:text-(--primary-600) transition-colors"
-                    >
-                      <Download className="w-4 h-4" />
-                    </a>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
           {/* Payment Information Card */}
           <PaymentInformationCard
-            amount={[
-              ...(request.requested_documents || []),
-              ...(isRmoPending
-                ? additionalDocsState
-                : request.additional_documents || []),
-            ].reduce((sum, doc) => {
-              const price = doc.document?.price || doc.unit_price || 0;
-              const quantity = doc.quantity || 0;
-              return sum + price * quantity;
-            }, 0)}
+            amount={
+              [
+                ...(request.requested_documents || []),
+                ...(isRmoPending
+                  ? additionalDocsState
+                  : request.additional_documents || []),
+              ].reduce((sum, doc) => {
+                const price = doc.document?.price || doc.unit_price || 0;
+                const quantity = doc.quantity || 0;
+                return sum + price * quantity;
+              }, 0) +
+              (request.bills || []).reduce(
+                (sum, bill) => sum + (bill.price || 0),
+                0,
+              )
+            }
             status={request.status}
             deliveryMethod={request.delivery_method}
             proof={request.receipts?.map((r) => r.path) || []}
             orNumber={request.or_number?.or_number}
             setReferenceNumber={setReferenceNumber}
           />
+
+          {/* Bills Card */}
+          {request.bills?.length !== 0 && (
+            <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-(--primary-100) flex items-center justify-center">
+                  <ReceiptText className="w-4 h-4 text-(--primary-600)" />
+                </div>
+                <h3 className="font-semibold text-(--text-dark)">
+                  Billing Breakdown
+                </h3>
+              </div>
+
+              <div className="space-y-3">
+                {request.bills.map((bill, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 border border-(--border-light) rounded-lg hover:bg-(--bg-light)/50 transition-colors"
+                  >
+                    {/* Left: Bill Info */}
+                    <div className="flex flex-col min-w-0 w-2/3">
+                      <p className="text-sm font-medium text-(--text-dark) truncate">
+                        {bill.name}
+                      </p>
+                    </div>
+
+                    {/* Right: Price */}
+                    <div className="text-sm font-semibold text-(--text-dark)">
+                      ₱{bill.price.toFixed(2)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Total */}
+              <div className="flex items-center justify-between pt-4 mt-4 border-t border-(--border-light)">
+                <span className="text-xs text-gray-500 uppercase tracking-wider">
+                  Total Bills
+                </span>
+                <span className="text-lg font-bold text-(--primary-600)">
+                  ₱
+                  {request.bills
+                    .reduce((sum, b) => sum + (b.price || 0), 0)
+                    .toFixed(2)}
+                </span>
+              </div>
+            </div>
+          )}
 
           {/*  Notes Card */}
           <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
@@ -664,7 +699,13 @@ export default function RequestView() {
         request={request}
         role={user.role}
         onClose={() => setModalOpen(false)}
-        onSubmit={async (remarks, files, orNumber) => {
+        onSubmit={async ({
+          note,
+          files,
+          or_number,
+          expected_release_date,
+          bills,
+        }) => {
           // <-- added orNumber
           const nextStatus = getNextStatus(
             user.role,
@@ -706,24 +747,38 @@ export default function RequestView() {
                   );
                 }
               }
-
-              await updateRmoRequestStatus(request.id, nextStatus, remarks);
+              await updateRmoRequestStatus(request.id, {
+                status: nextStatus,
+                note,
+                expected_release_date,
+                bills: nextStatus === "invoiced" ? bills : undefined,
+              });
             }
 
             if (user.role === "cashier") {
               const formData = new FormData();
               formData.append("status", nextStatus);
-              formData.append("note", remarks);
+              formData.append("note", note);
               formData.append("reference_number", referenceNumber);
-
-              // Pass OR number
-              formData.append("or_number", orNumber); // <-- new line
+              formData.append("or_number", or_number);
 
               files.forEach((file) => {
                 formData.append("proofs", file);
               });
 
-              await updateCashierRequestStatus(request.id, formData);
+              const isPaymentFlow =
+                request.status === "invoiced" && nextStatus === "paid";
+
+              if (isPaymentFlow) {
+                await updateCashierRequestStatus(request.id, formData);
+              } else {
+                const reviewPayload = {
+                  status: nextStatus,
+                  note: note,
+                };
+
+                await updateCashierRequestReview(request.id, reviewPayload);
+              }
             }
 
             showToast("success", `Request ${nextStatus} successfully!`);

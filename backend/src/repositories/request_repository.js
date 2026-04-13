@@ -1,4 +1,4 @@
-const { Request, Sequelize } = require("../database/models");
+const { Request, Bill, Log, Sequelize } = require("../database/models");
 const { Op } = Sequelize;
 
 function CreateRequest(data, transaction) {
@@ -10,6 +10,10 @@ function FindRequestById(id, transaction = null, options = {}) {
     transaction,
     ...options,
   });
+}
+
+function CreateBill(data, transaction = null) {
+  return Bill.create(data, { transaction });
 }
 
 async function FindByReferenceNumber(referenceNumber, options = {}) {
@@ -79,7 +83,7 @@ async function FetchAllRequestsWithStudent(page = 1, limit = 10, filters = {}) {
     {
       association: "student",
       attributes: ["id", "first_name", "middle_name", "last_name"],
-      required: false, // ✅ keep LEFT JOIN always
+      required: false,
       include: [
         {
           association: "education",
@@ -99,7 +103,19 @@ async function FetchAllRequestsWithStudent(page = 1, limit = 10, filters = {}) {
   return Request.paginate({
     page,
     paginate: limit,
-    order: [["created_at", "DESC"]],
+    order: [
+      [
+        Sequelize.literal(`
+      CASE 
+        WHEN \`Request\`.\`expected_release_date\` IS NULL THEN 1
+        ELSE 0
+      END
+    `),
+        "ASC",
+      ],
+      [Sequelize.col("expected_release_date"), "ASC"],
+      ["created_at", "DESC"],
+    ],
     where,
     include: requestIncludes,
     distinct: true,
@@ -131,10 +147,37 @@ async function GetAllRequestStatuses() {
   });
 }
 
+async function FetchDeficientAndBalanceDueRequests() {
+  return Request.findAll({
+    where: {
+      status: {
+        [Op.in]: ["deficient", "balance_due"],
+      },
+    },
+    include: [
+      {
+        association: "student",
+        attributes: ["id", "first_name", "middle_name", "last_name", "email"],
+      },
+    ],
+    order: [["created_at", "DESC"]],
+  });
+}
+
+async function GetLatestLogByRequestId(requestId) {
+  return Log.findOne({
+    where: { request_id: requestId },
+    order: [["created_at", "DESC"]],
+  });
+}
+
 module.exports = {
   CreateRequest,
+  CreateBill,
   FindRequestById,
   FindByReferenceNumber,
   GetAllRequestStatuses,
   FetchAllRequestsWithStudent,
+  FetchDeficientAndBalanceDueRequests,
+  GetLatestLogByRequestId,
 };

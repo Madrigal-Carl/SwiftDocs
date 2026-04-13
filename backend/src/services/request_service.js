@@ -8,7 +8,6 @@ const requirementRepository = require("../repositories/requirement_repository");
 const additionalDocumentRepository = require("../repositories/additional_document_repository");
 const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
-const specialOrderRepository = require("../repositories/special_order_repository");
 
 async function RequestDocuments(data, files = []) {
   const result = await sequelize.transaction(async (t) => {
@@ -17,7 +16,7 @@ async function RequestDocuments(data, files = []) {
     await educationRepository.CreateEducation(
       {
         student_id: student.id,
-        lrn: data.lrn,
+        ...(data.lrn && { lrn: data.lrn }),
         education_level: data.education_level,
         program: data.program,
         school_last_attended: data.school_last_attended,
@@ -38,16 +37,6 @@ async function RequestDocuments(data, files = []) {
       },
       t,
     );
-
-    if (data.special_order_number) {
-      await specialOrderRepository.CreateSpecialOrder(
-        {
-          request_id: request.id,
-          so_number: data.special_order_number,
-        },
-        t,
-      );
-    }
 
     if (Array.isArray(data.documents) && data.documents.length) {
       await Promise.all(
@@ -107,22 +96,15 @@ async function RequestDocuments(data, files = []) {
         {
           association: "requirements",
         },
-        {
-          association: "special_order",
-        },
       ],
     });
   });
 
-  try {
-    await mailService.SendMail({
-      to: result.student.email,
-      status: "pending",
-      data: result,
-    });
-  } catch (err) {
-    console.error("Failed to send pending email:", err.message);
-  }
+  await mailService.SendUpdateMail({
+    request: result,
+    status: "pending",
+    notes: null,
+  });
 
   return result;
 }
@@ -139,7 +121,7 @@ async function SendRequestEmail(referenceNumber) {
           include: ["document"],
         },
         {
-          association: "additional_documents",
+          association: "bills",
         },
       ],
     },
@@ -191,15 +173,13 @@ async function GetRequestWithStudent(requestId) {
         association: "or_number",
       },
       {
-        association: "special_order",
+        association: "bills",
       },
     ],
   });
 
   const formattedLogs = (request.logs || []).map((log) => {
     const account = log.account;
-
-    let full_name = null;
 
     return {
       ...log.toJSON(),
@@ -238,6 +218,8 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
         total_documents: totalDocuments,
         total_price: totalPrice,
         other: hasOther,
+        request_completed: req.request_completed,
+        expected_release_date: req.expected_release_date,
         created_at: req.createdAt.toISOString(),
       },
     };
@@ -254,10 +236,38 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
   };
 }
 
-async function GetRequestAnalytics(timeframe = "year") {
+async function GetRequestAnalytics(timeframe = "year", role = "admin") {
   const requests = await requestRepository.GetAllRequestStatuses();
 
-  const stats = computeStats(requests, timeframe);
+  const STATUS_MAP = {
+    cashier: ["pending", "balance_due", "invoiced", "paid"],
+    rmo: [
+      "under_review",
+      "deficient",
+      "invoiced",
+      "paid",
+      "released",
+      "rejected",
+    ],
+    admin: [
+      "pending",
+      "balance_due",
+      "under_review",
+      "deficient",
+      "invoiced",
+      "paid",
+      "released",
+      "rejected",
+    ],
+  };
+
+  const allowedStatuses = STATUS_MAP[role] || STATUS_MAP.admin;
+
+  const filteredRequests = requests.filter((req) =>
+    allowedStatuses.includes(req.status),
+  );
+
+  const stats = computeStats(filteredRequests, timeframe, role);
 
   return stats;
 }
@@ -298,7 +308,7 @@ async function GetRequestByReferenceNumber(referenceNumber) {
           association: "or_number",
         },
         {
-          association: "special_order",
+          association: "bills",
         },
       ],
     },

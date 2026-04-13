@@ -1,4 +1,4 @@
-import { PhilippinePeso, Eye, Clock, Mail } from "lucide-react";
+import { PhilippinePeso, Eye, Clock } from "lucide-react";
 import StatusBadge from "../StatusBadge";
 
 export default function PaymentInformationCard({
@@ -10,6 +10,47 @@ export default function PaymentInformationCard({
 }) {
   const showProof = status === "paid" || status === "released";
   const proofs = Array.isArray(proof) ? proof : [proof];
+
+  const NOTICE_CONFIG = {
+    pending: {
+      bg: "bg-yellow-50",
+      border: "border-yellow-200",
+      text: "text-yellow-700",
+      icon: "text-yellow-600",
+      message:
+        "Request is currently being checked. Payment is not required yet.",
+    },
+    under_review: {
+      bg: "bg-yellow-50",
+      border: "border-yellow-200",
+      text: "text-yellow-700",
+      icon: "text-yellow-600",
+      message: "Request is under review. Payment is not required yet.",
+    },
+    invoiced: {
+      bg: "bg-blue-50",
+      border: "border-blue-200",
+      text: "text-blue-700",
+      icon: "text-blue-600",
+      message: "Payment invoice has been sent to the student's email.",
+    },
+    balance_due: {
+      bg: "bg-orange-50",
+      border: "border-orange-200",
+      text: "text-orange-700",
+      icon: "text-orange-600",
+      message: "Payment not required. Settle balance needed.",
+    },
+    deficient: {
+      bg: "bg-rose-50",
+      border: "border-rose-200",
+      text: "text-rose-700",
+      icon: "text-rose-600",
+      message: "Submission is incomplete. Missing requirements.",
+    },
+  };
+
+  const notice = NOTICE_CONFIG[status];
 
   return (
     <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm">
@@ -85,23 +126,12 @@ export default function PaymentInformationCard({
         )}
       </div>
 
-      {/* Pending Notice */}
-      {status === "pending" && (
-        <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg flex items-center justify-center gap-2">
-          <Clock className="w-4 h-4 text-yellow-600" />
-          <p className="text-xs text-yellow-700">
-            Request is currently under review. Payment is not yet required.
-          </p>
-        </div>
-      )}
-
-      {/* Invoiced Notice */}
-      {status === "invoiced" && (
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center justify-center gap-2">
-          <Mail className="w-4 h-4 text-blue-600" />
-          <p className="text-xs text-blue-700">
-            Payment invoice has been sent to the student's email.
-          </p>
+      {notice && (
+        <div
+          className={`mt-4 p-3 rounded-lg border flex items-center justify-center gap-2 ${notice.bg} ${notice.border}`}
+        >
+          <Clock className={`w-4 h-4 ${notice.icon}`} />
+          <p className={`text-xs ${notice.text}`}>{notice.message}</p>
         </div>
       )}
     </div>

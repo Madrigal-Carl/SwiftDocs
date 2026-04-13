@@ -1,70 +1,151 @@
-import {
-  FileText,
-  CreditCard,
-  FileCheck,
-  BadgeCheck,
-  Check,
-  XCircle,
-} from "lucide-react";
+import { FileText, CreditCard, BadgeCheck, Check, XCircle } from "lucide-react";
+import { STATUS_COLORS } from "../../utils/status_colors";
 
 export default function ProgressTracker({ status, completedDate, logs = [] }) {
-  const getTransitionDate = (from, to) => {
-    const log = logs
-      .filter((l) => l.from_status === from && l.to_status === to)
-      .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))[0];
+  const normalize = (s) => s?.toLowerCase();
+
+  const getTransitionDate = (to, latest = false) => {
+    const filtered = logs
+      .filter((l) => l.to_status === to)
+      .sort((a, b) =>
+        latest
+          ? new Date(b.createdAt) - new Date(a.createdAt)
+          : new Date(a.createdAt) - new Date(b.createdAt),
+      );
+
+    const log = filtered[0];
     return log ? log.createdAt.split("T")[0] : null;
   };
 
-  const rejectedDate = getTransitionDate("pending", "rejected");
+  const currentStatus = normalize(status);
+
+  const isRejected = currentStatus === "rejected";
+  const isDeficient = currentStatus === "deficient";
+  const isBalanceDue = currentStatus === "balance_due";
+  const isReleased = currentStatus === "released";
+
+  const isSpecialFlow = isRejected || isBalanceDue;
+
+  const order = ["pending", "under_review", "invoiced", "paid", "released"];
+  const currentIndex = order.indexOf(currentStatus);
+  const safeIndex = currentIndex === -1 ? order.length : currentIndex;
 
   const dates = {
-    underReview: getTransitionDate("pending", "invoiced"),
-    paymentPending: getTransitionDate("invoiced", "paid"),
-    processing: getTransitionDate("paid", "released"),
-    completed: completedDate,
+    pending:
+      !isRejected && !isBalanceDue && safeIndex >= 1
+        ? getTransitionDate("under_review")
+        : null,
+
+    underReview:
+      !isRejected && !isBalanceDue && safeIndex >= 2
+        ? getTransitionDate("invoiced")
+        : null,
+
+    invoiced:
+      !isRejected && !isBalanceDue && safeIndex >= 3
+        ? getTransitionDate("paid")
+        : null,
+
+    paid:
+      !isRejected && !isBalanceDue && safeIndex >= 4
+        ? completedDate || getTransitionDate("released")
+        : null,
   };
 
   const steps = [
-    { id: 1, label: "Under Review", icon: FileText, date: dates.underReview },
+    {
+      id: 0,
+      key: "pending",
+      label: "Pending",
+      icon: FileText,
+      date: dates.pending,
+    },
+    {
+      id: 1,
+      key: "under_review",
+      label: "Under Review",
+      icon: FileText,
+      date: dates.underReview,
+    },
     {
       id: 2,
+      key: "invoiced",
       label: "Payment Pending",
       icon: CreditCard,
-      date: dates.paymentPending,
+      date: dates.invoiced,
     },
-    { id: 3, label: "Processing", icon: FileCheck, date: dates.processing },
-    { id: 4, label: "Completed", icon: BadgeCheck, date: dates.completed },
+    {
+      id: 3,
+      key: "paid",
+      label: "Released",
+      icon: BadgeCheck,
+      date: dates.paid,
+    },
   ];
 
-  const completedColors = [
-    "bg-yellow-500 text-white",
-    "bg-cyan-500 text-white",
-    "bg-indigo-500 text-white",
-    "bg-green-500 text-white",
-  ];
-
-  const currentBorderColor =
-    "border-(--primary-600) text-(--primary-600) ring-4 ring-(--primary-100)";
-
-  const isRejected = status.toLowerCase() === "rejected";
-  const isReleased = status.toLowerCase() === "released";
-
-  let currentStep = 1;
-  if (!isRejected && !isReleased) {
-    switch (status.toLowerCase()) {
-      case "pending":
-        currentStep = 1;
-        break;
-      case "invoiced":
-        currentStep = 2;
-        break;
-      case "paid":
-        currentStep = 3;
-        break;
-      default:
-        currentStep = 1;
+  const getStepState = (step) => {
+    // ✅ BALANCE DUE
+    if (isBalanceDue) {
+      if (step.key === "pending") return "active";
+      return "stale";
     }
-  }
+
+    // ✅ DEFICIENT
+    if (isDeficient) {
+      if (["pending", "under_review"].includes(step.key)) return "active";
+      return "stale";
+    }
+
+    // ✅ REJECTED
+    if (isRejected) return "stale";
+
+    // ✅ NORMAL FLOW
+    const currentIndexRaw = order.indexOf(currentStatus);
+    const currentIndex =
+      currentIndexRaw === -1 ? order.length : currentIndexRaw;
+    const stepIndex = order.indexOf(step.key);
+
+    if (isReleased) return "completed";
+
+    if (stepIndex < currentIndex) return "completed";
+    if (stepIndex === currentIndex) return "current";
+    return "stale";
+  };
+
+  const getStepClass = (state, step, index) => {
+    if (state === "completed") {
+      return `text-white`;
+    }
+
+    if (state === "current" || state === "active") {
+      return `bg-white border-2 scale-110`;
+    }
+
+    return "bg-white text-gray-400 border-2 border-gray-200";
+  };
+
+  const getStepStyle = (state, step) => {
+    const color =
+      step.key === "paid" ? STATUS_COLORS["released"] : STATUS_COLORS[step.key];
+
+    if (state === "completed") {
+      return { backgroundColor: color };
+    }
+
+    if (state === "current" || state === "active") {
+      return {
+        borderColor: color,
+        color: color,
+        boxShadow: `0 0 0 4px ${color}20`,
+      };
+    }
+
+    return {};
+  };
+
+  const getTextColor = (state) => {
+    return state === "stale" ? "text-gray-400" : "text-(--text-dark)";
+  };
 
   return (
     <div className="bg-white border border-(--border-light) rounded-xl p-6 shadow-sm flex flex-col justify-center items-center gap-4">
@@ -73,35 +154,14 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
       </h1>
 
       <div className="w-1/2">
-        <div
-          className={`flex items-center relative ${
-            isRejected ? "justify-start" : "justify-center"
-          }`}
-        >
-          <div
-            className={`absolute top-5 left-1/2 -translate-x-1/2 h-0.5 bg-gray-200 ${
-              isRejected ? "w-full" : "w-[80%]"
-            }`}
-          ></div>
+        <div className="flex items-center relative justify-center">
+          <div className="absolute top-5 left-1/2 -translate-x-1/2 h-0.5 bg-gray-200 w-[80%]" />
 
-          {/* Normal 4 steps */}
           {steps.map((step, index) => {
-            const isCompleted =
-              isReleased ||
-              (!isReleased && currentStep > step.id && !isRejected);
-            const isCurrent =
-              !isReleased && currentStep === step.id && !isRejected;
+            const state = getStepState(step);
 
+            const isCompleted = state === "completed";
             const StepIcon = isCompleted ? Check : step.icon;
-
-            const stepClass = isCompleted
-              ? completedColors[index]
-              : isCurrent
-                ? `bg-white ${currentBorderColor} border-2 scale-110`
-                : "bg-white text-gray-400 border-2 border-gray-200";
-
-            const stepTextColor =
-              isCompleted || isCurrent ? "text-(--text-dark)" : "text-gray-400";
 
             return (
               <div
@@ -110,11 +170,19 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
                 style={{ width: "20%" }}
               >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${stepClass}`}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${getStepClass(
+                    state,
+                    step,
+                    index,
+                  )}`}
+                  style={getStepStyle(state, step)}
                 >
                   <StepIcon className="w-5 h-5" />
                 </div>
-                <span className={`mt-2 text-xs font-medium ${stepTextColor}`}>
+
+                <span
+                  className={`mt-2 text-xs font-medium ${getTextColor(state)}`}
+                >
                   {step.label}
                 </span>
 
@@ -127,23 +195,27 @@ export default function ProgressTracker({ status, completedDate, logs = [] }) {
             );
           })}
 
-          {/* Rejected step */}
-          {isRejected && (
+          {/* 👉 REJECTED / DEFICIENT / BALANCE DUE NODE */}
+          {(isRejected || isDeficient || isBalanceDue) && (
             <div
               className="flex flex-col items-center relative z-10"
               style={{ width: "20%" }}
             >
-              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-red-500 text-white">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white"
+                style={{
+                  backgroundColor: STATUS_COLORS[currentStatus],
+                }}
+              >
                 <XCircle className="w-5 h-5" />
               </div>
-              <span className="mt-2 text-xs font-medium text-red-500">
-                Rejected
+
+              <span
+                className="mt-2 text-xs font-medium capitalize"
+                style={{ color: STATUS_COLORS[currentStatus] }}
+              >
+                {currentStatus.replace("_", " ")}
               </span>
-              {rejectedDate && (
-                <span className="text-[10px] text-gray-400 mt-0.5">
-                  {rejectedDate}
-                </span>
-              )}
             </div>
           )}
         </div>

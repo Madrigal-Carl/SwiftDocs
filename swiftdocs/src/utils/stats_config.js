@@ -1,18 +1,25 @@
-import { File, Clock, CheckCircle, XCircle, CreditCard } from "lucide-react";
+import {
+  File,
+  Clock,
+  CheckCircle,
+  XCircle,
+  CreditCard,
+  FileCheckCorner,
+} from "lucide-react";
 
 export const ROLE_STATS = {
   admin: [
     {
-      title: "Pending Requests",
-      status: "pending",
+      title: "Paid Requests",
+      status: "paid",
       color: "yellow",
-      icon: Clock,
+      icon: CheckCircle,
     },
     {
       title: "Released Documents",
       status: "released",
       color: "green",
-      icon: CheckCircle,
+      icon: FileCheckCorner,
     },
     {
       title: "Rejected Requests",
@@ -30,27 +37,37 @@ export const ROLE_STATS = {
       icon: Clock,
     },
     {
+      title: "Unpaid Balance",
+      status: "balance_due",
+      color: "blue",
+      icon: CreditCard,
+    },
+    {
       title: "Pending Payments",
       status: "invoiced",
       color: "cyan",
       icon: File,
     },
-    { title: "Paid Requests", status: "paid", color: "blue", icon: CreditCard },
   ],
 
   rmo: [
     {
-      title: "Pending Requests",
-      status: "pending",
+      title: "Under Review",
+      status: "under_review",
       color: "yellow",
       icon: Clock,
     },
-    { title: "Paid Requests", status: "paid", color: "blue", icon: CreditCard },
+    {
+      title: "Deficient Requests",
+      status: "deficient",
+      color: "blue",
+      icon: CreditCard,
+    },
     {
       title: "Released Documents",
       status: "released",
       color: "green",
-      icon: CheckCircle,
+      icon: FileCheckCorner,
     },
   ],
 };

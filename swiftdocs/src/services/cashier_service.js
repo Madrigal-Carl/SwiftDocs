@@ -13,12 +13,21 @@ export async function fetchCashierRequests(page = 1, limit = 10, filters = {}) {
   return res.data;
 }
 
+export async function updateCashierRequestReview(id, data) {
+  const res = await api.patch(`/cashier/requests/${id}/review`, data);
+  return res.data;
+}
+
 export async function updateCashierRequestStatus(id, formData) {
-  const res = await api.patch(`/cashier/requests/${id}/status`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
+  const res = await api.patch(
+    `/cashier/requests/${id}/approve-payment`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     },
-  });
+  );
 
   return res.data;
 }

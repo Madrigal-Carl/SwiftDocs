@@ -7,17 +7,20 @@ const updateRequestStatusSchema = Joi.object({
     "any.required": "Status is required",
   }),
   note: Joi.string().trim().empty("").default(null).optional(),
-  or_number: Joi.string().trim().max(255).when("status", {
-  is: "paid",
-  then: Joi.required().messages({
-    "string.empty": "OR number is required when marking as paid",
-    "any.required": "OR number is required when marking as paid",
-  }),
-  otherwise: Joi.optional(),
-  }),
+  or_number: Joi.string()
+    .trim()
+    .max(255)
+    .when("status", {
+      is: "paid",
+      then: Joi.required().messages({
+        "string.empty": "OR number is required when marking as paid",
+        "any.required": "OR number is required when marking as paid",
+      }),
+      otherwise: Joi.optional(),
+    }),
 });
 
-function validateUpdateRequestStatus(req, res, next) {
+function validateApprovePayment(req, res, next) {
   // 🔹 Validate body first
   const { error, value } = updateRequestStatusSchema.validate(req.body, {
     abortEarly: true,
@@ -66,6 +69,40 @@ function validateUpdateRequestStatus(req, res, next) {
   next();
 }
 
+const reviewSchema = Joi.object({
+  status: Joi.string()
+    .valid("under_review", "balance_due")
+    .required()
+    .messages({
+      "any.only": "Status must be under_review or balance_due",
+    }),
+  note: Joi.when("status", {
+    is: "balance_due",
+    then: Joi.string().trim().required().messages({
+      "any.required": "Remarks/Reason is needed",
+      "string.empty": "Remarks/Reason is needed",
+    }),
+    otherwise: Joi.string().trim().allow("", null).optional(),
+  }),
+});
+
+function validateUpdateToReview(req, res, next) {
+  const { error, value } = reviewSchema.validate(req.body, {
+    abortEarly: true,
+    stripUnknown: true,
+  });
+
+  if (error) {
+    return res.status(400).json({
+      message: error.details[0].message,
+    });
+  }
+
+  req.body = value;
+  next();
+}
+
 module.exports = {
-  validateUpdateRequestStatus,
+  validateApprovePayment,
+  validateUpdateToReview,
 };

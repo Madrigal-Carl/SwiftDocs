@@ -11,24 +11,46 @@ export default function RecentRequests({ onChangeTab }) {
 
   const targetTab = getTabByRole(user?.role);
 
-  const getProcessingTime = (createdAt) => {
-    if (!createdAt) return "-";
+  const getReleaseInfo = (expectedDate) => {
+    if (!expectedDate) {
+      return { label: "Not set", type: "neutral" };
+    }
 
     const now = new Date();
-    const created = new Date(createdAt);
+    const release = new Date(expectedDate);
 
-    if (isNaN(created)) return "-";
+    if (isNaN(release)) {
+      return { label: "Not set", type: "neutral" };
+    }
 
-    const diffMs = now - created;
+    const diffMs = release - now;
+    const days = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
 
-    const minutes = Math.floor(diffMs / (1000 * 60));
-    const hours = Math.floor(diffMs / (1000 * 60 * 60));
-    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    if (days > 0) {
+      return {
+        label: `${days} day${days > 1 ? "s" : ""}`,
+        type: "future",
+      };
+    }
 
-    if (days > 0) return `${days} day${days > 1 ? "s" : ""}`;
-    if (hours > 0) return `${hours} hour${hours > 1 ? "s" : ""}`;
-    if (minutes > 0) return `${minutes} min`;
-    return "Just now";
+    if (days === 0) {
+      return {
+        label: "Today",
+        type: "today",
+      };
+    }
+
+    return {
+      label: `${Math.abs(days)} day${Math.abs(days) > 1 ? "s" : ""}`,
+      type: "past",
+    };
+  };
+
+  const releaseStyles = {
+    future: "bg-blue-100 text-blue-700",
+    today: "bg-yellow-100 text-yellow-700",
+    past: "bg-red-100 text-red-700",
+    neutral: "bg-gray-100 text-gray-500",
   };
 
   return (
@@ -63,7 +85,7 @@ export default function RecentRequests({ onChangeTab }) {
                 Date Requested
               </th>
               <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase">
-                Requested
+                Release
               </th>
               <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase">
                 Status
@@ -111,8 +133,26 @@ export default function RecentRequests({ onChangeTab }) {
                       {new Date(req.request_date).toLocaleDateString()}
                     </td>
 
-                    <td className="px-6 py-4 text-sm text-gray-600 text-center">
-                      {getProcessingTime(req.created_at)}
+                    <td className="px-6 py-4 text-sm text-center">
+                      {(() => {
+                        if (req.status === "released") {
+                          return (
+                            <span className="px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-700">
+                              {req.request_completed}
+                            </span>
+                          );
+                        }
+
+                        const info = getReleaseInfo(req.expected_release_date);
+
+                        return (
+                          <span
+                            className={`px-2 py-1 rounded-md text-xs font-medium ${releaseStyles[info.type]}`}
+                          >
+                            {info.label}
+                          </span>
+                        );
+                      })()}
                     </td>
 
                     <td className="px-6 py-4 text-center capitalize">

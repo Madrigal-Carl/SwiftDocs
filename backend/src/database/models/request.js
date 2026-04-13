@@ -29,15 +29,15 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
-      Request.hasOne(models.Special_Order, {
-        foreignKey: "request_id",
-        as: "special_order",
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE",
-      });
       Request.hasMany(models.Requirement, {
         foreignKey: "request_id",
         as: "requirements",
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      });
+      Request.hasMany(models.Bill, {
+        foreignKey: "request_id",
+        as: "bills",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
@@ -69,12 +69,24 @@ module.exports = (sequelize, DataTypes) => {
       return this.status === "pending";
     }
 
-    isPaid() {
-      return this.status === "paid";
+    isBalanceDue() {
+      return this.status === "balance_due";
+    }
+
+    isDeficient() {
+      return this.status === "deficient";
+    }
+
+    isUnderReview() {
+      return this.status === "under_review";
     }
 
     isInvoiced() {
       return this.status === "invoiced";
+    }
+
+    isPaid() {
+      return this.status === "paid";
     }
 
     isReleased() {
@@ -99,20 +111,21 @@ module.exports = (sequelize, DataTypes) => {
 
     getGrandTotal() {
       const requestedTotal = (this.requested_documents || []).reduce(
-        (sum, rd) => {
-          return sum + (rd.quantity || 0) * (rd.document?.price || 0);
-        },
+        (sum, rd) => sum + (rd.quantity || 0) * (rd.document?.price || 0),
         0,
       );
 
       const additionalTotal = (this.additional_documents || []).reduce(
-        (sum, ad) => {
-          return sum + (ad.quantity || 0) * (ad.unit_price || 0);
-        },
+        (sum, ad) => sum + (ad.quantity || 0) * (ad.unit_price || 0),
         0,
       );
 
-      return requestedTotal + additionalTotal;
+      const billsTotal = (this.bills || []).reduce(
+        (sum, bill) => sum + (bill.price || 0),
+        0,
+      );
+
+      return requestedTotal + additionalTotal + billsTotal;
     }
 
     getDocumentSummary() {
@@ -132,36 +145,74 @@ module.exports = (sequelize, DataTypes) => {
         total: (ad.quantity || 0) * (ad.unit_price || 0),
       }));
 
-      return [...requested, ...additional];
+      const bills = (this.bills || []).map((bill) => ({
+        category: "bill",
+        type: bill.name,
+        unit_price: bill.price || 0,
+        total: bill.price || 0,
+      }));
+
+      return [...requested, ...additional, ...bills];
     }
 
-    markInvoiced() {
-      if (!this.isPending()) {
-        throw new Error("Only pending requests can be invoiced");
-      }
+    markPendingToBalanceDue() {
+      if (!this.isPending())
+        throw new Error("Only pending requests can become balance due");
+      this.status = "balance_due";
+    }
+
+    markPendingToUnderReview() {
+      if (!this.isPending())
+        throw new Error("Only pending requests can be under review");
+      this.status = "under_review";
+    }
+
+    markBalanceDueToUnderReview() {
+      if (!this.isBalanceDue())
+        throw new Error("Only balance due requests can be under review");
+      this.status = "under_review";
+    }
+
+    markUnderReviewToDeficient() {
+      if (!this.isUnderReview())
+        throw new Error("Only under review requests can be marked deficient");
+      this.status = "deficient";
+    }
+
+    markDeficientToInvoiced() {
+      if (!this.isDeficient())
+        throw new Error("Only deficient requests can be invoiced");
       this.status = "invoiced";
     }
 
-    markRejected() {
-      if (!this.isPending()) {
-        throw new Error("Only pending requests can be rejected");
-      }
-      this.status = "rejected";
+    markUnderReviewToInvoiced() {
+      if (!this.isUnderReview())
+        throw new Error("Only under review requests can be invoiced");
+      this.status = "invoiced";
     }
 
-    markPaid() {
-      if (!this.isInvoiced()) {
+    markInvoicedToPaid() {
+      if (!this.isInvoiced())
         throw new Error("Only invoiced requests can be paid");
-      }
       this.status = "paid";
     }
 
-    markReleased() {
-      if (!this.isPaid()) {
-        throw new Error("Only paid requests can be released");
-      }
+    markPaidToReleased() {
+      if (!this.isPaid()) throw new Error("Only paid requests can be released");
       this.status = "released";
       this.request_completed = new Date();
+    }
+
+    markDeficientToRejected() {
+      if (!this.isDeficient())
+        throw new Error("Only deficient requests can be rejected");
+      this.status = "rejected";
+    }
+
+    markBalanceDueToRejected() {
+      if (!this.isBalanceDue())
+        throw new Error("Only balance due requests can be rejected");
+      this.status = "rejected";
     }
   }
   Request.init(
@@ -195,6 +246,9 @@ module.exports = (sequelize, DataTypes) => {
       status: {
         type: DataTypes.ENUM(
           "rejected",
+          "deficient",
+          "balance_due",
+          "under_review",
           "released",
           "pending",
           "paid",
@@ -204,6 +258,10 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "pending",
       },
       request_completed: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+      },
+      expected_release_date: {
         type: DataTypes.DATEONLY,
         allowNull: true,
       },

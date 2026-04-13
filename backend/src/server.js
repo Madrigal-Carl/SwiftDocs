@@ -7,8 +7,10 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const http = require("http");
 const { Server } = require("socket.io");
+const cron = require("node-cron");
 const { globalLimiter, apiLimiter } = require("./middlewares/rate_limiter");
 const errorHandler = require("./middlewares/error_handler");
+const { checkStaleRequests } = require("./services/request_checker_service");
 
 const app = express();
 const server = http.createServer(app);
@@ -98,6 +100,22 @@ app.use("/api/accounts", accountRoutes);
 */
 
 app.use(errorHandler);
+
+/*
+|--------------------------------------------------------------------------
+| Cron Job: Check for stale requests every day at midnight
+|--------------------------------------------------------------------------
+*/
+
+cron.schedule(
+  "0 1 * * *",
+  async () => {
+    await checkStaleRequests();
+  },
+  {
+    timezone: "Asia/Manila",
+  },
+);
 
 /*
 |--------------------------------------------------------------------------

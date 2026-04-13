@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("special_orders", {
+    await queryInterface.createTable("bills", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -19,10 +19,15 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
-      so_number: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false,
         unique: true,
+      },
+      price: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        allowNull: false,
+        defaultValue: 0,
       },
       created_at: {
         allowNull: false,
@@ -39,6 +44,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("special_orders");
+    await queryInterface.dropTable("bills");
   },
 };

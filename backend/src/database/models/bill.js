@@ -1,22 +1,22 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Special_Order extends Model {
+  class Bill extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Special_Order.belongsTo(models.Request, {
+      Bill.belongsTo(models.Request, {
         foreignKey: "request_id",
-        as: "requests",
+        as: "request",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
     }
   }
-  Special_Order.init(
+  Bill.init(
     {
       request_id: {
         type: DataTypes.INTEGER,
@@ -26,19 +26,24 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       },
-      so_number: {
+      name: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
       },
+      price: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        defaultValue: 0,
+      },
     },
     {
       sequelize,
-      modelName: "Special_Order",
-      tableName: "special_orders",
+      modelName: "Bill",
+      tableName: "bills",
       underscored: true,
       timestamps: true,
     },
   );
-  return Special_Order;
+  return Bill;
 };

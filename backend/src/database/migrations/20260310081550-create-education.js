@@ -21,7 +21,7 @@ module.exports = {
       },
       lrn: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       education_level: {
         type: Sequelize.ENUM("college", "senior_high"),

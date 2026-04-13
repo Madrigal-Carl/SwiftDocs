@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       role: {
-        type: DataTypes.ENUM("rmo", "cashier"),
+        type: DataTypes.ENUM("rmo", "cashier", "system"),
         allowNull: false,
       },
       action: {

@@ -3,7 +3,6 @@ const { Op } = Sequelize;
 const requestRepository = require("../repositories/request_repository");
 const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
-const { computeStats } = require("../utils/stats_computation");
 const receiptRepository = require("../repositories/receipt_repository");
 
 /**
@@ -12,13 +11,19 @@ const receiptRepository = require("../repositories/receipt_repository");
 async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
   let { search = "", status = "" } = filters;
 
-  const allowedStatuses = ["paid", "invoiced"];
+  const allowedStatuses = [
+    "pending",
+    "balance_due",
+    "under_review",
+    "paid",
+    "invoiced",
+  ];
 
   search = search.trim();
   status = status.trim();
 
   const where = {
-    status: allowedStatuses, // default restriction
+    status: allowedStatuses,
   };
 
   if (status !== "" && allowedStatuses.includes(status)) {
@@ -31,7 +36,7 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
     where[Op.or] = [
       Sequelize.where(
         Sequelize.fn("LOWER", Sequelize.col("Request.reference_number")),
-        { [Op.like]: `%${safeSearch}%` }
+        { [Op.like]: `%${safeSearch}%` },
       ),
       Sequelize.literal(`
         EXISTS (
@@ -46,17 +51,22 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
     ];
   }
 
-  const allRequests = await Request.findAll({
-    where: { status: allowedStatuses },
-    attributes: ["status", "request_date"],
-  });
-
-  const stats = computeStats(allRequests);
-
   const { docs, pages, total } = await Request.paginate({
     page,
     paginate: limit,
-    order: [["created_at", "DESC"]],
+    order: [
+      [
+        Sequelize.literal(`
+      CASE 
+        WHEN \`Request\`.\`expected_release_date\` IS NULL THEN 1
+        ELSE 0
+      END
+    `),
+        "ASC",
+      ],
+      [Sequelize.col("expected_release_date"), "ASC"],
+      ["created_at", "DESC"],
+    ],
     where,
     include: [
       {
@@ -94,6 +104,8 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
         status: req.status,
         total_documents: totalDocuments,
         total_price: totalPrice,
+        request_completed: req.request_completed,
+        expected_release_date: req.expected_release_date,
         created_at: req.createdAt.toISOString(),
       },
     };
@@ -102,70 +114,108 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
   return {
     data: result,
     pagination: { total, pages, page, limit },
-    stats,
   };
 }
 
 /**
  * Update request status (cashier)
- * ✅ Accepts OR number from frontend
  */
-async function UpdateRequestStatus(
-  requestId,
-  status,
-  account,
-  note = null,
-  proofPaths = [],
-  orNumber // OR number input from frontend
-) {
-  const allowedStatuses = ["paid"];
-
-  if (!allowedStatuses.includes(status)) {
-    throw new Error("Invalid status for cashier");
-  }
-
-  // Fetch the request with necessary associations
+async function ApprovePayment(requestId, account, note, proofPaths, orNumber) {
   const request = await requestRepository.FindRequestById(requestId, null, {
     include: [
       { association: "student" },
       { association: "requested_documents", include: ["document"] },
       { association: "additional_documents" },
+      { association: "bills" },
     ],
+  });
+
+  if (!request) throw new Error("Request not found");
+
+  if (!request.isInvoiced()) {
+    throw new Error("Only invoiced requests can be marked as paid");
+  }
+
+  const existingOR = await OR_Number.findOne({
+    where: {
+      or_number: orNumber,
+    },
+  });
+
+  if (existingOR) {
+    throw new Error("OR number already exists");
+  }
+
+  const previousStatus = request.status;
+
+  request.markInvoicedToPaid();
+  await request.save();
+
+  const orNumberInstance = await OR_Number.create({
+    request_id: requestId,
+    or_number: orNumber,
+  });
+
+  await receiptRepository.CreateReceipts(
+    requestId,
+    proofPaths,
+    orNumberInstance.id,
+  );
+
+  await logRepository.CreateLog({
+    account_id: account.id,
+    request_id: requestId,
+    role: account.role,
+    action: "paid",
+    from_status: previousStatus,
+    to_status: request.status,
+    notes: note,
+  });
+
+  await mailService.SendUpdateMail({
+    request: request,
+    status: "paid",
+    notes: note,
+  });
+
+  request.or_number = orNumber;
+
+  return request;
+}
+
+async function UpdateToReview(requestId, status, account, note = null) {
+  const request = await requestRepository.FindRequestById(requestId, null, {
+    include: [{ association: "student" }],
   });
 
   if (!request) {
     throw new Error("Request not found");
   }
 
-  if (status === "paid" && !orNumber) {
-    throw new Error("OR number is required for paid requests");
-  }
-
   const previousStatus = request.status;
 
-  // 1️⃣ Mark request as paid
-  const actions = { paid: () => request.markPaid() };
-  actions[status]();
-  await request.save();
-
-  // 2️⃣ Create OR number record first
-  let orNumberInstance = null;
-  if (orNumber) {
-  orNumberInstance = await OR_Number.create({
-    request_id: requestId,
-    or_number: orNumber,
-  });
+  if (status === "under_review") {
+    if (request.isPending()) {
+      request.markPendingToUnderReview();
+    } else if (request.isBalanceDue()) {
+      request.markBalanceDueToUnderReview();
+    } else {
+      throw new Error(
+        "Only pending or balance_due can be moved to under_review",
+      );
+    }
   }
 
-  // 3️⃣ Save payment proofs / receipts
-  // Pass OR number ID so foreign key constraint is satisfied
-  await receiptRepository.CreateReceipts(
-  requestId,
-  proofPaths,
-  orNumberInstance.id // ✅ pass OR number ID
-  );
+  if (status === "balance_due") {
+    if (request.isPending()) {
+      request.markPendingToBalanceDue();
+    } else {
+      throw new Error("Only pending requests can be marked as balance_due");
+    }
+  }
 
-  // 4️⃣ Log action
+  await request.save();
+
   await logRepository.CreateLog({
     account_id: account.id,
     request_id: requestId,
@@ -176,16 +226,26 @@ async function UpdateRequestStatus(
     notes: note,
   });
 
-  // 5️⃣ Send notification email
-  await mailService.SendCashierUpdateMail({ request, status });
+  const emailStatusMap = {
+    under_review: "under_review",
+    balance_due: "balance_due",
+  };
 
-  // Attach OR number to request object for frontend
-  request.or_number = orNumber;
+  const emailStatus = emailStatusMap[status];
+
+  if (emailStatus) {
+    await mailService.SendUpdateMail({
+      request: request,
+      status: emailStatus,
+      notes: note,
+    });
+  }
 
   return request;
 }
 
 module.exports = {
   GetRequestsForCashier,
-  UpdateRequestStatus,
+  ApprovePayment,
+  UpdateToReview,
 };

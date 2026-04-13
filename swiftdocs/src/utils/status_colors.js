@@ -4,6 +4,9 @@ export const COLORS = {
   blue: "#6366f1",
   green: "#22c55e",
   red: "#ef4444",
+  purple: "#a855f7",
+  orange: "#f97316",
+  rose: "#f43f5e",
 };
 
 export const STATUS_COLORS = {
@@ -12,4 +15,7 @@ export const STATUS_COLORS = {
   paid: COLORS.blue,
   released: COLORS.green,
   rejected: COLORS.red,
+  under_review: COLORS.purple,
+  balance_due: COLORS.orange,
+  deficient: COLORS.rose,
 };

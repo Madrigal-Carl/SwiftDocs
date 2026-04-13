@@ -11,14 +11,22 @@ async function CreateRequest(req, res) {
 }
 
 async function SendRequestEmail(req, res) {
-  const result = await requestService.SendRequestEmail(
-    req.params.referenceNumber,
-  );
+  try {
+    const result = await requestService.SendRequestEmail(
+      req.params.referenceNumber,
+    );
 
-  res.json({
-    message: "Email sent successfully",
-    data: result,
-  });
+    res.json({
+      message: "Email sent successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Error sending email:", error);
+
+    res.status(500).json({
+      message: error.message || error,
+    });
+  }
 }
 
 async function GetRequest(req, res) {
@@ -47,7 +55,9 @@ async function GetAllRequestsWithStudent(req, res) {
 
 async function GetRequestAnalytics(req, res) {
   const timeframe = req.query.timeframe || "year";
-  const stats = await requestService.GetRequestAnalytics(timeframe);
+  const role = req.user?.role || "admin";
+
+  const stats = await requestService.GetRequestAnalytics(timeframe, role);
 
   res.json(stats);
 }

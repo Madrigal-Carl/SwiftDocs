@@ -3,9 +3,6 @@ import { STATUS_COLORS } from "../utils/status_colors";
 export default function StatusBadge({ status }) {
   const bgStyles = {
     pending: "bg-yellow-50",
-    under_review: "bg-purple-50",
-    balance_due: "bg-orange-50",
-    deficient: "bg-rose-50",
     invoiced: "bg-cyan-50",
     paid: "bg-indigo-50",
     released: "bg-green-50",
@@ -16,9 +13,6 @@ export default function StatusBadge({ status }) {
 
   const textColorMap = {
     pending: STATUS_COLORS.pending,
-    under_review: STATUS_COLORS.under_review,
-    balance_due: STATUS_COLORS.balance_due,
-    deficient: STATUS_COLORS.deficient,
     invoiced: STATUS_COLORS.invoiced,
     paid: STATUS_COLORS.paid,
     released: STATUS_COLORS.released,

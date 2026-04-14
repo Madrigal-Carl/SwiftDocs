@@ -186,6 +186,9 @@ async function GetRequestWithStudent(requestId) {
       {
         association: "bills",
       },
+      {
+        association: "validation",
+      },
     ],
   });
 

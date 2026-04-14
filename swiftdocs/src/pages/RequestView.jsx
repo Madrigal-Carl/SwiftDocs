@@ -42,7 +42,10 @@ export default function RequestView() {
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [referenceNumber, setReferenceNumber] = useState("");
-  const isRmoPending = user?.role === "rmo" && request?.status === "pending";
+  const isRmoPending =
+    user?.role === "rmo" &&
+    request?.status === "pending" &&
+    !request.isApproved;
 
   const [additionalDocsState, setAdditionalDocsState] = useState([]);
 
@@ -85,22 +88,16 @@ export default function RequestView() {
 
   const permissions = getRequestPermissions(user?.role, request?.status);
 
-  console.log(request?.isApproved);
   const isNotDecided =
     request?.isApproved === null || request?.isApproved === undefined;
 
   const canApprove =
-    permissions.approve && (isNotDecided || request?.isApproved === false);
+    permissions.approve &&
+    (request?.status === "pending"
+      ? isNotDecided || request?.isApproved === false
+      : true);
 
   const canReject = permissions.reject && isNotDecided;
-
-  const getFileType = (path) => {
-    const ext = path.split(".").pop().toLowerCase();
-
-    if (ext === "pdf") return "pdf";
-    if (["jpg", "jpeg", "png"].includes(ext)) return "image";
-    return "other";
-  };
 
   const getFileName = (path) => {
     return path.split("/").pop();

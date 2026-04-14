@@ -55,10 +55,24 @@ export default function ActionDropdown({
     setIsOpen(!isOpen);
   };
 
+  const isCashierInvoiced = role === "cashier" && status === "invoiced";
+  const isRmoPaid = role === "rmo" && status === "paid";
+
+  const rmoPendingBlocked = role === "rmo" && status === "pending" && other;
+
+  const canNormallyApprove = approve && !rmoPendingBlocked;
+
+  const notYetApproved =
+    status === "pending"
+      ? isApproved === null || isApproved === undefined || isApproved === false
+      : true;
+
+  const showApproveCashier = role === "cashier" && status === "invoiced";
+
   const showApprove =
-    approve &&
-    !(status === "pending" && other) &&
-    (isApproved === null || isApproved === undefined || isApproved === false);
+    ((isCashierInvoiced || isRmoPaid || canNormallyApprove) &&
+      notYetApproved) ||
+    showApproveCashier;
 
   const showReject =
     reject && (isApproved === null || isApproved === undefined);

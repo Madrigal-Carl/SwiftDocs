@@ -68,6 +68,28 @@ async function UpdateRequestStatus(
       throw new Error("Only pending requests can be invoiced");
     }
 
+    const validBills = (bills || []).filter(
+      (b) => b.name?.trim() !== "" && b.price !== "" && b.price !== null,
+    );
+
+    if (request.delivery_method === "delivery" && validBills.length < 1) {
+      throw new Error("At least one bill is required for delivery requests");
+    }
+
+    await Promise.all(
+      validBills.map((bill) =>
+        requestRepository.CreateBill({
+          request_id: request.id,
+          name: bill.name,
+          price: bill.price,
+        }),
+      ),
+    );
+
+    if (approved && expected_release_date) {
+      request.expected_release_date = expected_release_date;
+    }
+
     if (request.validation) {
       request.validation.rmo = true;
       await request.validation.save();
@@ -90,34 +112,6 @@ async function UpdateRequestStatus(
     } else {
       finalStatus = "pending";
       action = "approved_rmo";
-    }
-
-    const validBills = (bills || []).filter(
-      (b) => b.name?.trim() !== "" && b.price !== "" && b.price !== null,
-    );
-
-    if (
-      approved &&
-      request.delivery_method === "delivery" &&
-      validBills.length === 0
-    ) {
-      throw new Error("At least one bill is required for delivery requests");
-    }
-
-    if (approved && validBills.length > 0) {
-      await Promise.all(
-        validBills.map((bill) =>
-          requestRepository.CreateBill({
-            request_id: request.id,
-            name: bill.name,
-            price: bill.price,
-          }),
-        ),
-      );
-    }
-
-    if (approved && expected_release_date) {
-      request.expected_release_date = expected_release_date;
     }
   }
 
@@ -176,10 +170,8 @@ async function UpdateAdditionalDocumentPrices(
     throw new Error("Request not found");
   }
 
-  if (!request.isUnderReview() && !request.isDeficient()) {
-    throw new Error(
-      "Prices can only be updated while request is under review or deficient",
-    );
+  if (!request.isPending()) {
+    throw new Error("Prices can only be updated while request is pending");
   }
 
   for (const doc of additionalDocs) {

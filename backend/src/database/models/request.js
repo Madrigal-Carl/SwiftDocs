@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       Request.hasOne(models.Validation, {
         foreignKey: "request_id",
-        as: "validations",
+        as: "validation",
         onDelete: "CASCADE",
         onUpdate: "CASCADE",
       });
@@ -179,9 +179,9 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     isRequestApproved() {
-      if (!this.validations) return false;
+      if (!this.validation) return false;
 
-      return this.validations.rmo && this.validations.cashier;
+      return this.validation.rmo && this.validation.cashier;
     }
   }
   Request.init(

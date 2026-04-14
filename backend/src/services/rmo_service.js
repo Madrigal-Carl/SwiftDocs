@@ -22,7 +22,7 @@ async function UpdateRequestStatus(
       { association: "requested_documents", include: ["document"] },
       { association: "additional_documents" },
       { association: "bills" },
-      { association: "validations" },
+      { association: "validation" },
     ],
   });
 
@@ -46,12 +46,12 @@ async function UpdateRequestStatus(
       throw new Error("Only pending requests can be marked deficient");
     }
 
-    if (request.validations) {
-      request.validations.rmo = false;
-      await request.validations.save();
+    if (request.validation) {
+      request.validation.rmo = false;
+      await request.validation.save();
 
       await request.reload({
-        include: [{ association: "validations" }],
+        include: [{ association: "validation" }],
       });
 
       approved = request.isRequestApproved();
@@ -68,12 +68,12 @@ async function UpdateRequestStatus(
       throw new Error("Only pending requests can be invoiced");
     }
 
-    if (request.validations) {
-      request.validations.rmo = true;
-      await request.validations.save();
+    if (request.validation) {
+      request.validation.rmo = true;
+      await request.validation.save();
 
       await request.reload({
-        include: [{ association: "validations" }],
+        include: [{ association: "validation" }],
       });
 
       approved = request.isRequestApproved();

@@ -9,6 +9,7 @@ export default function ActionDropdown({
   status,
   role,
   other,
+  isApproved,
   onApprove,
   onReject,
 }) {
@@ -54,6 +55,14 @@ export default function ActionDropdown({
     setIsOpen(!isOpen);
   };
 
+  const showApprove =
+    approve &&
+    !(status === "pending" && other) &&
+    (isApproved === null || isApproved === undefined || isApproved === false);
+
+  const showReject =
+    reject && (isApproved === null || isApproved === undefined);
+
   const dropdown = isOpen ? (
     <div
       id="dropdown-portal"
@@ -73,7 +82,7 @@ export default function ActionDropdown({
         </button>
       )}
 
-      {approve && !(status === "pending" && role === "rmo" && other) && (
+      {showApprove && (
         <button
           onClick={() => {
             onApprove?.();
@@ -86,7 +95,7 @@ export default function ActionDropdown({
         </button>
       )}
 
-      {reject && (
+      {showReject && (
         <button
           onClick={() => {
             onReject?.();

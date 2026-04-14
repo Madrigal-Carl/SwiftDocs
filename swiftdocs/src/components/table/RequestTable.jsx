@@ -275,6 +275,7 @@ export default function RequestTable() {
                           status={req.status}
                           role={user.role}
                           other={req.other}
+                          isApproved={req.isApproved}
                           onApprove={() => {
                             setSelectedRequest({
                               ...req,

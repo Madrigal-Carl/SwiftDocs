@@ -84,8 +84,15 @@ export default function RequestView() {
   }
 
   const permissions = getRequestPermissions(user?.role, request?.status);
-  const canApprove = permissions.approve;
-  const canReject = permissions.reject;
+
+  console.log(request?.isApproved);
+  const isNotDecided =
+    request?.isApproved === null || request?.isApproved === undefined;
+
+  const canApprove =
+    permissions.approve && (isNotDecided || request?.isApproved === false);
+
+  const canReject = permissions.reject && isNotDecided;
 
   const getFileType = (path) => {
     const ext = path.split(".").pop().toLowerCase();

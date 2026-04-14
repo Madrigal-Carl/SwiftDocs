@@ -72,6 +72,7 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
       },
       { association: "requested_documents", include: ["document"] },
       { association: "additional_documents" },
+      { association: "validation" },
     ],
     distinct: true,
   });
@@ -83,6 +84,7 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
       req.getTotalDocumentQuantity() + req.getTotalAdditionalQuantity();
 
     const totalPrice = req.getGrandTotal();
+    const isApproved = req.validation.cashier;
 
     return {
       id: student.id,
@@ -95,6 +97,7 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
         status: req.status,
         total_documents: totalDocuments,
         total_price: totalPrice,
+        isApproved: isApproved,
         request_completed: req.request_completed,
         expected_release_date: req.expected_release_date,
         created_at: req.createdAt.toISOString(),
@@ -178,7 +181,7 @@ async function UpdateToReview(requestId, status, account, note = null) {
       { association: "requested_documents", include: ["document"] },
       { association: "additional_documents" },
       { association: "bills" },
-      { association: "validations" },
+      { association: "validation" },
     ],
   });
 
@@ -200,9 +203,9 @@ async function UpdateToReview(requestId, status, account, note = null) {
       throw new Error("Only pending requests can be marked balance_due");
     }
 
-    if (request.validations) {
-      request.validations.cashier = false;
-      await request.validations.save();
+    if (request.validation) {
+      request.validation.cashier = false;
+      await request.validation.save();
     }
 
     finalStatus = "pending";
@@ -216,9 +219,9 @@ async function UpdateToReview(requestId, status, account, note = null) {
       throw new Error("Only pending requests can be invoiced");
     }
 
-    if (request.validations) {
-      request.validations.cashier = true;
-      await request.validations.save();
+    if (request.validation) {
+      request.validation.cashier = true;
+      await request.validation.save();
     }
 
     const approved = request.isRequestApproved();

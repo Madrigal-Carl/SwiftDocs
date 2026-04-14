@@ -107,11 +107,11 @@ module.exports = {
         request_id: request.id,
         rmo:
           status !== "pending" && status !== "rejected"
-            ? faker.datatype.boolean({ probability: 0.9 })
+            ? faker.datatype.boolean({ probability: 0.5 })
             : false,
         cashier:
           status !== "pending" && status !== "rejected"
-            ? faker.datatype.boolean({ probability: 0.9 })
+            ? faker.datatype.boolean({ probability: 0.5 })
             : false,
       });
 

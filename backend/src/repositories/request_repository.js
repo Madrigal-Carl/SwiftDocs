@@ -98,6 +98,9 @@ async function FetchAllRequestsWithStudent(page = 1, limit = 10, filters = {}) {
     {
       association: "additional_documents",
     },
+    {
+      association: "validation",
+    },
   ];
 
   return Request.paginate({

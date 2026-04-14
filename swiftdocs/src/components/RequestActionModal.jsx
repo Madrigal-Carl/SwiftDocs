@@ -206,8 +206,7 @@ export default function RequestActionModal({
           )}
 
         {role === "rmo" &&
-          (request.status === "under_review" ||
-            request.status === "deficient") &&
+          request.status === "pending" &&
           action === "approve" && (
             <div className="flex flex-col gap-4 mb-4">
               <div>

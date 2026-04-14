@@ -36,11 +36,7 @@ export default function RequestActionModal({
   const getApproveLabel = () => {
     switch (request.status) {
       case "pending":
-      case "balance_due":
         return "Validate Request";
-      case "under_review":
-      case "deficient":
-        return "Send to Billing";
       case "invoiced":
         return "Mark Paid";
       case "paid":

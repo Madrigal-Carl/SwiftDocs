@@ -22,12 +22,10 @@ module.exports = {
       rmo: {
         type: Sequelize.BOOLEAN,
         allowNull: true,
-        defaultValue: false,
       },
       cashier: {
         type: Sequelize.BOOLEAN,
         allowNull: true,
-        defaultValue: false,
       },
       created_at: {
         allowNull: false,

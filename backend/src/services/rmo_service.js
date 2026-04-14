@@ -46,6 +46,17 @@ async function UpdateRequestStatus(
       throw new Error("Only pending requests can be marked deficient");
     }
 
+    if (request.validations) {
+      request.validations.rmo = false;
+      await request.validations.save();
+
+      await request.reload({
+        include: [{ association: "validations" }],
+      });
+
+      approved = request.isRequestApproved();
+    }
+
     finalStatus = "pending";
     action = "pending";
 

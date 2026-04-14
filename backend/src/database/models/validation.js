@@ -28,13 +28,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       rmo: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
+        allowNull: true,
       },
       cashier: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
+        allowNull: true,
       },
     },
     {

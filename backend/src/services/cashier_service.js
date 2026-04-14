@@ -200,6 +200,11 @@ async function UpdateToReview(requestId, status, account, note = null) {
       throw new Error("Only pending requests can be marked balance_due");
     }
 
+    if (request.validations) {
+      request.validations.cashier = false;
+      await request.validations.save();
+    }
+
     finalStatus = "pending";
     action = "pending";
 

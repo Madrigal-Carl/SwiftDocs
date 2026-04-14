@@ -39,7 +39,6 @@ function RequestModal({ isOpen, onClose }) {
   });
 
   const [academicInfo, setAcademicInfo] = useState({
-    studentNumber: "",
     entryLevel: "",
     course: "",
     track: "",
@@ -193,7 +192,6 @@ function RequestModal({ isOpen, onClose }) {
   const validateStep4 = () => {
     const newErrors = {};
     const {
-      studentNumber,
       entryLevel,
       completion,
       course,
@@ -204,7 +202,6 @@ function RequestModal({ isOpen, onClose }) {
       admissionDate,
     } = academicInfo;
 
-    if (!studentNumber) newErrors.studentNumber = true;
     if (!lastSchool) newErrors.lastSchool = true;
     if (!completion) newErrors.completion = true;
     if (!admissionDate) newErrors.admissionDate = true;
@@ -264,7 +261,6 @@ function RequestModal({ isOpen, onClose }) {
         address: studentInfo.address,
         phone_number: cleanPhoneNumber,
 
-        lrn: academicInfo.studentNumber,
         education_level: academicInfo.entryLevel
           ? academicInfo.entryLevel.toLowerCase().replace(" ", "_")
           : "",
@@ -589,9 +585,8 @@ function RequestModal({ isOpen, onClose }) {
                 </label>
 
                 <div
-                  className={`flex space-x-4 p-2 rounded transition ${
-                    errors.deliveryMethod ? "ring-1 ring-red-500" : ""
-                  }`}
+                  className={`flex space-x-4 p-2 rounded transition ${errors.deliveryMethod ? "ring-1 ring-red-500" : ""
+                    }`}
                 >
                   {["Pickup", "Delivery"].map((method) => (
                     <label
@@ -703,9 +698,8 @@ function RequestModal({ isOpen, onClose }) {
                 </button>
               </div>
               <div
-                className={`border rounded-xl overflow-hidden ${
-                  errors.documents ? "border-red-500" : "border-gray-200"
-                }`}
+                className={`border rounded-xl overflow-hidden ${errors.documents ? "border-red-500" : "border-gray-200"
+                  }`}
               >
                 <div className="overflow-x-auto">
                   <table className="w-full">
@@ -873,9 +867,8 @@ function RequestModal({ isOpen, onClose }) {
                       }
                       type={type}
                       placeholder={placeholder}
-                      className={`w-full px-4 py-3 border rounded-lg input-focus focus:outline-none ${
-                        errors[field] ? "border-red-500" : "border-gray-300"
-                      }`}
+                      className={`w-full px-4 py-3 border rounded-lg input-focus focus:outline-none ${errors[field] ? "border-red-500" : "border-gray-300"
+                        }`}
                     />
                   </div>
                 ))}
@@ -885,9 +878,8 @@ function RequestModal({ isOpen, onClose }) {
                   </label>
                   {/* Error ring applied here on the container */}
                   <div
-                    className={`flex space-x-4 p-2 rounded transition ${
-                      errors.gender ? "ring-1 ring-red-500" : ""
-                    }`}
+                    className={`flex space-x-4 p-2 rounded transition ${errors.gender ? "ring-1 ring-red-500" : ""
+                      }`}
                   >
                     {["Male", "Female"].map((gender) => (
                       <label
@@ -925,9 +917,8 @@ function RequestModal({ isOpen, onClose }) {
                         birthdate: e.target.value,
                       }))
                     }
-                    className={`w-full px-4 py-3 border rounded-lg ${
-                      errors.birthdate ? "border-red-500" : "border-gray-300"
-                    } focus:outline-none`}
+                    className={`w-full px-4 py-3 border rounded-lg ${errors.birthdate ? "border-red-500" : "border-gray-300"
+                      } focus:outline-none`}
                   />
                 </div>
                 <div>
@@ -943,9 +934,8 @@ function RequestModal({ isOpen, onClose }) {
                         email: e.target.value,
                       }))
                     }
-                    className={`w-full px-4 py-3 border rounded-lg ${
-                      errors.email ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-lg ${errors.email ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder="student@example.com"
                   />
                 </div>
@@ -962,9 +952,8 @@ function RequestModal({ isOpen, onClose }) {
                         mobile: e.target.value,
                       }))
                     }
-                    className={`w-full px-4 py-3 border rounded-lg ${
-                      errors.mobile ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-lg ${errors.mobile ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder="+63 912 345 6789"
                   />
                 </div>
@@ -981,9 +970,8 @@ function RequestModal({ isOpen, onClose }) {
                       }))
                     }
                     rows="3"
-                    className={`w-full px-4 py-3 border rounded-lg ${
-                      errors.address ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-lg ${errors.address ? "border-red-500" : "border-gray-300"
+                      }`}
                     placeholder="Enter complete address including street, city, province, zip code"
                   ></textarea>
                 </div>
@@ -1063,9 +1051,8 @@ function RequestModal({ isOpen, onClose }) {
 
                         {/* Container with ring applied */}
                         <div
-                          className={`flex space-x-4 p-2 rounded transition ${
-                            errors.entryLevel ? "ring-1 ring-red-500" : "ring-0"
-                          }`}
+                          className={`flex space-x-4 p-2 rounded transition ${errors.entryLevel ? "ring-1 ring-red-500" : "ring-0"
+                            }`}
                         >
                           {["Senior High", "College"].map((value) => (
                             <label
@@ -1141,9 +1128,8 @@ function RequestModal({ isOpen, onClose }) {
                   </label>
                   {/* Apply error ring here on the container instead of individual labels */}
                   <div
-                    className={`flex space-x-4 p-2 rounded transition ${
-                      errors.completion ? "ring-1 ring-red-500" : ""
-                    }`}
+                    className={`flex space-x-4 p-2 rounded transition ${errors.completion ? "ring-1 ring-red-500" : ""
+                      }`}
                   >
                     {["Graduate", "Undergraduate"].map((value) => (
                       <label

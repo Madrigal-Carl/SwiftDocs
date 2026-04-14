@@ -5,19 +5,10 @@ const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
 const receiptRepository = require("../repositories/receipt_repository");
 
-/**
- * Get paginated requests for cashier with filters
- */
 async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
   let { search = "", status = "" } = filters;
 
-  const allowedStatuses = [
-    "pending",
-    "balance_due",
-    "under_review",
-    "paid",
-    "invoiced",
-  ];
+  const allowedStatuses = ["pending", "paid", "invoiced"];
 
   search = search.trim();
   status = status.trim();
@@ -81,6 +72,7 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
       },
       { association: "requested_documents", include: ["document"] },
       { association: "additional_documents" },
+      { association: "validation" },
     ],
     distinct: true,
   });
@@ -92,6 +84,7 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
       req.getTotalDocumentQuantity() + req.getTotalAdditionalQuantity();
 
     const totalPrice = req.getGrandTotal();
+    const isApproved = req.validation.cashier;
 
     return {
       id: student.id,
@@ -104,6 +97,7 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
         status: req.status,
         total_documents: totalDocuments,
         total_price: totalPrice,
+        isApproved: isApproved,
         request_completed: req.request_completed,
         expected_release_date: req.expected_release_date,
         created_at: req.createdAt.toISOString(),
@@ -117,9 +111,6 @@ async function GetRequestsForCashier(page = 1, limit = 10, filters = {}) {
   };
 }
 
-/**
- * Update request status (cashier)
- */
 async function ApprovePayment(requestId, account, note, proofPaths, orNumber) {
   const request = await requestRepository.FindRequestById(requestId, null, {
     include: [
@@ -185,7 +176,13 @@ async function ApprovePayment(requestId, account, note, proofPaths, orNumber) {
 
 async function UpdateToReview(requestId, status, account, note = null) {
   const request = await requestRepository.FindRequestById(requestId, null, {
-    include: [{ association: "student" }],
+    include: [
+      { association: "student" },
+      { association: "requested_documents", include: ["document"] },
+      { association: "additional_documents" },
+      { association: "bills" },
+      { association: "validation" },
+    ],
   });
 
   if (!request) {
@@ -194,48 +191,75 @@ async function UpdateToReview(requestId, status, account, note = null) {
 
   const previousStatus = request.status;
 
-  if (status === "under_review") {
-    if (request.isPending()) {
-      request.markPendingToUnderReview();
-    } else if (request.isBalanceDue()) {
-      request.markBalanceDueToUnderReview();
-    } else {
-      throw new Error(
-        "Only pending or balance_due can be moved to under_review",
-      );
-    }
-  }
+  let finalStatus = request.status;
+  let emailStatus = status;
+  let role = account.role;
+  let accountId = account.id;
+  let action = status;
+  let isSystemAction = false;
 
   if (status === "balance_due") {
-    if (request.isPending()) {
-      request.markPendingToBalanceDue();
+    if (!request.isPending()) {
+      throw new Error("Only pending requests can be marked balance_due");
+    }
+
+    if (request.validation) {
+      request.validation.cashier = false;
+      await request.validation.save();
+    }
+
+    finalStatus = "pending";
+    action = "pending";
+
+    emailStatus = "balance_due";
+  }
+
+  if (status === "invoiced") {
+    if (!request.isPending()) {
+      throw new Error("Only pending requests can be invoiced");
+    }
+
+    if (request.validation) {
+      request.validation.cashier = true;
+      await request.validation.save();
+    }
+
+    const approved = request.isRequestApproved();
+
+    if (approved) {
+      request.markPendingToInvoiced();
+
+      finalStatus = "invoiced";
+      action = "invoiced";
+
+      role = "system";
+      accountId = null;
+      isSystemAction = true;
+
+      emailStatus = "invoiced";
     } else {
-      throw new Error("Only pending requests can be marked as balance_due");
+      finalStatus = "pending";
+      action = "approved_cashier";
+
+      emailStatus = null;
     }
   }
 
   await request.save();
 
   await logRepository.CreateLog({
-    account_id: account.id,
+    account_id: accountId,
     request_id: requestId,
-    role: account.role,
-    action: status,
+    role: isSystemAction ? "system" : role,
+    action,
     from_status: previousStatus,
-    to_status: request.status,
+    to_status: finalStatus,
     notes: note,
   });
 
-  const emailStatusMap = {
-    under_review: "under_review",
-    balance_due: "balance_due",
-  };
-
-  const emailStatus = emailStatusMap[status];
-
   if (emailStatus) {
     await mailService.SendUpdateMail({
-      request: request,
+      request,
       status: emailStatus,
       notes: note,
     });

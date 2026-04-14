@@ -8,12 +8,8 @@ export function getRequestPermissions(role, status) {
 
   // RMO
   if (role === "rmo") {
-    if (status === "under_review") {
+    if (status === "pending") {
       return { view: true, approve: true, reject: true };
-    }
-
-    if (status === "deficient") {
-      return { view: true, approve: true, reject: false };
     }
 
     if (status === "paid") {
@@ -27,10 +23,6 @@ export function getRequestPermissions(role, status) {
   if (role === "cashier") {
     if (status === "pending") {
       return { view: true, approve: true, reject: true };
-    }
-
-    if (status === "balance_due") {
-      return { view: true, approve: true, reject: false };
     }
 
     if (status === "invoiced") {

@@ -1,5 +1,4 @@
 const requestRepository = require("../repositories/request_repository");
-const { Request, Additional_Document } = require("../database/models");
 const logRepository = require("../repositories/log_repository");
 const mailService = require("./mail_service");
 
@@ -23,6 +22,7 @@ async function UpdateRequestStatus(
       { association: "requested_documents", include: ["document"] },
       { association: "additional_documents" },
       { association: "bills" },
+      { association: "validation" },
     ],
   });
 
@@ -32,34 +32,79 @@ async function UpdateRequestStatus(
 
   const previousStatus = request.status;
 
+  let finalStatus = request.status;
+  let emailStatus = status;
+  let role = account.role;
+  let accountId = account.id;
+  let action = status;
+  let isSystemAction = false;
+
+  let approved = request.isRequestApproved();
+
   if (status === "deficient") {
-    if (!request.isUnderReview()) {
-      throw new Error("Only under_review requests can be marked deficient");
+    if (!request.isPending()) {
+      throw new Error("Only pending requests can be marked deficient");
     }
 
-    request.markUnderReviewToDeficient();
+    if (request.validation) {
+      request.validation.rmo = false;
+      await request.validation.save();
+
+      await request.reload({
+        include: [{ association: "validation" }],
+      });
+
+      approved = request.isRequestApproved();
+    }
+
+    finalStatus = "pending";
+    action = "pending";
+
+    emailStatus = "deficient";
   }
 
   if (status === "invoiced") {
-    if (request.isUnderReview()) {
-      request.markUnderReviewToInvoiced();
-    } else if (request.isDeficient()) {
-      request.markDeficientToInvoiced();
+    if (!request.isPending()) {
+      throw new Error("Only pending requests can be invoiced");
+    }
+
+    if (request.validation) {
+      request.validation.rmo = true;
+      await request.validation.save();
+
+      await request.reload({
+        include: [{ association: "validation" }],
+      });
+
+      approved = request.isRequestApproved();
+    }
+
+    if (approved) {
+      request.markPendingToInvoiced();
+      finalStatus = "invoiced";
+      action = "invoiced";
+
+      role = "system";
+      accountId = null;
+      isSystemAction = true;
     } else {
-      throw new Error(
-        "Only under_review or deficient requests can be invoiced",
-      );
+      finalStatus = "pending";
+      action = "approved_rmo";
     }
 
     const validBills = (bills || []).filter(
       (b) => b.name?.trim() !== "" && b.price !== "" && b.price !== null,
     );
 
-    if (request.delivery_method === "delivery" && validBills.length === 0) {
+    if (
+      approved &&
+      request.delivery_method === "delivery" &&
+      validBills.length === 0
+    ) {
       throw new Error("At least one bill is required for delivery requests");
     }
 
-    if (validBills.length > 0) {
+    if (approved && validBills.length > 0) {
       await Promise.all(
         validBills.map((bill) =>
           requestRepository.CreateBill({
@@ -70,7 +115,8 @@ async function UpdateRequestStatus(
         ),
       );
     }
-    if (expected_release_date) {
+
+    if (approved && expected_release_date) {
       request.expected_release_date = expected_release_date;
     }
   }
@@ -81,25 +127,30 @@ async function UpdateRequestStatus(
     }
 
     request.markPaidToReleased();
+    finalStatus = "released";
   }
 
   await request.save();
 
   await logRepository.CreateLog({
-    account_id: account.id,
+    account_id: accountId,
     request_id: requestId,
-    role: account.role,
-    action: status,
+    role: isSystemAction ? "system" : role,
+    action,
     from_status: previousStatus,
-    to_status: request.status,
+    to_status: finalStatus,
     notes: note,
   });
 
-  await mailService.SendUpdateMail({
-    request: request,
-    status,
-    notes: note,
-  });
+  const shouldSendEmail = !(status === "invoiced" && !approved);
+
+  if (shouldSendEmail) {
+    await mailService.SendUpdateMail({
+      request,
+      status: emailStatus,
+      notes: note,
+    });
+  }
 
   return {
     ...request.toJSON(),

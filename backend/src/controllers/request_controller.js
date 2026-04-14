@@ -64,9 +64,12 @@ async function GetRequestAnalytics(req, res) {
 
 async function GetRequestByReferenceNumber(req, res) {
   const referenceNumber = req.params.referenceNumber.trim().toLowerCase();
+  const role = req.user?.role;
 
-  const request =
-    await requestService.GetRequestByReferenceNumber(referenceNumber);
+  const request = await requestService.GetRequestByReferenceNumber(
+    referenceNumber,
+    role,
+  );
 
   if (!request) {
     return res.status(404).json({ message: "Request not found" });

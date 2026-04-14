@@ -20,33 +20,12 @@ export default function PaymentInformationCard({
       message:
         "Request is currently being checked. Payment is not required yet.",
     },
-    under_review: {
-      bg: "bg-yellow-50",
-      border: "border-yellow-200",
-      text: "text-yellow-700",
-      icon: "text-yellow-600",
-      message: "Request is under review. Payment is not required yet.",
-    },
     invoiced: {
       bg: "bg-blue-50",
       border: "border-blue-200",
       text: "text-blue-700",
       icon: "text-blue-600",
       message: "Payment invoice has been sent to the student's email.",
-    },
-    balance_due: {
-      bg: "bg-orange-50",
-      border: "border-orange-200",
-      text: "text-orange-700",
-      icon: "text-orange-600",
-      message: "Payment not required. Settle balance needed.",
-    },
-    deficient: {
-      bg: "bg-rose-50",
-      border: "border-rose-200",
-      text: "text-rose-700",
-      icon: "text-rose-600",
-      message: "Submission is incomplete. Missing requirements.",
     },
   };
 

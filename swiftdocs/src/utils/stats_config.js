@@ -37,29 +37,29 @@ export const ROLE_STATS = {
       icon: Clock,
     },
     {
-      title: "Unpaid Balance",
-      status: "balance_due",
+      title: "Pending Payments",
+      status: "invoiced",
       color: "blue",
       icon: CreditCard,
     },
     {
-      title: "Pending Payments",
-      status: "invoiced",
+      title: "Paid Requests",
+      status: "paid",
       color: "cyan",
-      icon: File,
+      icon: CheckCircle,
     },
   ],
 
   rmo: [
     {
-      title: "Under Review",
-      status: "under_review",
+      title: "Pending Requests",
+      status: "pending",
       color: "yellow",
       icon: Clock,
     },
     {
-      title: "Deficient Requests",
-      status: "deficient",
+      title: "Paid Requests",
+      status: "paid",
       color: "blue",
       icon: CreditCard,
     },

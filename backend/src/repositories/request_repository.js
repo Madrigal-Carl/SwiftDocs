@@ -1,4 +1,4 @@
-const { Request, Bill, Log, Sequelize } = require("../database/models");
+const { Request, Bill, Sequelize } = require("../database/models");
 const { Op } = Sequelize;
 
 function CreateRequest(data, transaction) {
@@ -98,6 +98,9 @@ async function FetchAllRequestsWithStudent(page = 1, limit = 10, filters = {}) {
     {
       association: "additional_documents",
     },
+    {
+      association: "validation",
+    },
   ];
 
   return Request.paginate({
@@ -150,9 +153,7 @@ async function GetAllRequestStatuses() {
 async function FetchStaleRequests() {
   return Request.findAll({
     where: {
-      status: {
-        [Op.in]: ["deficient", "balance_due"],
-      },
+      status: "pending",
       updated_at: {
         [Op.lte]: Sequelize.literal("DATE_SUB(NOW(), INTERVAL 3 MONTH)"),
       },

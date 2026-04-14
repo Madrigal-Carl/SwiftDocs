@@ -81,25 +81,9 @@ export default function RequestTable() {
   };
 
   const STATUS_MAP = {
-    cashier: ["pending", "balance_due", "under_review", "invoiced", "paid"],
-    rmo: [
-      "under_review",
-      "deficient",
-      "invoiced",
-      "paid",
-      "released",
-      "rejected",
-    ],
-    admin: [
-      "pending",
-      "balance_due",
-      "under_review",
-      "deficient",
-      "invoiced",
-      "paid",
-      "released",
-      "rejected",
-    ],
+    cashier: ["pending", "invoiced", "paid"],
+    rmo: ["pending", "invoiced", "paid", "released", "rejected"],
+    admin: ["pending", "invoiced", "paid", "released", "rejected"],
   };
 
   const formatLabel = (status) => {
@@ -291,6 +275,7 @@ export default function RequestTable() {
                           status={req.status}
                           role={user.role}
                           other={req.other}
+                          isApproved={req.isApproved}
                           onApprove={() => {
                             setSelectedRequest({
                               ...req,

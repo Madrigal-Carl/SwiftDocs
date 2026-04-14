@@ -70,12 +70,9 @@ function validateApprovePayment(req, res, next) {
 }
 
 const reviewSchema = Joi.object({
-  status: Joi.string()
-    .valid("under_review", "balance_due")
-    .required()
-    .messages({
-      "any.only": "Status must be under_review or balance_due",
-    }),
+  status: Joi.string().valid("invoiced", "balance_due").required().messages({
+    "any.only": "Status must be invoiced or balance_due",
+  }),
   note: Joi.when("status", {
     is: "balance_due",
     then: Joi.string().trim().required().messages({

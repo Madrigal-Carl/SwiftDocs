@@ -5,6 +5,7 @@ const requestRepository = require("../repositories/request_repository");
 const requestedDocumentRepository = require("../repositories/requested_document_repository");
 const documentRepository = require("../repositories/document_repository");
 const requirementRepository = require("../repositories/requirement_repository");
+const validationRepository = require("../repositories/validation_repository");
 const additionalDocumentRepository = require("../repositories/additional_document_repository");
 const mailService = require("./mail_service");
 const { computeStats } = require("../utils/stats_computation");
@@ -34,6 +35,13 @@ async function RequestDocuments(data, files = []) {
         purpose: data.purpose,
         notes: data.notes,
         delivery_method: data.delivery_method,
+      },
+      t,
+    );
+
+    await validationRepository.CreateValidation(
+      {
+        request_id: request.id,
       },
       t,
     );
@@ -95,6 +103,9 @@ async function RequestDocuments(data, files = []) {
         },
         {
           association: "requirements",
+        },
+        {
+          association: "validation",
         },
       ],
     });
@@ -206,6 +217,7 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
     const totalPrice = req.getGrandTotal();
 
     const hasOther = (req.additional_documents || []).length > 0;
+    const isApproved = req.validation.rmo;
     return {
       id: student.id,
       full_name: student.getFullName(),
@@ -218,6 +230,7 @@ async function GetAllRequestsWithStudent(page = 1, limit = 10, filters = []) {
         total_documents: totalDocuments,
         total_price: totalPrice,
         other: hasOther,
+        isApproved: isApproved,
         request_completed: req.request_completed,
         expected_release_date: req.expected_release_date,
         created_at: req.createdAt.toISOString(),
@@ -240,25 +253,9 @@ async function GetRequestAnalytics(timeframe = "year", role = "admin") {
   const requests = await requestRepository.GetAllRequestStatuses();
 
   const STATUS_MAP = {
-    cashier: ["pending", "balance_due", "invoiced", "paid"],
-    rmo: [
-      "under_review",
-      "deficient",
-      "invoiced",
-      "paid",
-      "released",
-      "rejected",
-    ],
-    admin: [
-      "pending",
-      "balance_due",
-      "under_review",
-      "deficient",
-      "invoiced",
-      "paid",
-      "released",
-      "rejected",
-    ],
+    cashier: ["pending", "invoiced", "paid"],
+    rmo: ["pending", "invoiced", "paid", "released", "rejected"],
+    admin: ["pending", "invoiced", "paid", "released", "rejected"],
   };
 
   const allowedStatuses = STATUS_MAP[role] || STATUS_MAP.admin;
@@ -272,7 +269,7 @@ async function GetRequestAnalytics(timeframe = "year", role = "admin") {
   return stats;
 }
 
-async function GetRequestByReferenceNumber(referenceNumber) {
+async function GetRequestByReferenceNumber(referenceNumber, role) {
   // Use repository to fetch the request by reference_number
   const request = await requestRepository.FindByReferenceNumber(
     referenceNumber,
@@ -310,9 +307,18 @@ async function GetRequestByReferenceNumber(referenceNumber) {
         {
           association: "bills",
         },
+        {
+          association: "validation",
+        },
       ],
     },
   );
+
+  let isApproved = null;
+  if (request.validation) {
+    isApproved =
+      role === "cashier" ? request.validation.cashier : request.validation.rmo;
+  }
 
   const formattedLogs = (request.logs || []).map((log) => {
     const account = log.account;
@@ -336,6 +342,7 @@ async function GetRequestByReferenceNumber(referenceNumber) {
   return {
     ...request.toJSON(),
     logs: formattedLogs,
+    isApproved,
   };
 }
 
